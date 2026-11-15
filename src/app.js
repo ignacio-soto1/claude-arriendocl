@@ -7,9 +7,12 @@ const chile = require('./chile');
 const pricing = require('./pricing');
 const { HttpError } = require('./http');
 const marca = require('./marca');
+const WhatsApp = require('../public/whatsapp');
 
-function createApp({ db, uploadsDir, sessionSecret, secureCookies = false }) {
+function createApp({ db, uploadsDir, sessionSecret, secureCookies = false, whatsapp = marca.whatsapp }) {
   if (!sessionSecret) throw new Error('sessionSecret es obligatorio');
+  const whatsappNumero = whatsapp ? marca.normalizarWhatsapp(whatsapp) : null;
+  if (whatsapp && !whatsappNumero) throw new Error(`WhatsApp inválido: ${whatsapp}`);
   const app = express();
 
   app.set('view engine', 'ejs');
@@ -42,6 +45,9 @@ function createApp({ db, uploadsDir, sessionSecret, secureCookies = false }) {
     Object.assign(res.locals, {
       user: req.user,
       marca,
+      whatsapp: whatsappNumero,
+      urlBase: `${req.protocol}://${req.get('host')}`,
+      WhatsApp,
       formatCLP: chile.formatCLP,
       formatFecha: chile.formatFecha,
       TIPOS: chile.TIPOS,

@@ -10,8 +10,8 @@ Requiere Node.js 22.13 o superior (usa el SQLite que trae Node, sin dependencias
 cd arriendos-chile
 npm install
 npm run seed      # crea data/arriendos.db con 12 propiedades de ejemplo
-npm start         # http://localhost:3000
-npm test          # 19 tests (unitarios + flujo completo HTTP)
+WHATSAPP_RESERVAS="+56 9 1234 5678" npm start   # http://localhost:3000
+npm test          # 22 tests (unitarios + flujo completo HTTP)
 ```
 
 Usuarios de demo (contraseña `demo1234`):
@@ -22,9 +22,14 @@ Usuarios de demo (contraseña `demo1234`):
 | `anfitrion@demo.cl` | Anfitriona con propiedades y solicitudes pendientes |
 | `rodrigo@demo.cl` | Segundo anfitrión |
 
-Variables de entorno: `PORT`, `DB_FILE`, `UPLOADS_DIR`, `SESSION_SECRET` (obligatoria con `NODE_ENV=production`).
+Variables de entorno: `WHATSAPP_RESERVAS` (celular que recibe las reservas, ej. `+56 9 1234 5678`), `PORT`, `DB_FILE`, `UPLOADS_DIR`, `SESSION_SECRET` (obligatoria con `NODE_ENV=production`).
 
 ## Qué incluye
+
+**Reserva por WhatsApp**
+- Botón "Reservar por WhatsApp" en cada propiedad que abre el chat con el pedido ya escrito: propiedad, comuna, fechas, noches, huéspedes, total estimado, nombre del cliente (si ingresó) y enlace.
+- El mensaje se actualiza en vivo al cambiar fechas o huéspedes. Se edita en `public/whatsapp.js`.
+- Si `WHATSAPP_RESERVAS` no está definido, el botón no aparece y queda solo la reserva en el sitio.
 
 **Huéspedes**
 - Búsqueda por región → comuna (16 regiones), tipo, fechas, nº de huéspedes, precio máximo y texto libre; orden por precio, novedad o valoración.

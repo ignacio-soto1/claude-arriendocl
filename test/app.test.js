@@ -229,3 +229,20 @@ test('las vistas escapan HTML ingresado por usuarios', async () => {
   assert.doesNotMatch(ficha.text, /<script>alert/);
   assert.match(ficha.text, /&lt;script&gt;/);
 });
+
+test('con WhatsApp configurado la ficha muestra el botón con el pedido escrito', async () => {
+  const app = createApp({ db, uploadsDir, sessionSecret: 'x', whatsapp: '+56 9 1234 5678' });
+  const srv = await new Promise((resolve) => { const s = app.listen(0, () => resolve(s)); });
+  try {
+    const id = db.prepare("SELECT id FROM listings WHERE comuna = 'Pucón'").get().id;
+    const html = await (await fetch(`http://127.0.0.1:${srv.address().port}/propiedades/${id}`)).text();
+    const href = html.match(/id="btn-whatsapp"[^>]*href="([^"]+)"|href="([^"]+)"[^>]*\s+data-numero/);
+    const link = (href[1] || href[2]).replace(/&amp;/g, '&');
+    assert.ok(link.startsWith('https://wa.me/56912345678?text='));
+    const texto = decodeURIComponent(link.split('text=')[1]);
+    assert.match(texto, /Parcela con tinaja y vista al volcán Villarrica/);
+    assert.match(texto, new RegExp(`/propiedades/${id}`));
+    // Sin WhatsApp configurado (app principal de los tests) no aparece
+    assert.doesNotMatch(await (await fetch(`${base}/propiedades/${id}`)).text(), /btn-whatsapp/);
+  } finally { srv.close(); }
+});

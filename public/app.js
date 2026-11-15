@@ -54,16 +54,26 @@
     const box = form.querySelector('.cotizacion');
     const aviso = form.querySelector('[data-q="aviso"]');
     const q = (k) => form.querySelector(`[data-q="${k}"]`);
+    // Mantiene el mensaje de WhatsApp al día con las fechas, huéspedes y total.
+    const wa = document.getElementById('btn-whatsapp');
+    const actualizarWhatsapp = (extra) => {
+      if (!wa || !window.WhatsApp) return;
+      const d = Object.assign(JSON.parse(wa.dataset.wa), { huespedes: Number(form.huespedes.value) || null }, extra);
+      wa.href = window.WhatsApp.waUrl(wa.dataset.numero, window.WhatsApp.mensajeReserva(d));
+    };
     const update = () => {
       const a = form.llegada.value, b = form.salida.value;
       box.hidden = true; aviso.hidden = true;
+      actualizarWhatsapp({});
       if (!a || !b || a >= b) return;
       const n = Math.round((new Date(b + 'T00:00:00Z') - new Date(a + 'T00:00:00Z')) / 86400000);
+      actualizarWhatsapp({ llegada: a, salida: b, noches: n }); // fechas aunque no calcen, para que pregunten
       if (ocupado.some((o) => a < o.check_out && o.check_in < b)) {
         aviso.textContent = 'Esas fechas chocan con otra reserva.'; aviso.hidden = false; return;
       }
       if (n < min) { aviso.textContent = `Mínimo ${min} noches.`; aviso.hidden = false; return; }
       const sub = precio * n, serv = Math.round(sub * tasa);
+      actualizarWhatsapp({ llegada: a, salida: b, noches: n, total: sub + limpieza + serv });
       q('detalle').textContent = `${clp.format(precio)} × ${n} ${n === 1 ? 'noche' : 'noches'}`;
       q('subtotal').textContent = clp.format(sub);
       q('servicio').textContent = clp.format(serv);
@@ -71,6 +81,7 @@
       box.hidden = false;
     };
     form.addEventListener('change', update);
+    form.huespedes.addEventListener('input', update);
     update();
   }
 })();

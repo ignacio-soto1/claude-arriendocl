@@ -76,3 +76,28 @@ test('validarListing detecta errores y normaliza amenities', () => {
   assert.equal(datos.activo, 1);
   assert.equal(validarListing({ activo: '0' }).datos.activo, 0);
 });
+
+test('mensaje de WhatsApp incluye propiedad, fechas, huéspedes y total', () => {
+  const { mensajeReserva, waUrl } = require('../public/whatsapp');
+  const base = { marca: 'Arriendo en CL', titulo: 'Parcela en Pucón', tipo: 'Parcela', comuna: 'Pucón',
+    region: 'La Araucanía', url: 'https://ejemplo.cl/propiedades/1' };
+  const m = mensajeReserva({ ...base, llegada: '2027-01-14', salida: '2027-01-17', noches: 3, huespedes: 4, total: 338500, nombre: 'Javiera' });
+  assert.match(m, /^Hola Arriendo en CL/);
+  assert.match(m, /\*Parcela en Pucón\*/);
+  assert.match(m, /Llegada: .*14.*ene.*2027 · Salida: .*17.*ene.*2027 \(3 noches\)/);
+  assert.match(m, /Huéspedes: 4/);
+  assert.match(m, /Total estimado: \$\s?338\.500/);
+  assert.match(m, /Mi nombre: Javiera/);
+  assert.match(m, /https:\/\/ejemplo\.cl\/propiedades\/1/);
+  assert.match(mensajeReserva(base), /Fechas: por definir/);
+  const url = waUrl('56912345678', m);
+  assert.ok(url.startsWith('https://wa.me/56912345678?text='));
+  assert.equal(decodeURIComponent(url.split('text=')[1]), m);
+});
+
+test('normalizarWhatsapp acepta celulares chilenos', () => {
+  const { normalizarWhatsapp } = require('../src/marca');
+  assert.equal(normalizarWhatsapp('+56 9 1234 5678'), '56912345678');
+  assert.equal(normalizarWhatsapp('912345678'), '56912345678');
+  assert.equal(normalizarWhatsapp('22 123 4567'), null);
+});
