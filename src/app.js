@@ -6,6 +6,7 @@ const cookieSession = require('cookie-session');
 const chile = require('./chile');
 const pricing = require('./pricing');
 const { HttpError } = require('./http');
+const marca = require('./marca');
 
 function createApp({ db, uploadsDir, sessionSecret, secureCookies = false }) {
   if (!sessionSecret) throw new Error('sessionSecret es obligatorio');
@@ -20,7 +21,7 @@ function createApp({ db, uploadsDir, sessionSecret, secureCookies = false }) {
   app.use('/fotos', express.static(uploadsDir, { maxAge: '7d' }));
   app.use(express.urlencoded({ extended: false, limit: '100kb' }));
   app.use(cookieSession({
-    name: 'ruka_sesion',
+    name: 'aecl_sesion',
     keys: [sessionSecret],
     maxAge: 30 * 24 * 3600 * 1000,
     httpOnly: true,
@@ -40,6 +41,7 @@ function createApp({ db, uploadsDir, sessionSecret, secureCookies = false }) {
     if (req.session.flash) delete req.session.flash;
     Object.assign(res.locals, {
       user: req.user,
+      marca,
       formatCLP: chile.formatCLP,
       formatFecha: chile.formatFecha,
       TIPOS: chile.TIPOS,

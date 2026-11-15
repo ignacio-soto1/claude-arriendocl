@@ -25,7 +25,7 @@
         <% if (listing.superficie_m2) { %><span><strong><%= listing.superficie_m2 >= 10000 ? (listing.superficie_m2/10000).toLocaleString('es-CL', {maximumFractionDigits: 1}) + ' ha' : listing.superficie_m2.toLocaleString('es-CL') + ' m²' %></strong> superficie</span><% } %>
         <span>Mínimo <strong><%= listing.min_noches %></strong> <%= listing.min_noches === 1 ? 'noche' : 'noches' %></span>
       </section>
-      <p class="host">Anfitrión: <strong><%= listing.host_nombre %></strong> · en Ruka desde <%= new Date(listing.host_desde + 'Z').getFullYear() %></p>
+      <p class="host">Anfitrión: <strong><%= listing.host_nombre %></strong> · en <%= marca.nombre %> desde <%= new Date(listing.host_desde + 'Z').getFullYear() %></p>
       <section>
         <h2>Sobre este lugar</h2>
         <p class="desc"><%= listing.descripcion %></p>
@@ -70,7 +70,7 @@
         <div class="cotizacion" hidden>
           <div class="row between"><span data-q="detalle"></span><span data-q="subtotal"></span></div>
           <% if (listing.tarifa_limpieza) { %><div class="row between"><span>Limpieza</span><span><%= formatCLP(listing.tarifa_limpieza) %></span></div><% } %>
-          <div class="row between"><span>Tarifa de servicio Ruka (<%= Math.round(TASA_SERVICIO * 100) %>%)</span><span data-q="servicio"></span></div>
+          <div class="row between"><span>Tarifa de servicio (<%= Math.round(TASA_SERVICIO * 100) %>%)</span><span data-q="servicio"></span></div>
           <div class="row between total"><span>Total</span><span data-q="total"></span></div>
         </div>
         <p class="aviso" data-q="aviso" hidden></p>

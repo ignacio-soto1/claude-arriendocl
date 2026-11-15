@@ -3,6 +3,7 @@
 const express = require('express');
 const { hashPassword, verifyPassword } = require('../db');
 const { validarRut, formatearRut } = require('../chile');
+const marca = require('../marca');
 
 // Solo redirige a rutas internas para evitar open redirects.
 function destinoSeguro(volver) {
@@ -41,7 +42,7 @@ module.exports = ({ db }) => {
           VALUES (?, ?, ?, ?, ?, ?)`).run(datos.nombre, datos.email, rut, datos.telefono || null,
           hashPassword(password), datos.es_anfitrion ? 1 : 0);
         req.session.userId = Number(info.lastInsertRowid);
-        req.flash('ok', `¡Bienvenido/a a Ruka, ${datos.nombre.split(' ')[0]}!`);
+        req.flash('ok', `¡Bienvenido/a a ${marca.nombre}, ${datos.nombre.split(' ')[0]}!`);
         return res.redirect(datos.es_anfitrion ? '/anfitrion' : destinoSeguro(req.body.volver));
       }
     }

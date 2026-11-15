@@ -76,7 +76,7 @@ function seed(db) {
 }
 
 if (require.main === module) {
-  const file = process.env.DB_FILE || path.join(__dirname, '..', 'data', 'ruka.db');
+  const file = process.env.DB_FILE || path.join(__dirname, '..', 'data', 'arriendos.db');
   fs.mkdirSync(path.dirname(file), { recursive: true });
   for (const f of [file, `${file}-wal`, `${file}-shm`]) fs.rmSync(f, { force: true });
   const db = openDb(file);

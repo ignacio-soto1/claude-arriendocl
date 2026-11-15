@@ -7,7 +7,7 @@ const { openDb } = require('./db');
 const { createApp } = require('./app');
 
 const PORT = Number(process.env.PORT) || 3000;
-const DB_FILE = process.env.DB_FILE || path.join(__dirname, '..', 'data', 'ruka.db');
+const DB_FILE = process.env.DB_FILE || path.join(__dirname, '..', 'data', 'arriendos.db');
 const UPLOADS_DIR = process.env.UPLOADS_DIR || path.join(__dirname, '..', 'uploads');
 const PROD = process.env.NODE_ENV === 'production';
 
@@ -24,4 +24,4 @@ fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 const db = openDb(DB_FILE);
 const app = createApp({ db, uploadsDir: UPLOADS_DIR, sessionSecret: secret, secureCookies: PROD });
 
-app.listen(PORT, () => console.log(`Ruka escuchando en http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Arriendo en CL escuchando en http://localhost:${PORT}`));

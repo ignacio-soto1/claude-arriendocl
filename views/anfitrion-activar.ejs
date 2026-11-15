@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 <div class="narrow center">
   <h1>Publica tu parcela o departamento</h1>
-  <p>Llega a viajeros de todo Chile. Publicar es gratis: Ruka cobra la tarifa de servicio al huésped y tú recibes el 100% de tu precio por noche más la limpieza.</p>
+  <p>Llega a viajeros de todo Chile. Publicar es gratis: <%= marca.nombre %> cobra la tarifa de servicio al huésped y tú recibes el 100% de tu precio por noche más la limpieza.</p>
   <% if (user) { %>
     <form method="post" action="/anfitrion/activar"><button class="btn">Activar cuenta de anfitrión</button></form>
   <% } else { %>

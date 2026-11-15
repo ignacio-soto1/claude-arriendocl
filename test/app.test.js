@@ -13,7 +13,7 @@ const { hoyChile } = require('../src/chile');
 let server;
 let base;
 let db;
-const uploadsDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ruka-uploads-'));
+const uploadsDir = fs.mkdtempSync(path.join(os.tmpdir(), 'aecl-uploads-'));
 
 test.before(async () => {
   db = openDb(':memory:');

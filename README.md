@@ -1,6 +1,6 @@
-# Ruka · Arriendo de parcelas y departamentos en Chile
+# Arriendo en CL · Arriendo de parcelas y departamentos en Chile
 
-MVP de una plataforma tipo Airbnb enfocada solo en Chile: parcelas, departamentos, casas y cabañas por noche, de Arica a Magallanes.
+Sitio web de [@arriendoencl](https://www.instagram.com/arriendoencl/): plataforma tipo Airbnb enfocada solo en Chile: parcelas, departamentos, casas y cabañas por noche, de Arica a Magallanes.
 
 ## Cómo correrlo
 
@@ -9,7 +9,7 @@ Requiere Node.js 22.13 o superior (usa el SQLite que trae Node, sin dependencias
 ```bash
 cd arriendos-chile
 npm install
-npm run seed      # crea data/ruka.db con 12 propiedades de ejemplo
+npm run seed      # crea data/arriendos.db con 12 propiedades de ejemplo
 npm start         # http://localhost:3000
 npm test          # 19 tests (unitarios + flujo completo HTTP)
 ```
