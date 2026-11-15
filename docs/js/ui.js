@@ -42,7 +42,7 @@
     const ig = `https://www.instagram.com/${CFG.instagram}/`;
     const wa = waUrl(`Hola ${CFG.marca} 👋 Tengo una consulta sobre arriendos.`);
     document.querySelector('header.top').innerHTML = `
-      <a class="logo-link" href="./" aria-label="${esc(CFG.marca)}, inicio">${logo('chico')}</a>
+      <a class="logo-link" href="${CFG.unaPagina ? '#inicio' : './'}" aria-label="${esc(CFG.marca)}, inicio">${logo('chico')}</a>
       <nav>
         <a href="${esc(ig)}" target="_blank" rel="noopener" class="icon-link">${IG_ICON}<span>@${esc(CFG.instagram)}</span></a>
         <a href="${esc(wa)}" target="_blank" rel="noopener" class="btn sm wa">${WA_ICON}<span>WhatsApp</span></a>
@@ -53,13 +53,32 @@
          <a href="${esc(wa)}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a></p>`;
   }
 
-  // Capa de mapa base (OpenStreetMap).
-  function capaBase() {
+  // Capa de mapa base: OpenStreetMap, o el contorno de Chile (data/contorno.js) si CONFIG.mapaBase = 'contorno'.
+  function capaBase(mapa) {
+    if (CFG.mapaBase === 'contorno' && window.CONTORNO_GEO) {
+      if (mapa) mapa.getContainer().classList.add('mapa-contorno');
+      return L.geoJSON(window.CONTORNO_GEO, {
+        interactive: false,
+        style: (f) => (f.properties.chile
+          ? { color: '#2a8f87', weight: 1.2, fillColor: '#f4f1e6', fillOpacity: 1 }
+          : { color: '#b9c4c9', weight: 1, fillColor: '#e7ebe8', fillOpacity: 1 }),
+        attribution: 'Contornos: Natural Earth',
+      });
+    }
     return L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     });
   }
 
-  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase };
+  // Enlace a la ficha. En modo de una sola página (CONFIG.unaPagina) usa #p-<id>.
+  function enlaceFicha(p, f = {}) {
+    if (CFG.unaPagina) return `#p-${p.id}`;
+    const q = new URLSearchParams({ id: p.id });
+    if (f.llegada && f.salida) { q.set('llegada', f.llegada); q.set('salida', f.salida); }
+    if (f.huespedes) q.set('huespedes', f.huespedes);
+    return `propiedad.html?${q}`;
+  }
+
+  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha };
 })();

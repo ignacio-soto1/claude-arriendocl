@@ -49,22 +49,17 @@
   function escribirURL() {
     const q = new URLSearchParams();
     for (const k of CAMPOS) { const v = form[k].value.trim(); if (v && !(k === 'orden' && v === 'recomendadas')) q.set(k, v); }
-    history.replaceState(null, '', q.toString() ? `?${q}` : location.pathname);
+    if (!window.CONFIG.unaPagina) history.replaceState(null, '', q.toString() ? `?${q}` : location.pathname);
   }
 
   // Mapa
   const mapa = L.map('mapa', { scrollWheelZoom: false, zoomControl: true });
-  UI.capaBase().addTo(mapa);
+  UI.capaBase(mapa).addTo(mapa);
   mapa.on('focus click', () => mapa.scrollWheelZoom.enable());
   const capa = L.layerGroup().addTo(mapa);
   const marcadores = new Map();
 
-  function enlace(p, f) {
-    const q = new URLSearchParams({ id: p.id });
-    if (f.llegada && f.salida) { q.set('llegada', f.llegada); q.set('salida', f.salida); }
-    if (f.huespedes) q.set('huespedes', f.huespedes);
-    return `propiedad.html?${q}`;
-  }
+  const enlace = UI.enlaceFicha;
 
   function tarjeta(p, f) {
     const q = f.llegada && f.salida ? C.cotizar(p, f.llegada, f.salida) : null;
@@ -151,6 +146,9 @@
     explorar.scrollIntoView({ block: 'start' });
   });
   window.addEventListener('resize', () => mapa.invalidateSize());
+
+  // Para el modo de una sola página: filtros actuales y reajuste del mapa al volver.
+  window.Inicio = { filtros: filtrosActuales, alVolver: () => { mapa.invalidateSize(); encuadrar(false); } };
 
   leerURL();
   abrirMas(['huespedes', 'precio_max', 'texto'].some((k) => form[k].value) || (form.orden.value !== 'recomendadas'));
