@@ -1,0 +1,10 @@
+</main>
+<footer class="bottom">
+  <p><%= marca.nombre %> · Arriendos por noche de Arica a Magallanes. Precios en pesos chilenos (CLP).</p>
+  <p><a href="<%= marca.instagramUrl %>" target="_blank" rel="noopener">Síguenos en Instagram @<%= marca.instagram %></a><% if (whatsapp) { %> · <a href="<%= WhatsApp.waUrl(whatsapp, `Hola ${marca.nombre} 👋 Tengo una consulta sobre arriendos.`) %>" target="_blank" rel="noopener">Escríbenos por WhatsApp</a><% } %></p>
+</footer>
+<script>window.REGIONES = <%- JSON.stringify(REGIONES).replace(/</g, '\\u003c') %>;</script>
+<script src="/whatsapp.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

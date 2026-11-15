@@ -1,0 +1,50 @@
+<%- include('partials/header') %>
+<% if (!hayFiltros) { %>
+<section class="hero">
+  <h1>Parcelas, departamentos y cabañas<br>para arrendar en todo Chile</h1>
+  <p>Desde el desierto de Atacama hasta la Patagonia. Reserva directo con anfitriones verificados con RUT.</p>
+</section>
+<% } %>
+<form class="search" method="get" action="/">
+  <%- include('partials/region-comuna', { region: filtros.region, comuna: filtros.comuna }) %>
+  <label>Tipo
+    <select name="tipo">
+      <option value="">Todos</option>
+      <% for (const [k, v] of Object.entries(TIPOS)) { %><option value="<%= k %>" <%= filtros.tipo === k ? 'selected' : '' %>><%= v %></option><% } %>
+    </select>
+  </label>
+  <label>Llegada <input type="date" name="llegada" value="<%= filtros.llegada %>" min="<%= hoy %>" data-llegada></label>
+  <label>Salida <input type="date" name="salida" value="<%= filtros.salida %>" min="<%= hoy %>" data-salida></label>
+  <label>Huéspedes <input type="number" name="huespedes" min="1" max="50" value="<%= filtros.huespedes || '' %>" placeholder="2"></label>
+  <label>Máx. por noche <input type="text" inputmode="numeric" name="precio_max" value="<%= filtros.precio_max || '' %>" placeholder="$100.000"></label>
+  <label class="grow">Buscar <input type="search" name="texto" value="<%= filtros.texto %>" placeholder="tinaja, vista al lago…"></label>
+  <label>Ordenar
+    <select name="orden">
+      <option value="recientes" <%= filtros.orden === 'recientes' ? 'selected' : '' %>>Más recientes</option>
+      <option value="precio_asc" <%= filtros.orden === 'precio_asc' ? 'selected' : '' %>>Menor precio</option>
+      <option value="precio_desc" <%= filtros.orden === 'precio_desc' ? 'selected' : '' %>>Mayor precio</option>
+      <option value="valoracion" <%= filtros.orden === 'valoracion' ? 'selected' : '' %>>Mejor evaluadas</option>
+    </select>
+  </label>
+  <button class="btn">Buscar</button>
+</form>
+
+<% if (!hayFiltros) { %>
+<div class="chips">
+  <a href="/?tipo=parcela">🌳 Parcelas</a>
+  <a href="/?tipo=departamento">🏢 Departamentos</a>
+  <a href="/?tipo=cabana">🛖 Cabañas</a>
+  <a href="/?region=La+Araucan%C3%ADa">Sur: La Araucanía</a>
+  <a href="/?region=Valpara%C3%ADso">Costa: Valparaíso</a>
+  <a href="/?region=Metropolitana+de+Santiago">Santiago</a>
+</div>
+<% } %>
+
+<h2 class="results-title"><%= resultados.length %> <%= resultados.length === 1 ? 'propiedad' : 'propiedades' %><%= filtros.comuna ? ` en ${filtros.comuna}` : filtros.region ? ` en ${filtros.region}` : '' %></h2>
+<% const qs = filtros.llegada ? `?llegada=${filtros.llegada}&salida=${filtros.salida}&huespedes=${filtros.huespedes || 1}` : ''; %>
+<% if (resultados.length) { %>
+  <div class="grid"><% resultados.forEach(l => { %><%- include('partials/card', { l, qs }) %><% }) %></div>
+<% } else { %>
+  <p class="empty">No encontramos propiedades con esos filtros. Prueba ampliando la zona o cambiando las fechas.</p>
+<% } %>
+<%- include('partials/footer') %>

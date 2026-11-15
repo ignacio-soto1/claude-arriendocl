@@ -1,0 +1,11 @@
+<%- include('partials/header') %>
+<div class="narrow center">
+  <h1>Publica tu parcela o departamento</h1>
+  <p>Llega a viajeros de todo Chile. Publicar es gratis: <%= marca.nombre %> cobra la tarifa de servicio al huésped y tú recibes el 100% de tu precio por noche más la limpieza.</p>
+  <% if (user) { %>
+    <form method="post" action="/anfitrion/activar"><button class="btn">Activar cuenta de anfitrión</button></form>
+  <% } else { %>
+    <p><a class="btn" href="/registro?volver=%2Fanfitrion%2Factivar">Crear cuenta</a> <a class="btn ghost" href="/ingresar?volver=%2Fanfitrion%2Factivar">Ya tengo cuenta</a></p>
+  <% } %>
+</div>
+<%- include('partials/footer') %>

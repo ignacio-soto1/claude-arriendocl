@@ -1,0 +1,12 @@
+<label>Región
+  <select name="region" data-region <%= locals.requerido ? 'required' : '' %>>
+    <option value=""><%= locals.requerido ? 'Elige una región' : 'Todo Chile' %></option>
+    <% REGIONES.forEach(r => { %><option value="<%= r.nombre %>" <%= r.nombre === region ? 'selected' : '' %>><%= r.nombre %></option><% }) %>
+  </select>
+</label>
+<label>Comuna
+  <select name="comuna" data-comuna data-actual="<%= comuna || '' %>" <%= locals.requerido ? 'required' : '' %>>
+    <option value=""><%= locals.requerido ? 'Elige una comuna' : 'Todas' %></option>
+    <% const rr = REGIONES.find(x => x.nombre === region); if (rr) rr.comunas.forEach(c => { %><option <%= c === comuna ? 'selected' : '' %>><%= c %></option><% }) %>
+  </select>
+</label>

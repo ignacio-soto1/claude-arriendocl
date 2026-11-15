@@ -1,0 +1,5 @@
+<% if (foto) { %>
+  <img src="/fotos/<%= foto %>" alt="<%= alt %>" loading="lazy">
+<% } else { %>
+  <div class="ph ph-<%= tipo %>" role="img" aria-label="<%= alt %>"><span><%= { parcela: '🌳', departamento: '🏢', casa: '🏡', cabana: '🛖' }[tipo] %></span></div>
+<% } %>
