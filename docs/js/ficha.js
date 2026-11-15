@@ -63,8 +63,8 @@
             <div class="row between total"><span>Total</span><span data-q="total"></span></div>
           </div>
           <p class="aviso" data-q="aviso" hidden></p>
-          <a class="btn block wa" id="btn-whatsapp" target="_blank" rel="noopener">${UI.WA_ICON} Reservar por WhatsApp</a>
-          <p class="muted small center">Se abre WhatsApp con tu pedido ya escrito; solo tienes que enviarlo.</p>
+          <a class="btn block wa" id="btn-whatsapp" target="_blank" rel="noopener">${UI.WA_ICON} <span data-q="btn">Reservar por WhatsApp</span></a>
+          <p class="muted small center" data-q="ayuda"></p>
         </form>
       </aside>
     </div>
@@ -110,9 +110,25 @@
     };
     // Incluye las fechas aunque no calcen (así pueden preguntar), y el total solo si es válido.
     if (cot) Object.assign(datos, { llegada, salida, noches: cot.noches });
-    if (r.ok) datos.total = cot.total;
+    if (r.ok) Object.assign(datos, { precio_noche: p.precio_noche, limpieza: cot.limpieza, total: cot.total });
     btn.href = UI.waUrl(window.WhatsApp.mensajeReserva(datos));
+
+    // Sin fechas, el botón lleva al calendario en vez de abrir WhatsApp.
+    const faltanFechas = !llegada || !salida;
+    btn.classList.toggle('pendiente', faltanFechas);
+    $('btn').textContent = faltanFechas ? 'Elige tus fechas para reservar' : (r.ok ? 'Reservar por WhatsApp' : 'Consultar por WhatsApp');
+    $('ayuda').textContent = faltanFechas
+      ? 'Elige llegada y salida: te armamos el mensaje con las fechas y el precio.'
+      : 'Se abre WhatsApp con tu reserva ya escrita: fechas, propiedad y precio. Solo tienes que enviarla.';
   }
+
+  btn.addEventListener('click', (e) => {
+    if (!btn.classList.contains('pendiente')) return;
+    e.preventDefault();
+    const campo = form.llegada.value ? form.salida : form.llegada;
+    campo.focus();
+    try { campo.showPicker(); } catch (_) { /* navegadores sin showPicker */ }
+  });
 
   form.llegada.addEventListener('change', () => {
     if (!form.llegada.value) return;

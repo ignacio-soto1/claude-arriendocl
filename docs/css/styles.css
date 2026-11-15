@@ -188,3 +188,5 @@ legend { font-weight: 700; padding: 0 6px; }
   .search.abierto .btn.extra { display: block; }
   .mas-filtros { display: block; grid-column: span 2; padding: 8px; }
 }
+
+.btn.wa.pendiente { background: var(--surface); color: var(--text); border: 2px dashed var(--brand); }

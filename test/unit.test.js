@@ -84,9 +84,10 @@ test('mensaje de WhatsApp incluye propiedad, fechas, huéspedes y total', () => 
   const m = mensajeReserva({ ...base, llegada: '2027-01-14', salida: '2027-01-17', noches: 3, huespedes: 4, total: 338500, nombre: 'Javiera' });
   assert.match(m, /^Hola Arriendo en CL/);
   assert.match(m, /\*Parcela en Pucón\*/);
-  assert.match(m, /Llegada: .*14.*ene.*2027 · Salida: .*17.*ene.*2027 \(3 noches\)/);
-  assert.match(m, /Huéspedes: 4/);
-  assert.match(m, /Total estimado: \$\s?338\.500/);
+  assert.match(m, /📅 Llegada: .*14.*ene.*2027\n📅 Salida: .*17.*ene.*2027\n🌙 3 noches · 👥 4 huéspedes/);
+  assert.match(m, /\*Total: \$\s?338\.500 CLP\*/);
+  const conDesglose = mensajeReserva({ ...base, llegada: '2027-01-14', salida: '2027-01-17', noches: 3, precio_noche: 95000, limpieza: 25000, total: 310000 });
+  assert.match(conDesglose, /\$\s?95\.000 × 3 noches = \$\s?285\.000\nLimpieza: \$\s?25\.000\n\*Total: \$\s?310\.000 CLP\*/);
   assert.match(m, /Mi nombre: Javiera/);
   assert.match(m, /https:\/\/ejemplo\.cl\/propiedades\/1/);
   assert.match(mensajeReserva(base), /Fechas: por definir/);

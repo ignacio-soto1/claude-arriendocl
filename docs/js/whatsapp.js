@@ -9,19 +9,28 @@
   const fecha = new Intl.DateTimeFormat('es-CL', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
   const fmtFecha = (iso) => fecha.format(new Date(iso + 'T00:00:00Z'));
 
-  // d: { marca, titulo, tipo, comuna, region, url, llegada?, salida?, noches?, huespedes?, total?, nombre? }
+  const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
+
+  // d: { marca, titulo, tipo, comuna, region, url, llegada?, salida?, noches?, huespedes?,
+  //      precio_noche?, limpieza?, total?, nombre? }
   function mensajeReserva(d) {
-    const l = [`Hola ${d.marca} 👋 Quiero reservar:`, '', `🏡 *${d.titulo}*`, `📍 ${d.tipo} en ${d.comuna}, ${d.region}`];
+    const l = [`Hola ${d.marca} 👋 Quiero reservar:`, '', `🏡 *${d.titulo}*`, `📍 ${d.tipo} en ${d.comuna}, ${d.region}`, ''];
     if (d.llegada && d.salida) {
-      l.push(`📅 Llegada: ${fmtFecha(d.llegada)} · Salida: ${fmtFecha(d.salida)}` +
-        (d.noches ? ` (${d.noches} ${d.noches === 1 ? 'noche' : 'noches'})` : ''));
+      l.push(`📅 Llegada: ${fmtFecha(d.llegada)}`, `📅 Salida: ${fmtFecha(d.salida)}`);
+      const extra = [d.noches && `🌙 ${plural(d.noches, 'noche', 'noches')}`, d.huespedes && `👥 ${plural(d.huespedes, 'huésped', 'huéspedes')}`].filter(Boolean);
+      if (extra.length) l.push(extra.join(' · '));
     } else {
       l.push('📅 Fechas: por definir');
+      if (d.huespedes) l.push(`👥 ${plural(d.huespedes, 'huésped', 'huéspedes')}`);
     }
-    if (d.huespedes) l.push(`👥 Huéspedes: ${d.huespedes}`);
-    if (d.total) l.push(`💰 Total estimado: ${clp.format(d.total)}`);
-    if (d.nombre) l.push(`🙋 Mi nombre: ${d.nombre}`);
-    l.push(`🔗 ${d.url}`, '', '¿Está disponible?');
+    if (d.total) {
+      l.push('', '💰 *Resumen del precio*');
+      if (d.precio_noche && d.noches) l.push(`${clp.format(d.precio_noche)} × ${plural(d.noches, 'noche', 'noches')} = ${clp.format(d.precio_noche * d.noches)}`);
+      if (d.limpieza) l.push(`Limpieza: ${clp.format(d.limpieza)}`);
+      l.push(`*Total: ${clp.format(d.total)} CLP*`);
+    }
+    if (d.nombre) l.push('', `🙋 Mi nombre: ${d.nombre}`);
+    l.push('', `🔗 ${d.url}`, '', '¿Está disponible?');
     return l.join('\n');
   }
 
