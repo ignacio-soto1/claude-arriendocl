@@ -1,0 +1,17 @@
+<%- include('partials/header') %>
+<div class="narrow">
+  <h1>Crea tu cuenta</h1>
+  <% if (errores.length) { %><ul class="errores"><% errores.forEach(e => { %><li><%= e %></li><% }) %></ul><% } %>
+  <form method="post" action="/registro" class="stack">
+    <input type="hidden" name="volver" value="<%= volver %>">
+    <label>Nombre completo <input name="nombre" required autocomplete="name" value="<%= datos.nombre || '' %>"></label>
+    <label>Correo electrónico <input type="email" name="email" required autocomplete="email" value="<%= datos.email || '' %>"></label>
+    <label>RUT <input name="rut" required placeholder="12.345.678-5" value="<%= datos.rut || '' %>" data-rut></label>
+    <label>Celular (opcional) <input type="tel" name="telefono" placeholder="+56 9 1234 5678" autocomplete="tel" value="<%= datos.telefono || '' %>"></label>
+    <label>Contraseña <input type="password" name="password" required minlength="8" autocomplete="new-password"></label>
+    <label class="check"><input type="checkbox" name="es_anfitrion" value="1" <%= datos.es_anfitrion ? 'checked' : '' %>> Quiero publicar mis propiedades</label>
+    <button class="btn block">Crear cuenta</button>
+  </form>
+  <p class="center">¿Ya tienes cuenta? <a href="/ingresar<%= volver ? '?volver=' + encodeURIComponent(volver) : '' %>">Ingresa</a></p>
+</div>
+<%- include('partials/footer') %>

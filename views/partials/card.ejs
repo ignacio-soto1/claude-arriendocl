@@ -1,0 +1,13 @@
+<a class="card" href="/propiedades/<%= l.id %><%= qs || '' %>">
+  <div class="card-img"><%- include('foto', { foto: l.foto, tipo: l.tipo, alt: l.titulo }) %>
+    <span class="tag"><%= TIPOS[l.tipo] %></span></div>
+  <div class="card-body">
+    <div class="row between">
+      <strong><%= l.comuna %></strong>
+      <% if (l.rating_prom) { %><span class="rating">★ <%= l.rating_prom.toFixed(1).replace('.', ',') %> <small>(<%= l.n_resenas %>)</small></span><% } else { %><span class="muted small">Nuevo</span><% } %>
+    </div>
+    <div class="muted small"><%= l.titulo %></div>
+    <div class="muted small"><%= l.capacidad %> huéspedes · <%= l.dormitorios %> dorm.<% if (l.superficie_m2 && l.tipo === 'parcela') { %> · <%= (l.superficie_m2 >= 10000 ? (l.superficie_m2/10000).toLocaleString('es-CL', {maximumFractionDigits: 1}) + ' ha' : l.superficie_m2.toLocaleString('es-CL') + ' m²') %><% } %></div>
+    <div><strong><%= formatCLP(l.precio_noche) %></strong> <span class="muted">noche</span></div>
+  </div>
+</a>

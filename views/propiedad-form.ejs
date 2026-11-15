@@ -1,0 +1,65 @@
+<%- include('partials/header') %>
+<div class="form-page">
+  <h1><%= title %></h1>
+  <% if (errores.length) { %><ul class="errores"><% errores.forEach(e => { %><li><%= e %></li><% }) %></ul><% } %>
+  <form method="post" enctype="multipart/form-data" class="stack"
+        action="<%= listing.id ? `/anfitrion/propiedades/${listing.id}/editar` : '/anfitrion/propiedades/nueva' %>">
+    <fieldset>
+      <legend>Lo básico</legend>
+      <label>Tipo de propiedad
+        <select name="tipo" required>
+          <option value="">Elige…</option>
+          <% for (const [k, v] of Object.entries(TIPOS)) { %><option value="<%= k %>" <%= listing.tipo === k ? 'selected' : '' %>><%= v %></option><% } %>
+        </select>
+      </label>
+      <label>Título <input name="titulo" required minlength="10" maxlength="120" value="<%= listing.titulo || '' %>" placeholder="Parcela con tinaja y vista al volcán Villarrica"></label>
+      <label>Descripción <textarea name="descripcion" required minlength="30" rows="6" placeholder="Cuéntales a los huéspedes qué hace especial tu lugar, cómo llegar, reglas de la casa…"><%= listing.descripcion || '' %></textarea></label>
+    </fieldset>
+    <fieldset>
+      <legend>Ubicación</legend>
+      <div class="row2"><%- include('partials/region-comuna', { region: listing.region, comuna: listing.comuna, requerido: true }) %></div>
+      <label>Dirección o referencia (se comparte al confirmar) <input name="direccion" maxlength="200" value="<%= listing.direccion || '' %>" placeholder="Camino a Caburgua km 8, parcela 12"></label>
+    </fieldset>
+    <fieldset>
+      <legend>Espacio</legend>
+      <div class="row4">
+        <label>Capacidad <input type="number" name="capacidad" min="1" max="50" required value="<%= listing.capacidad ?? '' %>"></label>
+        <label>Dormitorios <input type="number" name="dormitorios" min="0" max="50" required value="<%= listing.dormitorios ?? '' %>"></label>
+        <label>Baños <input type="number" name="banos" min="0" max="50" required value="<%= listing.banos ?? '' %>"></label>
+        <label>Superficie (m²) <input type="number" name="superficie_m2" min="1" value="<%= listing.superficie_m2 ?? '' %>" placeholder="5000"></label>
+      </div>
+      <p class="muted small">Para parcelas indica el terreno total: 5.000 m² = 0,5 ha.</p>
+    </fieldset>
+    <fieldset>
+      <legend>Precio (CLP)</legend>
+      <div class="row3">
+        <label>Precio por noche <input type="text" inputmode="numeric" name="precio_noche" required value="<%= listing.precio_noche ?? '' %>" placeholder="65000"></label>
+        <label>Tarifa de limpieza <input type="text" inputmode="numeric" name="tarifa_limpieza" value="<%= listing.tarifa_limpieza ?? 0 %>"></label>
+        <label>Mínimo de noches <input type="number" name="min_noches" min="1" max="90" value="<%= listing.min_noches ?? 1 %>"></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Comodidades</legend>
+      <div class="amen-grid">
+        <% for (const [k, v] of Object.entries(AMENITIES)) { %>
+          <label class="check"><input type="checkbox" name="amenities" value="<%= k %>" <%= (listing.amenities || []).includes(k) ? 'checked' : '' %>> <%= v %></label>
+        <% } %>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Fotos</legend>
+      <% if (fotos.length) { %>
+        <div class="fotos-edit">
+          <% fotos.forEach(f => { %>
+            <label><img src="/fotos/<%= f.filename %>" alt=""><span class="check"><input type="checkbox" name="eliminar_fotos" value="<%= f.id %>"> Eliminar</span></label>
+          <% }) %>
+        </div>
+      <% } %>
+      <label>Agregar fotos (JPG, PNG o WebP · hasta 10 por vez, 5 MB c/u)
+        <input type="file" name="fotos" accept="image/jpeg,image/png,image/webp" multiple></label>
+    </fieldset>
+    <label class="check"><input type="hidden" name="activo" value="0"><input type="checkbox" name="activo" value="1" <%= listing.activo ? 'checked' : '' %>> Publicada (visible en las búsquedas)</label>
+    <button class="btn"><%= listing.id ? 'Guardar cambios' : 'Publicar propiedad' %></button>
+  </form>
+</div>
+<%- include('partials/footer') %>

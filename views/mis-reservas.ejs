@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+<h1>Mis reservas</h1>
+<% if (!reservas.length) { %>
+  <p class="empty">Aún no tienes reservas. <a href="/">Busca tu próximo destino</a>.</p>
+<% } %>
+<div class="lista">
+<% reservas.forEach(b => { %>
+  <div class="item">
+    <a class="item-img" href="/propiedades/<%= b.listing_id %>"><%- include('partials/foto', { foto: b.foto, tipo: b.tipo, alt: b.titulo }) %></a>
+    <div class="item-body">
+      <div class="row between"><a href="/propiedades/<%= b.listing_id %>"><strong><%= b.titulo %></strong></a><%- include('partials/estado', { estado: b.estado }) %></div>
+      <div class="muted small"><%= b.comuna %>, <%= b.region %> · Reserva #<%= b.id %></div>
+      <div><%= formatFecha(b.check_in) %> → <%= formatFecha(b.check_out) %> · <%= b.noches %> <%= b.noches === 1 ? 'noche' : 'noches' %> · <%= b.huespedes %> huésp.</div>
+      <div><strong><%= formatCLP(b.total) %></strong> <span class="muted small">(<%= formatCLP(b.subtotal) %> + limpieza <%= formatCLP(b.limpieza) %> + servicio <%= formatCLP(b.servicio) %>)</span></div>
+      <% if (b.estado === 'confirmada') { %>
+        <div class="small">Contacto anfitrión: <%= b.host_nombre %> · <a href="mailto:<%= b.host_email %>"><%= b.host_email %></a><%= b.host_telefono ? ` · ${b.host_telefono}` : '' %></div>
+      <% } %>
+      <div class="acciones">
+        <% if (['pendiente', 'confirmada'].includes(b.estado) && b.check_in > hoy) { %>
+          <form method="post" action="/reservas/<%= b.id %>/cancelar" data-confirm="¿Seguro que quieres cancelar esta reserva?"><button class="btn ghost sm">Cancelar reserva</button></form>
+        <% } %>
+        <% if (b.estado === 'confirmada' && b.check_out <= hoy) { %>
+          <% if (b.mi_rating) { %><span class="rating">Tu nota: <%= '★'.repeat(b.mi_rating) %></span><% } else { %>
+          <form method="post" action="/reservas/<%= b.id %>/resena" class="resena-form">
+            <select name="rating" required aria-label="Nota"><option value="">Nota</option><% for (let i = 5; i >= 1; i--) { %><option value="<%= i %>"><%= '★'.repeat(i) %></option><% } %></select>
+            <input name="comentario" maxlength="1000" placeholder="¿Cómo fue tu estadía?">
+            <button class="btn sm">Publicar reseña</button>
+          </form>
+          <% } %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+<% }) %>
+</div>
+<%- include('partials/footer') %>

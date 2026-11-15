@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+<div class="narrow">
+  <h1>Ingresar</h1>
+  <% if (error) { %><ul class="errores"><li><%= error %></li></ul><% } %>
+  <form method="post" action="/ingresar" class="stack">
+    <input type="hidden" name="volver" value="<%= volver %>">
+    <label>Correo electrónico <input type="email" name="email" required autocomplete="email" value="<%= email %>"></label>
+    <label>Contraseña <input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="btn block">Ingresar</button>
+  </form>
+  <p class="center">¿No tienes cuenta? <a href="/registro<%= volver ? '?volver=' + encodeURIComponent(volver) : '' %>">Regístrate</a></p>
+</div>
+<%- include('partials/footer') %>

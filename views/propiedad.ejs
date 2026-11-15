@@ -1,0 +1,84 @@
+<%- include('partials/header') %>
+<article class="detalle">
+  <p class="crumbs"><a href="/?region=<%= encodeURIComponent(listing.region) %>"><%= listing.region %></a> › <a href="/?region=<%= encodeURIComponent(listing.region) %>&comuna=<%= encodeURIComponent(listing.comuna) %>"><%= listing.comuna %></a></p>
+  <h1><%= listing.titulo %></h1>
+  <p class="muted">
+    <%= TIPOS[listing.tipo] %> en <%= listing.comuna %>
+    <% if (listing.rating_prom) { %> · <span class="rating">★ <%= listing.rating_prom.toFixed(1).replace('.', ',') %></span> (<%= listing.n_resenas %> <%= listing.n_resenas === 1 ? 'reseña' : 'reseñas' %>)<% } %>
+    <% if (!listing.activo) { %> · <strong class="estado cancelada">Pausada (solo tú la ves)</strong><% } %>
+  </p>
+
+  <div class="galeria <%= fotos.length > 1 ? 'multi' : '' %>">
+    <% if (fotos.length) { fotos.slice(0, 5).forEach((f, i) => { %>
+      <img src="/fotos/<%= f.filename %>" alt="Foto <%= i + 1 %> de <%= listing.titulo %>" <%= i ? 'loading=lazy' : '' %>>
+    <% }) } else { %>
+      <%- include('partials/foto', { foto: null, tipo: listing.tipo, alt: listing.titulo }) %>
+    <% } %>
+  </div>
+
+  <div class="detalle-cols">
+    <div>
+      <section class="facts">
+        <span><strong><%= listing.capacidad %></strong> huéspedes</span>
+        <span><strong><%= listing.dormitorios %></strong> dormitorios</span>
+        <span><strong><%= listing.banos %></strong> baños</span>
+        <% if (listing.superficie_m2) { %><span><strong><%= listing.superficie_m2 >= 10000 ? (listing.superficie_m2/10000).toLocaleString('es-CL', {maximumFractionDigits: 1}) + ' ha' : listing.superficie_m2.toLocaleString('es-CL') + ' m²' %></strong> superficie</span><% } %>
+        <span>Mínimo <strong><%= listing.min_noches %></strong> <%= listing.min_noches === 1 ? 'noche' : 'noches' %></span>
+      </section>
+      <p class="host">Anfitrión: <strong><%= listing.host_nombre %></strong> · en Ruka desde <%= new Date(listing.host_desde + 'Z').getFullYear() %></p>
+      <section>
+        <h2>Sobre este lugar</h2>
+        <p class="desc"><%= listing.descripcion %></p>
+      </section>
+      <% if (listing.amenities.length) { %>
+      <section>
+        <h2>Lo que ofrece</h2>
+        <ul class="amenities"><% listing.amenities.forEach(a => { %><li><%= AMENITIES[a] %></li><% }) %></ul>
+      </section>
+      <% } %>
+      <% if (ocupado.length) { %>
+      <section>
+        <h2>Fechas no disponibles</h2>
+        <ul class="ocupado"><% ocupado.forEach(o => { %><li><%= formatFecha(o.check_in) %> → <%= formatFecha(o.check_out) %></li><% }) %></ul>
+      </section>
+      <% } %>
+      <section>
+        <h2>Reseñas</h2>
+        <% if (!resenas.length) { %><p class="muted">Aún no hay reseñas.</p><% } %>
+        <% resenas.forEach(rv => { %>
+          <div class="resena"><strong><%= rv.nombre.split(' ')[0] %></strong> <span class="rating"><%= '★'.repeat(rv.rating) %><span class="muted"><%= '★'.repeat(5 - rv.rating) %></span></span>
+            <% if (rv.comentario) { %><p><%= rv.comentario %></p><% } %></div>
+        <% }) %>
+      </section>
+    </div>
+
+    <aside class="reserva-box">
+      <p><strong class="precio"><%= formatCLP(listing.precio_noche) %></strong> <span class="muted">/ noche</span></p>
+      <% if (user && user.id === listing.host_id) { %>
+        <p class="muted">Esta es tu propiedad.</p>
+        <a class="btn block" href="/anfitrion/propiedades/<%= listing.id %>/editar">Editar propiedad</a>
+      <% } else { %>
+      <form method="post" action="/propiedades/<%= listing.id %>/reservar" id="form-reserva"
+            data-precio="<%= listing.precio_noche %>" data-limpieza="<%= listing.tarifa_limpieza %>"
+            data-tasa="<%= TASA_SERVICIO %>" data-min="<%= listing.min_noches %>"
+            data-ocupado='<%= JSON.stringify(ocupado) %>'>
+        <div class="row2">
+          <label>Llegada <input type="date" name="llegada" required min="<%= hoy %>" value="<%= reserva.llegada %>" data-llegada></label>
+          <label>Salida <input type="date" name="salida" required min="<%= hoy %>" value="<%= reserva.salida %>" data-salida></label>
+        </div>
+        <label>Huéspedes <input type="number" name="huespedes" min="1" max="<%= listing.capacidad %>" value="<%= Math.min(reserva.huespedes, listing.capacidad) %>" required></label>
+        <div class="cotizacion" hidden>
+          <div class="row between"><span data-q="detalle"></span><span data-q="subtotal"></span></div>
+          <% if (listing.tarifa_limpieza) { %><div class="row between"><span>Limpieza</span><span><%= formatCLP(listing.tarifa_limpieza) %></span></div><% } %>
+          <div class="row between"><span>Tarifa de servicio Ruka (<%= Math.round(TASA_SERVICIO * 100) %>%)</span><span data-q="servicio"></span></div>
+          <div class="row between total"><span>Total</span><span data-q="total"></span></div>
+        </div>
+        <p class="aviso" data-q="aviso" hidden></p>
+        <button class="btn block"><%= user ? 'Solicitar reserva' : 'Ingresa para reservar' %></button>
+        <p class="muted small center">No se te cobrará hasta que el anfitrión confirme.</p>
+      </form>
+      <% } %>
+    </aside>
+  </div>
+</article>
+<%- include('partials/footer') %>
