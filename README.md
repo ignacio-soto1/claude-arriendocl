@@ -7,7 +7,7 @@ Sitio web de [@arriendoencl](https://www.instagram.com/arriendoencl/): plataform
 Requiere Node.js 22.13 o superior (usa el SQLite que trae Node, sin dependencias nativas).
 
 ```bash
-cd arriendos-chile
+git clone https://github.com/ignacio-soto1/claude-arriendocl && cd claude-arriendocl
 npm install
 npm run seed      # crea data/arriendos.db con 12 propiedades de ejemplo
 WHATSAPP_RESERVAS="+56 9 1234 5678" npm start   # http://localhost:3000
