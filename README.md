@@ -2,7 +2,29 @@
 
 Sitio web de [@arriendoencl](https://www.instagram.com/arriendoencl/): plataforma tipo Airbnb enfocada solo en Chile: parcelas, departamentos, casas y cabañas por noche, de Arica a Magallanes.
 
-## Cómo correrlo
+## Sitio estático en GitHub Pages (carpeta `docs/`)
+
+Versión catálogo del sitio, sin servidor: lista de propiedades con filtros, **mapa con todas las ubicaciones**, ficha de cada propiedad con mapa y cálculo del total, y botón **Reservar por WhatsApp** con el pedido ya escrito.
+
+**Publicarlo (una vez):**
+1. En GitHub, el repo debe ser **público** (o tener GitHub Pro para Pages en repos privados).
+2. Repo → **Settings** → **Pages** → *Build and deployment*: Source **Deploy from a branch**, Branch **main**, carpeta **/docs** → **Save**.
+3. En 1–2 minutos queda en `https://ignacio-soto1.github.io/claude-arriendocl/`.
+
+**Editarlo** (desde la web de GitHub con el lápiz ✏️, sin instalar nada):
+- `docs/config.js` → tu número de WhatsApp (`'56912345678'`) y la marca.
+- `docs/data/propiedades.js` → propiedades: textos, precios, coordenadas para el mapa y fechas ya reservadas.
+- `docs/img/` → sube las fotos y agrégalas en `fotos: ['img/archivo.jpg']`.
+
+Cada commit a `main` se publica solo. Para probarlo en tu computador: `cd docs && python3 -m http.server` y abre http://localhost:8000.
+
+El mapa usa [Leaflet](https://leafletjs.com) (incluido en `docs/vendor/`) con mapas de [OpenStreetMap](https://www.openstreetmap.org): gratis y sin clave.
+
+## App completa con servidor (Node.js)
+
+La versión con cuentas, reservas en el sitio y panel de anfitrión sigue en `src/` (requiere un servidor, no corre en Pages).
+
+### Cómo correrla
 
 Requiere Node.js 22.13 o superior (usa el SQLite que trae Node, sin dependencias nativas).
 
@@ -11,7 +33,7 @@ git clone https://github.com/ignacio-soto1/claude-arriendocl && cd claude-arrien
 npm install
 npm run seed      # crea data/arriendos.db con 12 propiedades de ejemplo
 WHATSAPP_RESERVAS="+56 9 1234 5678" npm start   # http://localhost:3000
-npm test          # 22 tests (unitarios + flujo completo HTTP)
+npm test          # 29 tests (app + sitio estático) (unitarios + flujo completo HTTP)
 ```
 
 Usuarios de demo (contraseña `demo1234`):
