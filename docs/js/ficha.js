@@ -73,7 +73,7 @@
   // Mapa de la ficha con un círculo de ubicación aproximada
   const mapa = L.map('mapa-ficha', { scrollWheelZoom: false }).setView([p.lat, p.lng], 12);
   UI.capaBase().addTo(mapa);
-  L.circle([p.lat, p.lng], { radius: 1200, color: '#1d6b52', fillColor: '#1d6b52', fillOpacity: 0.18, weight: 2 }).addTo(mapa);
+  L.circle([p.lat, p.lng], { radius: 1200, color: '#0e6ba8', fillColor: '#4cc9c0', fillOpacity: 0.18, weight: 2 }).addTo(mapa);
   mapa.on('click', () => mapa.scrollWheelZoom.enable());
 
   // Reserva

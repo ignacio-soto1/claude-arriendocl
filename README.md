@@ -18,6 +18,8 @@ Versión catálogo del sitio, sin servidor: lista de propiedades con filtros, **
 
 Cada commit a `main` se publica solo. Para probarlo en tu computador: `cd docs && python3 -m http.server` y abre http://localhost:8000.
 
+Identidad visual: logo recreado del Instagram (íconos llave · piscina · casa, ARRIENDO en Playfair Display, EN CL en Montserrat), paleta azul piscina / turquesa / dorado / celeste, y foto de portada `docs/img/hero-piscina.jpg` (cámbiala por otra foto horizontal con el mismo nombre).
+
 El mapa usa [Leaflet](https://leafletjs.com) (incluido en `docs/vendor/`) con mapas de [OpenStreetMap](https://www.openstreetmap.org): gratis y sin clave.
 
 ## App completa con servidor (Node.js)

@@ -1,27 +1,45 @@
+/* Paleta de Arriendo en CL: azul piscina, turquesa, dorado de la llave y celeste del cielo */
 :root {
-  --bg: #fbfaf7; --surface: #fff; --text: #1f2421; --muted: #67706b; --line: #e4e2dc;
-  --brand: #1d6b52; --brand-ink: #fff; --brand-soft: #e3f1ea; --accent: #c8553d;
-  --ok: #1d6b52; --warn: #a86b00; --err: #b3261e; --radius: 14px;
+  --bg: #f8f7f3; --surface: #fff; --text: #13293a; --muted: #5d6b76; --line: #e2e4e3;
+  --brand: #0e6ba8; --brand-ink: #fff; --brand-soft: #e2f0f8; --accent: #b98a1f;
+  --gold: #d9a935; --aqua: #26ada4; --sky: #4aa8d8; --navy: #0f2a3d;
+  --ok: #1f7a5a; --warn: #a86b00; --err: #b3261e; --radius: 14px;
+  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  --sans: Montserrat, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #141716; --surface: #1c201e; --text: #e8ebe9; --muted: #9aa39e; --line: #2f3532;
-    --brand: #4fb08c; --brand-ink: #0d1a14; --brand-soft: #1e3229; --accent: #e07a62; --err: #ff8a80; --warn: #e3a743; }
+  :root { --bg: #0d1820; --surface: #13232f; --text: #e6edf2; --muted: #9aabb8; --line: #233746;
+    --brand: #4fb3e8; --brand-ink: #06141d; --brand-soft: #16354a; --accent: #e9c46a;
+    --gold: #e9c46a; --aqua: #4cc9c0; --sky: #8ecae6; --navy: #e6edf2; --err: #ff8a80; --warn: #e3a743; }
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+body { margin: 0; font: 16px/1.55 var(--sans); background: var(--bg); color: var(--text); }
 a { color: var(--brand); }
 main { max-width: 1200px; margin: 0 auto; padding: 16px; }
-h1 { font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.2; margin: .5em 0; }
-h2 { font-size: 1.2rem; margin: 1.6em 0 .6em; }
+h1, h2 { font-family: var(--serif); font-weight: 700; letter-spacing: -.005em; color: var(--navy); font-variant-numeric: lining-nums; }
+h1 { font-size: clamp(1.6rem, 3.2vw, 2.2rem); line-height: 1.15; margin: .5em 0; }
+h2 { font-size: 1.35rem; margin: 1.6em 0 .6em; }
 .muted { color: var(--muted); } .small { font-size: .875rem; } .center { text-align: center; }
 .row { display: flex; gap: 8px; align-items: center; } .between { justify-content: space-between; } .wrap { flex-wrap: wrap; }
 
 .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
   padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface); position: sticky; top: 0; z-index: 1100; }
-.logo { font-weight: 800; font-size: 1.5rem; text-decoration: none; color: var(--brand); letter-spacing: -.02em; }
-.logo span { color: var(--accent); font-weight: 600; margin: 0 .08em; }
+/* Logo: íconos de línea + ARRIENDO (serif) + — EN CL — */
+.logo-link { text-decoration: none; }
+.logo { display: inline-flex; flex-direction: column; align-items: center; color: var(--navy); line-height: 1; }
+.logo-iconos { display: flex; align-items: center; gap: .45em; }
+.logo-iconos svg { width: 1.5em; height: 1.5em; display: block; }
+.logo-iconos i { width: 1px; height: 1.5em; background: currentColor; opacity: .55; }
+.i-llave { color: var(--gold); } .i-piscina { color: var(--aqua); } .i-casa { color: var(--sky); }
+.logo-texto { font-family: var(--serif); font-weight: 700; text-transform: uppercase; letter-spacing: .02em; font-size: 2.6em; margin-top: .12em; }
+.logo-sub { display: flex; align-items: center; gap: .7em; width: 100%; font-weight: 500; text-transform: uppercase; letter-spacing: .32em; font-size: .62em; margin-top: .35em; }
+.logo-sub::before, .logo-sub::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: .7; }
+.logo.chico { font-size: 10px; }
+@media (max-width: 860px) { .logo.chico { font-size: 9px; } #hero-logo { display: none; } }
+.logo.grande { font-size: clamp(14px, 3.4vw, 22px); color: #fff; }
+.logo.grande .i-llave { color: #f2cf6b; } .logo.grande .i-piscina { color: #6fe0d6; } .logo.grande .i-casa { color: #a9dcf6; }
 .top nav { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
 .top nav a { text-decoration: none; color: var(--text); } .top nav a.on { color: var(--brand); font-weight: 600; }
 .inline { display: inline; }
@@ -39,7 +57,17 @@ button.link { background: none; border: 0; color: var(--muted); cursor: pointer;
 .flash.ok { background: var(--brand-soft); } .flash.error { background: color-mix(in srgb, var(--err) 15%, transparent); }
 .flash.info { background: color-mix(in srgb, var(--warn) 15%, transparent); }
 
-.hero { padding: 32px 0 8px; } .hero h1 { font-size: clamp(1.8rem, 4.5vw, 2.8rem); } .hero p { color: var(--muted); max-width: 60ch; }
+/* Portada con la foto de la piscina */
+.hero-foto { position: relative; color: #fff; text-align: center; padding: 40px 16px 34px;
+  background: linear-gradient(180deg, rgb(8 30 48 / .45), rgb(8 30 48 / .25) 45%, rgb(8 30 48 / .6)), url("../img/hero-piscina.jpg") center 60% / cover no-repeat; }
+.hero-inner { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.hero-foto h1 { color: #fff; font-size: clamp(1.5rem, 4vw, 2.5rem); margin: .4em 0 0; text-shadow: 0 2px 16px rgb(0 0 0 / .4); }
+.hero-foto p { margin: 0; max-width: 56ch; font-size: 1.02rem; text-shadow: 0 1px 10px rgb(0 0 0 / .5); }
+.destacados { list-style: none; display: flex; justify-content: center; flex-wrap: wrap; margin: 18px 0 0; padding: 0; }
+.destacados li { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 4px 22px; font-size: .74rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; text-shadow: 0 1px 8px rgb(0 0 0 / .5); }
+.destacados li + li { border-left: 1px solid rgb(255 255 255 / .6); }
+.destacados svg { width: 38px; height: 38px; filter: drop-shadow(0 1px 4px rgb(0 0 0 / .4)); }
 
 label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--muted); }
 input, select, textarea { font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; width: 100%; min-width: 0; }
@@ -65,10 +93,10 @@ label.check input { width: auto; }
 .empty { padding: 32px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); }
 
 .ph { width: 100%; height: 100%; display: grid; place-items: center; font-size: 3rem; }
-.ph-parcela { background: linear-gradient(135deg, #a8d5a2, #4f8a5b); }
-.ph-departamento { background: linear-gradient(135deg, #b8c9e8, #5b6f9e); }
-.ph-casa { background: linear-gradient(135deg, #f2d1a8, #c8853d); }
-.ph-cabana { background: linear-gradient(135deg, #d9c2a6, #7a5a3a); }
+.ph-parcela { background: linear-gradient(135deg, #b9e2c4, #3f8f6b); }
+.ph-departamento { background: linear-gradient(135deg, #a9dcf6, #0e6ba8); }
+.ph-casa { background: linear-gradient(135deg, #f6e2a8, #d9a935); }
+.ph-cabana { background: linear-gradient(135deg, #a5e6df, #26ada4); }
 
 .crumbs { font-size: .9rem; margin: 0; }
 .galeria { border-radius: var(--radius); overflow: hidden; height: clamp(220px, 42vw, 480px); }
@@ -156,7 +184,7 @@ legend { font-weight: 700; padding: 0 6px; }
 /* Pines con precio */
 .pin { background: none; border: 0; }
 .pin span { display: inline-block; transform: translate(-50%, -50%); white-space: nowrap; background: var(--surface); color: var(--text);
-  font: 700 13px/1 system-ui, sans-serif; padding: 6px 9px; border-radius: 999px; border: 1px solid var(--line);
+  font: 700 13px/1 var(--sans); padding: 6px 9px; border-radius: 999px; border: 1px solid var(--line);
   box-shadow: 0 2px 8px rgb(0 0 0 / .25); transition: transform .12s, background .12s; }
 .pin:hover span, .pin.activo span { background: var(--brand); color: var(--brand-ink); transform: translate(-50%, -50%) scale(1.12); }
 .pin.activo { z-index: 1000 !important; }
@@ -164,11 +192,11 @@ legend { font-weight: 700; padding: 0 6px; }
 /* Popup del mapa */
 .leaflet-popup-content { margin: 0; }
 .leaflet-popup-content-wrapper { padding: 0; border-radius: 12px; overflow: hidden; }
-.popup { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: #1f2421; padding: 0 0 10px; font: 14px/1.4 system-ui, sans-serif; }
+.popup { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: #13293a; padding: 0 0 10px; font: 14px/1.4 var(--sans); }
 .popup > :not(.popup-img) { padding: 0 12px; }
 .popup-img { height: 110px; margin-bottom: 8px; } .popup-img img, .popup-img .ph { width: 100%; height: 100%; object-fit: cover; font-size: 2.2rem; }
 .popup span { color: #67706b; }
-.leaflet-container a.popup { color: #1f2421; }
+.leaflet-container a.popup { color: #13293a; }
 
 .mapa-ficha { height: 320px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); z-index: 0; }
 
@@ -179,8 +207,10 @@ legend { font-weight: 700; padding: 0 6px; }
 .mas-filtros { display: none; }
 .toggle-mapa { scroll-margin-top: 80px; } .explorar { scroll-margin-top: 72px; }
 @media (max-width: 860px) {
-  .hero { padding-top: 12px; } .hero br { display: none; }
-  .hero h1 { font-size: 1.6rem; } .hero p { margin: 0; font-size: .95rem; }
+  .hero-foto { padding: 28px 12px 22px; }
+  .hero-foto p { font-size: .92rem; }
+  .destacados li { padding: 4px 10px; font-size: .6rem; letter-spacing: .08em; width: 25%; text-align: center; }
+  .destacados svg { width: 30px; height: 30px; }
   .search { grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px; margin: 12px 0; }
   .search .grow { grid-column: span 2; }
   .search .extra { display: none; }
@@ -190,3 +220,10 @@ legend { font-weight: 700; padding: 0 6px; }
 }
 
 .btn.wa.pendiente { background: var(--surface); color: var(--text); border: 2px dashed var(--brand); }
+
+/* Detalles de marca */
+.top { padding: 8px 16px; }
+.tag { font-weight: 600; letter-spacing: .06em; text-transform: uppercase; font-size: .66rem; }
+.resultados-head h2 { font-size: 1.5rem; }
+.precio { font-weight: 700; }
+.reserva-box { border-top: 4px solid var(--aqua); }

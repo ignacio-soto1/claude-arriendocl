@@ -5,6 +5,8 @@
   const { esc, foto } = window.UI;
   const TODAS = window.PROPIEDADES;
   UI.montarMarco();
+  document.getElementById('hero-logo').innerHTML = UI.logo('grande');
+  document.querySelectorAll('[data-icono]').forEach((el) => { el.innerHTML = UI.ICONOS_MARCA[el.dataset.icono]; });
 
   const form = document.getElementById('filtros');
   const lista = document.getElementById('lista');

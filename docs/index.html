@@ -4,20 +4,33 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Arriendo en CL · Parcelas, departamentos y cabañas en Chile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap">
+  <meta property="og:image" content="https://ignacio-soto1.github.io/claude-arriendocl/img/hero-piscina.jpg">
   <meta name="description" content="Arrienda parcelas, departamentos, casas y cabañas por noche en todo Chile. Reserva directo por WhatsApp.">
   <meta property="og:title" content="Arriendo en CL">
   <meta property="og:description" content="Parcelas, departamentos y cabañas para arrendar en todo Chile. Reserva directo por WhatsApp.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏡</text></svg>">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="inicio">
 <header class="top"></header>
+<section class="hero-foto">
+  <div class="hero-inner">
+    <div id="hero-logo"></div>
+    <h1>¡Los mejores panoramas se viven al aire libre!</h1>
+    <p>Parcelas, cabañas y departamentos para arrendar en Chile. Elige tus fechas y reserva directo por WhatsApp.</p>
+    <ul class="destacados">
+      <li><span data-icono="piscina"></span>Piscina</li>
+      <li><span data-icono="quincho"></span>Quincho equipado</li>
+      <li><span data-icono="arbol"></span>Áreas verdes</li>
+      <li><span data-icono="personas"></span>Espacios amplios</li>
+    </ul>
+  </div>
+</section>
 <main>
-  <section class="hero">
-    <h1>Parcelas, departamentos y cabañas <br>para arrendar en todo Chile</h1>
-    <p>Desde el desierto de Atacama hasta la Patagonia. Elige tus fechas y reserva directo por WhatsApp.</p>
-  </section>
 
   <form class="search" id="filtros" role="search">
     <label>Región <select name="region"><option value="">Todo Chile</option></select></label>
