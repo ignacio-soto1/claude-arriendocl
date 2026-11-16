@@ -163,7 +163,7 @@
   // Prueba social en la portada: "+46 mil personas ya son parte de nuestra comunidad. ¡Súmate!" (con ícono de TikTok)
   function pruebaSocial(el) {
     if (!el || !CFG.tiktok || !CFG.seguidoresTiktok) { if (el) el.hidden = true; return; }
-    el.innerHTML = `<a href="https://www.tiktok.com/@${esc(CFG.tiktok)}" target="_blank" rel="noopener" aria-label="Síguenos en TikTok: +${esc(CFG.seguidoresTiktok)} personas ya son parte de nuestra comunidad">${TT_ICON}<span><strong>+${esc(CFG.seguidoresTiktok)}</strong> personas ya son parte de nuestra comunidad. ¡Súmate!</span></a>`;
+    el.innerHTML = `<a href="https://www.tiktok.com/@${esc(CFG.tiktok)}" target="_blank" rel="noopener" aria-label="Síguenos en TikTok: +${esc(CFG.seguidoresTiktok)} personas ya son parte de nuestra comunidad">${TT_ICON}<span><strong>+${esc(CFG.seguidoresTiktok)}</strong> ya son parte de la comunidad. ¡Súmate!</span></a>`;
   }
 
   window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar, precios, conTarjeta, favoritos, botonFavorito, pruebaSocial };
