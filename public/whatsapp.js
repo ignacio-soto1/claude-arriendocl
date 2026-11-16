@@ -14,7 +14,7 @@
   // d: { marca, titulo, tipo, comuna, region, url, llegada?, salida?, noches?, huespedes?,
   //      precio_noche?, limpieza?, total?, nombre? }
   function mensajeReserva(d) {
-    // Sin emojis: el enlace de WhatsApp en iPhone los muestra como "�".
+    // Sin emojis: el enlace de WhatsApp en iPhone los muestra como un signo de reemplazo.
     const l = [`Hola ${d.marca}, quiero reservar:`, '', `*${d.titulo}*`, `${d.tipo} en ${d.comuna}, ${d.region}`, ''];
     if (d.llegada && d.salida) {
       l.push(`*Llegada:* ${fmtFecha(d.llegada)}`, `*Salida:* ${fmtFecha(d.salida)}`);
