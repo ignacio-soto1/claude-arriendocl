@@ -53,7 +53,6 @@
       <nav>
         <a href="${publica}" class="btn sm publica">${ICONOS_MARCA.publicar}<span class="largo">Publica con nosotros</span><span class="corto">Publica</span></a>
         <a href="${esc(ig)}" target="_blank" rel="noopener" class="icon-link">${IG_ICON}<span>@${esc(CFG.instagram)}</span></a>
-        <a href="${esc(wa)}" target="_blank" rel="noopener" class="btn sm wa">${WA_ICON}<span>WhatsApp</span></a>
       </nav>`;
     document.querySelector('footer.bottom').innerHTML = `
       <p>${esc(CFG.marca)} · Arriendos por noche de Arica a Magallanes. Precios en pesos chilenos (CLP).</p>
