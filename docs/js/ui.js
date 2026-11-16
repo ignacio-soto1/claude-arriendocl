@@ -105,5 +105,17 @@
     return `propiedad.html?${q}`;
   }
 
-  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar };
+  // Precio con tarjeta (CONFIG.recargoTarjeta, redondeado a la luca). Sin recargo devuelve null.
+  const conTarjeta = (n) => (Number(CFG.recargoTarjeta) > 0 ? window.Catalogo.totalTarjeta(n, CFG.recargoTarjeta) : null);
+  // HTML con los dos precios: transferencia destacado y tarjeta al lado.
+  function precios(n, unidad = '') {
+    const fmt = window.Catalogo.formatCLP;
+    const t = conTarjeta(n);
+    const u = unidad ? ` <span class="muted">${unidad}</span>` : '';
+    if (!t) return `<strong>${esc(fmt(n))}</strong>${u}`;
+    return `<span class="precios"><span><strong>${esc(fmt(n))}</strong>${u} <span class="medio">transferencia</span></span>`
+      + `<span class="precio-tarjeta">${esc(fmt(t))} con tarjeta</span></span>`;
+  }
+
+  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar, precios, conTarjeta };
 })();

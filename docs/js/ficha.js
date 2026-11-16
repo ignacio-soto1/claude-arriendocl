@@ -14,25 +14,29 @@
     return `${location.origin}${location.pathname.replace(/[^/]*$/, '')}propiedad.html?id=${encodeURIComponent(p.id)}`;
   }
 
+  // Celdas de una fila de precios: transferencia y tarjeta.
+  const celdas = (n) => `<td>${esc(C.formatCLP(n))}</td>${UI.conTarjeta(n) ? `<td class="col-tarjeta">${esc(C.formatCLP(UI.conTarjeta(n)))}</td>` : ''}`;
+  const encabezado = () => (UI.conTarjeta(1000) ? '<tr><th></th><th>Transferencia</th><th class="col-tarjeta">Tarjeta</th></tr>' : '');
+
   function seccionPreciosDia(p) {
-    const filas = [`<tr><td>Arriendo del día</td><td>${esc(C.formatCLP(p.precio_dia))}</td></tr>`];
-    if (p.precio_dia_fin_semana) filas.push(`<tr><td>Sábado y domingo</td><td>${esc(C.formatCLP(p.precio_dia_fin_semana))}</td></tr>`);
+    const filas = [`<tr><td>Arriendo del día</td>${celdas(p.precio_dia)}</tr>`];
+    if (p.precio_dia_fin_semana) filas.push(`<tr><td>Sábado y domingo</td>${celdas(p.precio_dia_fin_semana)}</tr>`);
     for (const t of p.temporadas || []) {
-      if (t.precio_dia) filas.push(`<tr><td>${esc(t.nombre)} <small>(${esc(diaMes(t.desde))} al ${esc(diaMes(t.hasta))})</small></td><td>${esc(C.formatCLP(t.precio_dia))}</td></tr>`);
+      if (t.precio_dia) filas.push(`<tr><td>${esc(t.nombre)} <small>(${esc(diaMes(t.desde))} al ${esc(diaMes(t.hasta))})</small></td>${celdas(t.precio_dia)}</tr>`);
     }
     const pp = p.por_persona;
-    return `<section><h2>Precios</h2><table class="tabla-precios">${filas.join('')}</table>
+    return `<section><h2>Precios</h2><table class="tabla-precios">${encabezado()}${filas.join('')}</table>
       <p class="muted small">Horario de ${esc(p.horario_dia.desde)} a ${esc(p.horario_dia.hasta)}.${pp ? ` Incluye hasta ${pp.incluidas} personas; cada persona adicional, ${esc(C.formatCLP(pp.extra))}.` : ''}</p></section>`;
   }
 
   function seccionPrecios(p) {
-    const filas = [`<tr><td>Normal</td><td>${esc(C.formatCLP(p.precio_noche))}</td></tr>`];
-    if (p.precio_fin_semana) filas.push(`<tr><td>Fin de semana <small>(noches de viernes y sábado)</small></td><td>${esc(C.formatCLP(p.precio_fin_semana))}</td></tr>`);
+    const filas = [`<tr><td>Normal</td>${celdas(p.precio_noche)}</tr>`];
+    if (p.precio_fin_semana) filas.push(`<tr><td>Fin de semana <small>(noches de viernes y sábado)</small></td>${celdas(p.precio_fin_semana)}</tr>`);
     for (const t of p.temporadas || []) {
-      if (t.precio_noche) filas.push(`<tr><td>${esc(t.nombre)} <small>(${esc(diaMes(t.desde))} al ${esc(diaMes(t.hasta))})</small></td><td>${esc(C.formatCLP(t.precio_noche))}</td></tr>`);
+      if (t.precio_noche) filas.push(`<tr><td>${esc(t.nombre)} <small>(${esc(diaMes(t.desde))} al ${esc(diaMes(t.hasta))})</small></td>${celdas(t.precio_noche)}</tr>`);
     }
     if (filas.length === 1) return '';
-    return `<section><h2>Precios por noche</h2><table class="tabla-precios">${filas.join('')}</table>
+    return `<section><h2>Precios por noche</h2><table class="tabla-precios">${encabezado()}${filas.join('')}</table>
       <p class="muted small">El total se calcula noche a noche según las fechas que elijas.</p></section>`;
   }
 
@@ -130,7 +134,8 @@
         </div>
 
         <aside class="reserva-box">
-          <p><strong class="precio">${esc(C.formatCLP(C.precioBase(p)))}</strong> <span class="muted">/ ${C.unidad(p)}</span>
+          <p class="precio-caja"><span class="precio">${esc(C.formatCLP(C.precioBase(p)))}</span> <span class="muted">/ ${C.unidad(p)} con transferencia</span>
+            ${UI.conTarjeta(C.precioBase(p)) ? `<br><span class="precio-tarjeta">${esc(C.formatCLP(UI.conTarjeta(C.precioBase(p))))} / ${C.unidad(p)} con tarjeta</span>` : ''}
             ${variable ? `<br><span class="muted small">Varía según ${dia ? 'fin de semana y temporada' : 'temporada y fin de semana'}</span>` : ''}</p>
           <form id="form-reserva">${dia ? `
             <div class="row2">

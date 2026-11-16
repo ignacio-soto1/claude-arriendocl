@@ -82,7 +82,8 @@
         <div><strong>${esc(p.comuna)}</strong> <span class="muted small">· ${esc(p.region)}</span></div>
         <div class="muted small titulo">${esc(p.titulo)}</div>
         <div class="muted small">${dia ? `Hasta ${p.capacidad} personas · ${esc(p.horario_dia.desde)} a ${esc(p.horario_dia.hasta)}` : `${p.capacidad} huéspedes · ${p.dormitorios} dorm.`}${p.tipo === 'parcela' && p.superficie_m2 ? ' · ' + esc(C.superficie(p.superficie_m2)) : ''}</div>
-        <div><strong>${esc(C.formatCLP(C.precioBase(p)))}</strong> <span class="muted">${C.unidad(p)}</span>${q ? ` <span class="muted small">· ${esc(C.formatCLP(q.total))} total</span>` : ''}</div>
+        <div class="card-precio">${UI.precios(C.precioBase(p), C.unidad(p))}</div>
+        ${q ? `<div class="muted small">Total: ${esc(C.formatCLP(q.total))} transferencia${UI.conTarjeta(q.total) ? ` · ${esc(C.formatCLP(UI.conTarjeta(q.total)))} tarjeta` : ''}</div>` : ''}
       </div></a>`;
   }
 
@@ -91,7 +92,7 @@
       <div class="popup-img">${foto(p)}</div>
       <strong>${esc(p.titulo)}</strong>
       <span>${esc(C.TIPOS[p.tipo])} · ${esc(p.comuna)}</span>
-      <span><b>${esc(C.formatCLP(C.precioBase(p)))}</b> ${C.unidad(p)}</span></a>`;
+      <span class="popup-precio">${UI.precios(C.precioBase(p), C.unidad(p))}</span></a>`;
   }
 
   let primeraVez = true;
