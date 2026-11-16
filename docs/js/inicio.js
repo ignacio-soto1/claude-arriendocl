@@ -98,12 +98,11 @@
     const q = dia ? (f.llegada ? C.cotizarDia(p, f.llegada, f.huespedes) : null)
       : (f.llegada && f.salida ? C.cotizar(p, f.llegada, f.salida) : null);
     return `<a class="card" href="${esc(enlace(p, f))}" data-id="${esc(p.id)}">
-      <div class="card-img">${foto(p)}${UI.botonFavorito(p.id)}<span class="tag">${esc(C.TIPOS[p.tipo])}</span>${dia ? '<span class="tag tag-dia">Eventos de día</span>' : ''}</div>
+      <div class="card-img">${foto(p)}${UI.botonFavorito(p.id)}${dia ? '<span class="tag tag-dia">Eventos de día</span>' : ''}</div>
       <div class="card-body">
-        <div><strong>${esc(p.comuna)}</strong> <span class="muted small">· ${esc(p.region)}</span></div>
-        <div class="muted small titulo">${esc(p.titulo)}</div>
-        <div class="muted small">${dia ? `Hasta ${p.capacidad} personas · ${esc(p.horario_dia.desde)} a ${esc(p.horario_dia.hasta)}` : `${p.capacidad} huéspedes · ${p.dormitorios} dorm.`}${p.tipo === 'parcela' && p.superficie_m2 ? ' · ' + esc(C.superficie(p.superficie_m2)) : ''}</div>
-        <div class="card-precio">${UI.precios(C.precioBase(p), C.unidad(p))}</div>
+        <div class="card-lugar">${esc(p.comuna)}, ${esc(p.region)}</div>
+        <div class="muted">${esc(C.TIPOS[p.tipo])} · ${dia ? `hasta ${p.capacidad} personas` : `${p.capacidad} huéspedes`}</div>
+        <div class="card-precio">${UI.conTarjeta(C.precioBase(p)) ? `<s>${esc(C.formatCLP(UI.conTarjeta(C.precioBase(p))))}</s> ` : ''}<strong>${esc(C.formatCLP(C.precioBase(p)))}</strong> ${C.unidad(p)}${UI.conTarjeta(C.precioBase(p)) ? ' <span class="transf">con transferencia</span>' : ''}</div>
         ${q ? `<div class="muted small">Total: ${UI.conTarjeta(q.total) ? `<s>${esc(C.formatCLP(C.cotizacionTarjeta(q, window.CONFIG.recargoTarjeta).total))}</s> ` : ''}${esc(C.formatCLP(q.total))}${UI.conTarjeta(q.total) ? ' con transferencia' : ''}</div>` : ''}
       </div></a>`;
   }
@@ -130,6 +129,12 @@
     conteo.textContent = `${res.length} ${res.length === 1 ? 'propiedad' : 'propiedades'}${nombreCat ? ` ${nombreCat}` : ''}${lugar ? ` en ${lugar}` : ''}` +
       (f.modo === 'dia' && f.llegada ? ` disponibles el ${C.formatFecha(f.llegada)}`
         : f.llegada && f.salida ? ` disponibles del ${C.formatFecha(f.llegada)} al ${C.formatFecha(f.salida)}` : '');
+    const ff = (x) => new Intl.DateTimeFormat('es-CL', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(x + 'T00:00:00Z'));
+    document.querySelector('[data-p="donde"]').textContent = f.comuna || f.region || 'Todo Chile';
+    document.querySelector('[data-p="cuando"]').textContent = f.modo === 'dia' && f.llegada ? ff(f.llegada)
+      : f.llegada && f.salida ? `${ff(f.llegada)} – ${ff(f.salida)}` : 'Cualquier fecha';
+    document.querySelector('[data-p="quien"]').textContent = f.huespedes ? `${f.huespedes} ${f.huespedes === 1 ? 'persona' : 'personas'}` : '¿Cuántos?';
+    document.querySelector('[data-mostrar]').textContent = `Mostrar ${res.length} ${res.length === 1 ? 'propiedad' : 'propiedades'}`;
     lista.innerHTML = res.length ? res.map((p) => tarjeta(p, f)).join('')
       : '<p class="empty">No encontramos propiedades con esos filtros. Prueba con otras fechas o amplía la zona.</p>';
 
@@ -169,17 +174,19 @@
   form.addEventListener('submit', (e) => e.preventDefault());
   form.addEventListener('reset', () => setTimeout(() => { llenarComunas('', ''); form.orden.value = 'recomendadas'; ajustarModo(); categoria = ''; dibujarCategorias(); render(); }));
 
-  // "Más filtros" en pantallas angostas (se abre solo si ya hay filtros secundarios activos)
-  const btnMas = form.querySelector('.mas-filtros');
-  const abrirMas = (abrir) => { form.classList.toggle('abierto', abrir); btnMas.setAttribute('aria-expanded', abrir); btnMas.textContent = abrir ? 'Menos filtros' : 'Más filtros'; };
-  btnMas.addEventListener('click', () => abrirMas(!form.classList.contains('abierto')));
+  // Buscador en píldora: abre los filtros en una ventana
+  const dlg = document.getElementById('dlg-filtros');
+  document.getElementById('pildora').addEventListener('click', () => { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', ''); });
+  dlg.addEventListener('click', (e) => {
+    if (e.target.closest('[data-cerrar]') || e.target === dlg) { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); }
+  });
 
   // Lista ⇄ mapa en pantallas angostas
   const explorar = document.getElementById('explorar');
   const toggle = document.getElementById('toggle-mapa');
   toggle.addEventListener('click', () => {
     const verMapa = explorar.classList.toggle('ver-mapa');
-    toggle.textContent = verMapa ? '📋 Ver lista' : '🗺️ Ver mapa';
+    toggle.firstChild.textContent = verMapa ? 'Mostrar lista ' : 'Mostrar mapa ';
     if (verMapa) setTimeout(() => { mapa.invalidateSize(); encuadrar(false); }, 0);
     explorar.scrollIntoView({ block: 'start' });
   });
@@ -187,7 +194,8 @@
   // El botón flotante no tapa el formulario de "Publica con nosotros".
   const seccionPub = document.getElementById('publica');
   if (seccionPub && 'IntersectionObserver' in window) {
-    new IntersectionObserver(([e]) => toggle.classList.toggle('oculto', e.isIntersecting)).observe(seccionPub);
+    // Solo cuando la sección llega a la franja inferior de la pantalla, donde está el botón
+    new IntersectionObserver(([e]) => toggle.classList.toggle('oculto', e.isIntersecting), { rootMargin: '-82% 0px 0px 0px' }).observe(seccionPub);
   }
 
   // "Publica con nosotros": arma el WhatsApp del dueño con los datos del formulario.
@@ -230,6 +238,5 @@
   leerURL();
   // Al llegar con #publica, baja a la sección cuando la lista ya está dibujada.
   if (location.hash === '#publica') setTimeout(() => document.getElementById('publica')?.scrollIntoView(), 0);
-  abrirMas(['huespedes', 'precio_max', 'texto'].some((k) => form[k].value) || (form.orden.value !== 'recomendadas'));
   render();
 })();

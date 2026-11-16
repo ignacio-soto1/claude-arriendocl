@@ -16,7 +16,7 @@
   <meta property="og:description" content="Parcelas, departamentos y cabañas para arrendar en todo Chile. Reserva directo por WhatsApp.">
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="css/styles.css?v=202611160418">
+  <link rel="stylesheet" href="css/styles.css?v=202611160616">
 </head>
 <body class="inicio">
 <header class="top"></header>
@@ -35,6 +35,18 @@
 </section>
 <main>
 
+  <button type="button" class="pildora" id="pildora" aria-haspopup="dialog" aria-controls="dlg-filtros">
+    <span><b>¿Dónde?</b><small data-p="donde">Todo Chile</small></span>
+    <span><b>Fechas</b><small data-p="cuando">Cualquier fecha</small></span>
+    <span><b>Huéspedes</b><small data-p="quien">¿Cuántos?</small></span>
+    <span class="lupa" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></span>
+  </button>
+
+  <dialog class="dlg" id="dlg-filtros" aria-labelledby="dlg-titulo">
+    <div class="dlg-cab">
+      <button type="button" class="dlg-cerrar" data-cerrar aria-label="Cerrar">✕</button>
+      <h2 id="dlg-titulo">Buscar</h2>
+    </div>
   <form class="search" id="filtros" role="search">
     <fieldset class="modos">
       <legend class="sr">Tipo de arriendo</legend>
@@ -47,15 +59,18 @@
     <label>Tipo <select name="tipo"><option value="">Todos</option></select></label>
     <label><span data-etq="llegada">Llegada</span> <input type="date" name="llegada" data-llegada></label>
     <label data-campo="salida">Salida <input type="date" name="salida" data-salida></label>
-    <button type="button" class="btn ghost mas-filtros" aria-expanded="false" aria-controls="filtros">Más filtros</button>
-    <label class="extra"><span data-etq="huespedes">Huéspedes</span> <input type="number" name="huespedes" min="1" max="50" placeholder="2"></label>
-    <label class="extra">Precio máximo <select name="precio_max">
+    <label><span data-etq="huespedes">Huéspedes</span> <input type="number" name="huespedes" min="1" max="50" placeholder="2"></label>
+    <label>Precio máximo <select name="precio_max">
       <option value="">Sin límite</option><option value="50000">$50.000</option><option value="75000">$75.000</option>
       <option value="100000">$100.000</option><option value="150000">$150.000</option></select></label>
-    <label class="grow extra">Buscar <input type="search" name="texto" placeholder="tinaja, lago, playa…"></label>
-    <label class="extra">Ordenar <select name="orden"></select></label>
-    <button type="reset" class="btn ghost extra">Limpiar</button>
+    <label class="grow">Buscar <input type="search" name="texto" placeholder="tinaja, lago, playa…"></label>
+    <label>Ordenar <select name="orden"></select></label>
   </form>
+    <div class="dlg-pie">
+      <button type="reset" form="filtros" class="link">Limpiar todo</button>
+      <button type="button" class="btn" data-cerrar data-mostrar>Mostrar propiedades</button>
+    </div>
+  </dialog>
 
   <nav class="categorias" id="categorias" aria-label="Filtrar por categoría"></nav>
 
@@ -67,7 +82,7 @@
     <div class="grid" id="lista"></div>
     <div class="mapa-wrap"><div id="mapa" aria-label="Mapa de propiedades"></div></div>
   </div>
-  <button type="button" class="btn toggle-mapa" id="toggle-mapa" aria-controls="explorar">🗺️ Ver mapa</button>
+  <button type="button" class="btn toggle-mapa" id="toggle-mapa" aria-controls="explorar">Mostrar mapa <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 6.5 9 4l6 2.5 6-2.5v13.5L15 20l-6-2.5L3 20Z"/><path d="M9 4v13.5M15 6.5V20"/></svg></button>
 
   <section class="publica-seccion" id="publica" aria-labelledby="publica-titulo">
     <div class="publica-texto">
@@ -106,12 +121,12 @@
 </main>
 <footer class="bottom"></footer>
 
-<script src="config.js?v=202611160418"></script>
-<script src="data/propiedades.js?v=202611160418"></script>
+<script src="config.js?v=202611160616"></script>
+<script src="data/propiedades.js?v=202611160616"></script>
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="js/catalogo.js?v=202611160418"></script>
-<script src="js/whatsapp.js?v=202611160418"></script>
-<script src="js/ui.js?v=202611160418"></script>
-<script src="js/inicio.js?v=202611160418"></script>
+<script src="js/catalogo.js?v=202611160616"></script>
+<script src="js/whatsapp.js?v=202611160616"></script>
+<script src="js/ui.js?v=202611160616"></script>
+<script src="js/inicio.js?v=202611160616"></script>
 </body>
 </html>
