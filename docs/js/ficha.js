@@ -15,8 +15,10 @@
   }
 
   // Celdas de una fila de precios: transferencia y tarjeta.
-  const celdas = (n) => `<td>${esc(C.formatCLP(n))}</td>${UI.conTarjeta(n) ? `<td class="col-tarjeta">${esc(C.formatCLP(UI.conTarjeta(n)))}</td>` : ''}`;
-  const encabezado = () => (UI.conTarjeta(1000) ? '<tr><th></th><th>Transferencia</th><th class="col-tarjeta">Tarjeta</th></tr>' : '');
+  const celdas = (n) => (UI.conTarjeta(n)
+    ? `<td class="col-tarjeta"><s>${esc(C.formatCLP(UI.conTarjeta(n)))}</s></td><td class="col-desc">${esc(C.formatCLP(n))}</td>`
+    : `<td>${esc(C.formatCLP(n))}</td>`);
+  const encabezado = () => (UI.conTarjeta(1000) ? '<tr><th></th><th class="col-tarjeta">Precio</th><th class="col-desc">Con transferencia</th></tr>' : '');
 
   function seccionPreciosDia(p) {
     const filas = [`<tr><td>Arriendo del día</td>${celdas(p.precio_dia)}</tr>`];
@@ -134,8 +136,8 @@
         </div>
 
         <aside class="reserva-box">
-          <p class="precio-caja"><span class="precio">${esc(C.formatCLP(C.precioBase(p)))}</span> <span class="muted">/ ${C.unidad(p)} con transferencia</span>
-            ${UI.conTarjeta(C.precioBase(p)) ? `<br><span class="precio-tarjeta">${esc(C.formatCLP(UI.conTarjeta(C.precioBase(p))))} / ${C.unidad(p)} con tarjeta</span>` : ''}
+          <p class="precio-caja">${UI.conTarjeta(C.precioBase(p)) ? `<s class="precio-lista">${esc(C.formatCLP(UI.conTarjeta(C.precioBase(p))))}</s> ` : ''}<span class="precio">${esc(C.formatCLP(C.precioBase(p)))}</span> <span class="muted">/ ${C.unidad(p)}</span>
+            ${UI.conTarjeta(C.precioBase(p)) ? '<br><span class="descuento">Descuento pagando con transferencia</span>' : ''}
             ${variable ? `<br><span class="muted small">Varía según ${dia ? 'fin de semana y temporada' : 'temporada y fin de semana'}</span>` : ''}</p>
           <form id="form-reserva">${dia ? `
             <div class="row2">
@@ -153,17 +155,18 @@
               <div data-q="filas"></div>
               ${p.tarifa_limpieza ? `<div class="row between"><span>Limpieza</span><span>${esc(C.formatCLP(p.tarifa_limpieza))}</span></div>` : ''}
               ${conTarjeta ? `
-              <div class="row between total"><span>Total con tarjeta</span><span data-q="total-tarjeta"></span></div>
-              <div class="row between ahorro"><span>Con transferencia</span><span data-q="total"></span></div>`
+              <div class="row between"><span>Precio total</span><s data-q="total-tarjeta"></s></div>
+              <div class="row between total ahorro"><span>Con descuento por transferencia</span><span data-q="total"></span></div>
+              <div class="row between"><span class="muted small">Ahorras</span><span class="muted small" data-q="ahorro"></span></div>`
               : `<div class="row between total"><span>Total</span><span data-q="total"></span></div>`}
             </div>
             ${conTarjeta ? `
             <fieldset class="pago">
               <legend>¿Cómo quieres pagar?</legend>
               <label class="opcion"><input type="radio" name="pago" value="tarjeta" checked>
-                <span><strong>Tarjeta de crédito o débito</strong><small>Te enviamos un link de pago por WhatsApp. Puedes pagar en cuotas.</small></span></label>
+                <span><strong>Tarjeta de crédito o débito</strong><small>Precio normal. Te enviamos un link de pago por WhatsApp; puedes pagar en cuotas.</small></span></label>
               <label class="opcion"><input type="radio" name="pago" value="transferencia">
-                <span><strong>Transferencia bancaria</strong><small>Precio con descuento. Te enviamos los datos por WhatsApp.</small></span></label>
+                <span><strong>Transferencia bancaria</strong><small>Con descuento. Te enviamos los datos por WhatsApp.</small></span></label>
             </fieldset>` : ''}
             <p class="aviso" data-q="aviso" hidden></p>
             <a class="btn block wa" id="btn-whatsapp" target="_blank" rel="noopener">${UI.WA_ICON} <span data-q="btn">Reservar por WhatsApp</span></a>
@@ -248,7 +251,7 @@
         if (conTarjeta) {
           const conT = C.totalTarjeta(cot.total, CFG.recargoTarjeta);
           $('total-tarjeta').textContent = C.formatCLP(conT);
-          $('total').textContent = `${C.formatCLP(cot.total)} (ahorras ${C.formatCLP(conT - cot.total)})`;
+          $('ahorro').textContent = C.formatCLP(conT - cot.total);
         }
       }
       const error = avisoCalendario || r.error;

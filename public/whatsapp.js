@@ -48,7 +48,7 @@
       }
       if (d.limpieza) l.push(`Limpieza: ${clp.format(d.limpieza)}`);
       if (d.total_tarjeta) {
-        l.push(`*Total con transferencia: ${clp.format(d.total)} CLP*`, `*Total con tarjeta: ${clp.format(d.total_tarjeta)} CLP*`);
+        l.push(`*Precio total: ${clp.format(d.total_tarjeta)} CLP*`, `*Con descuento por transferencia: ${clp.format(d.total)} CLP*`);
       } else {
         l.push(`*Total: ${clp.format(d.total)} CLP*`);
       }

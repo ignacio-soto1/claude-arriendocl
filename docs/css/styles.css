@@ -11,11 +11,11 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) { --bg: #0d1820; --surface: #13232f; --text: #e6edf2; --muted: #9aabb8; --line: #233746;
     --brand: #4fb3e8; --brand-ink: #06141d; --brand-soft: #16354a; --accent: #e9c46a;
-    --gold: #e9c46a; --aqua: #4cc9c0; --sky: #8ecae6; --navy: #e6edf2; --err: #ff8a80; --warn: #e3a743;  color-scheme: dark; }
+    --gold: #e9c46a; --aqua: #4cc9c0; --sky: #8ecae6; --navy: #e6edf2; --err: #ff8a80; --warn: #e3a743; --ok: #5fd4a8; color-scheme: dark; }
 }
 :root[data-theme="dark"] { --bg: #0d1820; --surface: #13232f; --text: #e6edf2; --muted: #9aabb8; --line: #233746;
     --brand: #4fb3e8; --brand-ink: #06141d; --brand-soft: #16354a; --accent: #e9c46a;
-    --gold: #e9c46a; --aqua: #4cc9c0; --sky: #8ecae6; --navy: #e6edf2; --err: #ff8a80; --warn: #e3a743;  color-scheme: dark; }
+    --gold: #e9c46a; --aqua: #4cc9c0; --sky: #8ecae6; --navy: #e6edf2; --err: #ff8a80; --warn: #e3a743; --ok: #5fd4a8; color-scheme: dark; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body { margin: 0; font: 16px/1.55 var(--sans); background: var(--bg); color: var(--text); }
@@ -352,3 +352,12 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   .tabla-precios td.col-tarjeta, .tabla-precios th.col-tarjeta { padding-left: 10px; }
   .tabla-precios td:first-child { padding-right: 8px; }
 }
+
+/* Precio de lista tachado y precio con descuento por transferencia */
+.precio-lista { color: var(--muted); font-weight: 400; text-decoration-thickness: 1.5px; }
+.descuento { color: var(--ok); font-size: .8rem; font-weight: 600; }
+.tabla-precios td.col-desc { color: var(--ok); font-weight: 700; text-align: right; padding-left: 12px; }
+.tabla-precios td.col-tarjeta { text-align: right; }
+.tabla-precios th.col-desc { color: var(--ok); }
+.precio-caja .precio-lista { font-size: 1.05rem; }
+.cotizacion .total.ahorro { font-size: 1rem; }

@@ -107,14 +107,14 @@
 
   // Precio con tarjeta (CONFIG.recargoTarjeta, redondeado a la luca). Sin recargo devuelve null.
   const conTarjeta = (n) => (Number(CFG.recargoTarjeta) > 0 ? window.Catalogo.totalTarjeta(n, CFG.recargoTarjeta) : null);
-  // HTML con los dos precios: transferencia destacado y tarjeta al lado.
+  // HTML de precio: el precio normal (tarjeta) tachado y el precio con descuento por transferencia destacado.
   function precios(n, unidad = '') {
     const fmt = window.Catalogo.formatCLP;
     const t = conTarjeta(n);
     const u = unidad ? ` <span class="muted">${unidad}</span>` : '';
     if (!t) return `<strong>${esc(fmt(n))}</strong>${u}`;
-    return `<span class="precios"><span><strong>${esc(fmt(n))}</strong>${u} <span class="medio">transferencia</span></span>`
-      + `<span class="precio-tarjeta">${esc(fmt(t))} con tarjeta</span></span>`;
+    return `<span class="precios"><span><s class="precio-lista">${esc(fmt(t))}</s> <strong>${esc(fmt(n))}</strong>${u}</span>`
+      + `<span class="descuento">Descuento pagando con transferencia</span></span>`;
   }
 
   window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar, precios, conTarjeta };

@@ -18,7 +18,13 @@ const TIPOS = { parcela: 'Parcela', departamento: 'Departamento', casa: 'Casa', 
 
 function conTarjeta(n, cfg) {
   const r = Number(cfg.recargoTarjeta) || 0;
-  return r ? ` (${clp.format(Math.round((n * (1 + r)) / 1000) * 1000)} con tarjeta)` : '';
+  return r ? clp.format(Math.round((n * (1 + r)) / 1000) * 1000) : '';
+}
+
+// "$102.000 la noche, $95.000 con transferencia" (o solo el precio si no hay recargo con tarjeta)
+function precioTexto(n, unidad, cfg) {
+  const t = conTarjeta(n, cfg);
+  return t ? `${t} ${unidad}, ${clp.format(n)} con transferencia` : `${clp.format(n)} ${unidad}`;
 }
 
 function pagina(p, cfg) {
@@ -27,8 +33,8 @@ function pagina(p, cfg) {
   const titulo = `${p.titulo} · ${cfg.marca}`;
   const dia = p.modalidad === 'dia';
   const desc = dia
-    ? `${TIPOS[p.tipo]} para eventos en ${p.comuna}, ${p.region} · hasta ${p.capacidad} personas · desde ${clp.format(p.precio_dia)} el día con transferencia${conTarjeta(p.precio_dia, cfg)}. Reserva por WhatsApp.`
-    : `${TIPOS[p.tipo]} en ${p.comuna}, ${p.region} · ${p.capacidad} huéspedes · desde ${clp.format(p.precio_noche)} la noche con transferencia${conTarjeta(p.precio_noche, cfg)}. Reserva por WhatsApp.`;
+    ? `${TIPOS[p.tipo]} para eventos en ${p.comuna}, ${p.region} · hasta ${p.capacidad} personas · desde ${precioTexto(p.precio_dia, 'el día', cfg)}. Reserva por WhatsApp.`
+    : `${TIPOS[p.tipo]} en ${p.comuna}, ${p.region} · ${p.capacidad} huéspedes · desde ${precioTexto(p.precio_noche, 'la noche', cfg)}. Reserva por WhatsApp.`;
   const destino = `../propiedad.html?id=${encodeURIComponent(p.id)}`;
   return `<!doctype html>
 <html lang="es-CL">
