@@ -22,6 +22,32 @@ Identidad visual: logo recreado del Instagram (íconos llave · piscina · casa,
 
 El mapa usa [Leaflet](https://leafletjs.com) (incluido en `docs/vendor/`) con mapas de [OpenStreetMap](https://www.openstreetmap.org): gratis y sin clave.
 
+### Qué se edita y dónde
+
+| Quiero… | Archivo | Campo |
+|---|---|---|
+| Cambiar el WhatsApp de reservas | `docs/config.js` | `whatsapp` |
+| Ajustar el % extra con tarjeta | `docs/config.js` | `recargoTarjeta` (0 lo desactiva) |
+| Cambiar horarios, cancelación, garantía y reglas | `docs/config.js` | `condiciones` (y `condiciones` en una propiedad para excepciones) |
+| Precio de fin de semana o por temporada | `docs/data/propiedades.js` | `precio_fin_semana`, `temporadas` |
+| Marcar fechas reservadas | `docs/data/propiedades.js` | `ocupado` |
+| Agregar opiniones reales de huéspedes | `docs/data/propiedades.js` | `resenas` |
+
+**Después de agregar o cambiar propiedades**, corre `npm run paginas`. Esto regenera `docs/p/`: una página por propiedad que da la vista previa con foto, título y precio cuando el enlace se comparte en WhatsApp o Instagram. Hay un test que avisa si quedaron desactualizadas.
+
+### Estadísticas (opcional, gratis)
+
+1. Crea una cuenta en [goatcounter.com](https://www.goatcounter.com) (sin publicidad ni cookies) y elige un código, por ejemplo `arriendoencl`.
+2. Escríbelo en `docs/config.js` → `goatcounter: 'arriendoencl'`.
+3. Verás visitas por página y los clics en *Reservar por WhatsApp*, *Compartir*, *Enviar a un amigo* y *Publica con nosotros*, por propiedad.
+
+### Dominio propio (ej. arriendoencl.cl)
+
+1. Compra el dominio en [nic.cl](https://www.nic.cl).
+2. En la configuración DNS del dominio crea 4 registros **A** apuntando a `185.199.108.153`, `185.199.109.153`, `185.199.110.153` y `185.199.111.153`, y un **CNAME** `www` → `ignacio-soto1.github.io`.
+3. En GitHub → Settings → Pages → **Custom domain**, escribe el dominio y activa **Enforce HTTPS**.
+4. Cambia `urlSitio` en `docs/config.js` por la dirección nueva y corre `npm run paginas`.
+
 ## App completa con servidor (Node.js)
 
 La versión con cuentas, reservas en el sitio y panel de anfitrión sigue en `src/` (requiere un servidor, no corre en Pages).
@@ -35,7 +61,7 @@ git clone https://github.com/ignacio-soto1/claude-arriendocl && cd claude-arrien
 npm install
 npm run seed      # crea data/arriendos.db con 12 propiedades de ejemplo
 WHATSAPP_RESERVAS="+56 9 1234 5678" npm start   # http://localhost:3000
-npm test          # 29 tests (app + sitio estático) (unitarios + flujo completo HTTP)
+npm test          # 34 tests (app + sitio estático) (unitarios + flujo completo HTTP)
 ```
 
 Usuarios de demo (contraseña `demo1234`):

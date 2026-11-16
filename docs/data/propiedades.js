@@ -8,12 +8,19 @@
 // - credito_foto: solo si la foto NO es tuya (ej. Wikimedia): { autor, licencia, enlace }. Bórralo al poner tus fotos.
 // - ocupado:   fechas ya reservadas [{ desde: 'AAAA-MM-DD', hasta: 'AAAA-MM-DD' }] (hasta = día de salida)
 // - amenities: claves de la lista COMODIDADES en js/catalogo.js
+// - precio_fin_semana (opcional): precio de las noches de viernes y sábado
+// - temporadas (opcional): [{ nombre: 'Verano', desde: 'MM-DD', hasta: 'MM-DD', precio_noche: 130000 }]
+//              (desde/hasta incluidos; puede cruzar el año, ej. '12-20' a '02-28')
+// - condiciones (opcional): reemplaza las de config.js para esta propiedad, ej. { llegada: '16:00' }
+// - resenas (opcional): opiniones reales de huéspedes [{ nombre: 'Javiera', texto: '...', estrellas: 5 }]
 window.PROPIEDADES = [
   {
     id: 'parcela-pucon-tinaja',
     titulo: 'Parcela con tinaja y vista al volcán Villarrica',
     tipo: 'parcela', region: 'La Araucanía', comuna: 'Pucón', lat: -39.2490, lng: -71.8890,
     superficie_m2: 5000, precio_noche: 95000, tarifa_limpieza: 25000,
+    precio_fin_semana: 110000,
+    temporadas: [{ nombre: 'Verano', desde: '12-26', hasta: '02-28', precio_noche: 130000 }],
     capacidad: 6, dormitorios: 3, banos: 2, min_noches: 2,
     amenities: ['wifi', 'estacionamiento', 'tinaja', 'quincho', 'lena', 'cocina', 'mascotas'],
     descripcion: 'Parcela de media hectárea a 10 minutos del centro de Pucón, camino a Caburgua. Casa de madera nativa con estufa a leña, tinaja de ciprés para 6 personas y quincho techado. Ideal para familias y grupos de amigos.\n\nA 5 minutos del río Trancura (rafting) y a 30 del centro de ski.',
@@ -26,6 +33,7 @@ window.PROPIEDADES = [
     titulo: 'Depto frente al mar en Viña con estacionamiento',
     tipo: 'departamento', region: 'Valparaíso', comuna: 'Viña del Mar', lat: -33.0090, lng: -71.5490,
     superficie_m2: 68, precio_noche: 72000, tarifa_limpieza: 15000,
+    temporadas: [{ nombre: 'Verano', desde: '12-20', hasta: '03-01', precio_noche: 95000 }],
     capacidad: 4, dormitorios: 2, banos: 1, min_noches: 2,
     amenities: ['wifi', 'estacionamiento', 'vista_mar', 'terraza', 'cocina', 'lavadora', 'conserje', 'piscina'],
     descripcion: 'Departamento piso 14 en Av. San Martín con vista panorámica al mar. Edificio con piscina y conserjería 24/7. A pasos de la playa Acapulco, restaurantes y el Casino.',
@@ -37,6 +45,7 @@ window.PROPIEDADES = [
     titulo: 'Cabaña de alerce a orillas del lago Llanquihue',
     tipo: 'cabana', region: 'Los Lagos', comuna: 'Puerto Varas', lat: -41.2900, lng: -72.9000,
     superficie_m2: 80, precio_noche: 110000, tarifa_limpieza: 30000,
+    temporadas: [{ nombre: 'Verano', desde: '01-01', hasta: '02-28', precio_noche: 135000 }],
     capacidad: 5, dormitorios: 2, banos: 2, min_noches: 2,
     amenities: ['wifi', 'estacionamiento', 'lago_rio', 'lena', 'cocina', 'terraza', 'tinaja'],
     descripcion: 'Cabaña de alerce con acceso privado al lago y vista a los volcanes Osorno y Calbuco. Muelle propio, kayaks disponibles. A 8 km del centro de Puerto Varas.',
@@ -61,6 +70,8 @@ window.PROPIEDADES = [
     titulo: 'Parcela de agrado en Pirque con piscina y quincho',
     tipo: 'parcela', region: 'Metropolitana de Santiago', comuna: 'Pirque', lat: -33.6400, lng: -70.5750,
     superficie_m2: 10000, precio_noche: 180000, tarifa_limpieza: 40000,
+    precio_fin_semana: 220000,
+    temporadas: [{ nombre: 'Fiestas Patrias', desde: '09-16', hasta: '09-20', precio_noche: 260000 }],
     capacidad: 12, dormitorios: 5, banos: 3, min_noches: 2,
     amenities: ['wifi', 'estacionamiento', 'piscina', 'quincho', 'mascotas', 'agua_potable', 'terraza'],
     descripcion: 'Una hectárea a 40 minutos de Santiago, junto a la Viña Concha y Toro. Casa patronal con piscina, gran quincho para eventos familiares y canchas de pasto. Perfecta para celebraciones y fines de semana largos.',

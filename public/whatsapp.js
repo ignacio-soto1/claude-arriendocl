@@ -12,7 +12,7 @@
   const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
 
   // d: { marca, titulo, tipo, comuna, region, url, llegada?, salida?, noches?, huespedes?,
-  //      precio_noche?, limpieza?, total?, total_tarjeta?, pago?, nombre? }
+  //      precio_noche?, detalle?, limpieza?, total?, total_tarjeta?, pago?, horario?, nombre? }
   function mensajeReserva(d) {
     // Sin emojis: el enlace de WhatsApp en iPhone los muestra como un signo de reemplazo.
     const l = [`Hola ${d.marca}, quiero reservar:`, '', `*${d.titulo}*`, `${d.tipo} en ${d.comuna}, ${d.region}`, ''];
@@ -20,13 +20,22 @@
       l.push(`*Llegada:* ${fmtFecha(d.llegada)}`, `*Salida:* ${fmtFecha(d.salida)}`);
       if (d.noches) l.push(`*Noches:* ${d.noches}`);
       if (d.huespedes) l.push(`*Huéspedes:* ${d.huespedes}`);
+      if (d.horario) l.push(`*Horario:* ${d.horario}`);
     } else {
       l.push('*Fechas:* por definir');
       if (d.huespedes) l.push(`*Huéspedes:* ${d.huespedes}`);
     }
     if (d.total) {
       l.push('', '*Resumen del precio*');
-      if (d.precio_noche && d.noches) l.push(`${clp.format(d.precio_noche)} × ${plural(d.noches, 'noche', 'noches')} = ${clp.format(d.precio_noche * d.noches)}`);
+      if (d.detalle && d.detalle.length) {
+        // Desglose por tipo de noche (temporada, fin de semana, normal)
+        const varios = d.detalle.length > 1 || d.detalle[0].etiqueta !== 'Normal';
+        for (const g of d.detalle) {
+          l.push(`${clp.format(g.precio)} × ${plural(g.noches, 'noche', 'noches')}${varios ? ` (${g.etiqueta.toLowerCase()})` : ''} = ${clp.format(g.precio * g.noches)}`);
+        }
+      } else if (d.precio_noche && d.noches) {
+        l.push(`${clp.format(d.precio_noche)} × ${plural(d.noches, 'noche', 'noches')} = ${clp.format(d.precio_noche * d.noches)}`);
+      }
       if (d.limpieza) l.push(`Limpieza: ${clp.format(d.limpieza)}`);
       if (d.total_tarjeta) {
         l.push(`*Total con transferencia: ${clp.format(d.total)} CLP*`, `*Total con tarjeta: ${clp.format(d.total_tarjeta)} CLP*`);

@@ -11,7 +11,8 @@
     "start": "node --no-warnings=ExperimentalWarning src/server.js",
     "dev": "node --no-warnings=ExperimentalWarning --watch src/server.js",
     "seed": "node --no-warnings=ExperimentalWarning src/seed.js",
-    "test": "node --no-warnings=ExperimentalWarning --test \"test/*.test.js\""
+    "test": "node --no-warnings=ExperimentalWarning --test \"test/*.test.js\"",
+    "paginas": "node scripts/generar-paginas.js"
   },
   "dependencies": {
     "cookie-session": "^2.1.1",

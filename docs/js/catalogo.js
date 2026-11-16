@@ -43,12 +43,44 @@
     return !(p.ocupado || []).some((o) => seSolapan(llegada, salida, o.desde, o.hasta));
   }
 
+  // ¿La fecha (AAAA-MM-DD) cae en la temporada {desde: 'MM-DD', hasta: 'MM-DD'}? Ambos días incluidos;
+  // si desde > hasta, la temporada cruza el año (ej. 12-20 a 02-28).
+  function enTemporada(fecha, t) {
+    const md = fecha.slice(5);
+    return t.desde <= t.hasta ? md >= t.desde && md <= t.hasta : md >= t.desde || md <= t.hasta;
+  }
+
+  // Precio de una noche: temporada > fin de semana (noches de viernes y sábado) > precio normal.
+  function precioNoche(p, fecha) {
+    const t = (p.temporadas || []).find((x) => enTemporada(fecha, x));
+    if (t) return { precio: t.precio_noche, etiqueta: t.nombre };
+    const dia = new Date(fecha + 'T00:00:00Z').getUTCDay();
+    if (p.precio_fin_semana && (dia === 5 || dia === 6)) return { precio: p.precio_fin_semana, etiqueta: 'Fin de semana' };
+    return { precio: p.precio_noche, etiqueta: 'Normal' };
+  }
+
+  // Cotización noche a noche. detalle agrupa las noches por precio: [{ etiqueta, precio, noches }].
   function cotizar(p, llegada, salida) {
     const n = noches(llegada, salida);
     if (!n || n <= 0) return null;
-    const subtotal = p.precio_noche * n;
+    const detalle = [];
+    let subtotal = 0;
+    for (let i = 0; i < n; i++) {
+      const { precio, etiqueta } = precioNoche(p, sumarDias(llegada, i));
+      subtotal += precio;
+      const g = detalle.find((x) => x.etiqueta === etiqueta && x.precio === precio);
+      if (g) g.noches++; else detalle.push({ etiqueta, precio, noches: 1 });
+    }
     const limpieza = p.tarifa_limpieza || 0;
-    return { noches: n, subtotal, limpieza, total: subtotal + limpieza };
+    return { noches: n, subtotal, limpieza, total: subtotal + limpieza, detalle };
+  }
+
+  // Condiciones de la propiedad: las generales de CONFIG con lo propio de cada propiedad encima.
+  function condiciones(p, generales = {}) {
+    const c = Object.assign({}, generales, p.condiciones || {});
+    const reglas = [...(c.reglas || [])];
+    reglas.unshift((p.amenities || []).includes('mascotas') ? 'Se aceptan mascotas (avísanos al reservar).' : 'No se aceptan mascotas.');
+    return { ...c, reglas };
   }
 
   // Revisa una solicitud y devuelve { ok, error?, cotizacion? }.
@@ -138,6 +170,6 @@
   return {
     TIPOS, ICONOS, COMODIDADES, ORDENES,
     formatCLP, formatFecha, hoyChile, esFecha, noches, seSolapan, disponible, cotizar, validarReserva,
-    filtrar, regiones, superficie, precioCorto, sumarDias, normalizar, totalTarjeta,
+    filtrar, regiones, superficie, precioCorto, sumarDias, normalizar, totalTarjeta, precioNoche, enTemporada, condiciones,
   };
 });

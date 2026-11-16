@@ -53,7 +53,8 @@ const base = { id: 'x', tipo: 'parcela', region: 'La Araucanía', comuna: 'Pucó
 test('validarReserva: total, choque de fechas, mínimo de noches y capacidad', () => {
   const hoy = '2026-11-15';
   assert.deepEqual(C.validarReserva(base, { llegada: '2027-01-05', salida: '2027-01-08', huespedes: 2 }, hoy),
-    { ok: true, cotizacion: { noches: 3, subtotal: 300000, limpieza: 20000, total: 320000 } });
+    { ok: true, cotizacion: { noches: 3, subtotal: 300000, limpieza: 20000, total: 320000,
+      detalle: [{ etiqueta: 'Normal', precio: 100000, noches: 3 }] } });
   assert.match(C.validarReserva(base, { llegada: '2027-01-08', salida: '2027-01-11' }, hoy).error, /ya están reservadas/);
   assert.equal(C.validarReserva(base, { llegada: '2027-01-15', salida: '2027-01-17' }, hoy).ok, true); // llega el día que salen
   assert.match(C.validarReserva(base, { llegada: '2027-02-01', salida: '2027-02-02' }, hoy).error, /mínimo de 2/);
@@ -87,6 +88,28 @@ test('regiones ordenadas de norte a sur, sin repetir', () => {
   assert.equal(new Set(r.map((x) => x.region)).size, r.length);
 });
 
+test('precios por temporada y fin de semana, noche a noche', () => {
+  const p = { ...base, ocupado: [], precio_fin_semana: 120000,
+    temporadas: [{ nombre: 'Verano', desde: '12-26', hasta: '02-28', precio_noche: 150000 }] };
+  // jue 10 jun 2027 a lun 14 jun: jue normal, vie y sáb fin de semana, dom normal
+  const q = C.cotizar(p, '2027-06-10', '2027-06-14');
+  assert.equal(q.subtotal, 100000 + 120000 + 120000 + 100000);
+  assert.deepEqual(q.detalle.map((g) => [g.etiqueta, g.noches]), [['Normal', 1], ['Fin de semana', 2], ['Normal', 1]].reduce((acc, [e, n]) => {
+    const g = acc.find((x) => x[0] === e); if (g) g[1] += n; else acc.push([e, n]); return acc; }, []));
+  // la temporada cruza el año y gana al fin de semana
+  assert.equal(C.precioNoche(p, '2027-01-01').etiqueta, 'Verano');
+  assert.equal(C.precioNoche(p, '2026-12-23').precio, 100000); // miércoles, fuera de temporada
+  assert.ok(C.enTemporada('2027-02-28', p.temporadas[0]) && !C.enTemporada('2027-03-01', p.temporadas[0]));
+});
+
+test('condiciones: generales + propiedad, con regla de mascotas', () => {
+  const c = C.condiciones({ amenities: ['mascotas'], condiciones: { llegada: '16:00' } }, { llegada: '15:00', salida: '12:00', reglas: ['Sin fiestas'] });
+  assert.equal(c.llegada, '16:00');
+  assert.equal(c.salida, '12:00');
+  assert.deepEqual(c.reglas, ['Se aceptan mascotas (avísanos al reservar).', 'Sin fiestas']);
+  assert.match(C.condiciones({ amenities: [] }, {}).reglas[0], /No se aceptan mascotas/);
+});
+
 test('total con tarjeta: 7% sobre transferencia, redondeado a la luca', () => {
   assert.equal(C.totalTarjeta(215000, 0.07), 230000);
   assert.equal(C.totalTarjeta(100000, 0.07), 107000);
@@ -99,4 +122,14 @@ test('formatos chilenos', () => {
   assert.equal(C.precioCorto(95000), '$95 mil');
   assert.equal(C.formatCLP(338500).replace(/\s/g, ''), '$338.500');
   assert.equal(C.hoyChile(new Date('2026-01-01T02:00:00Z')), '2025-12-31');
+});
+
+test('las páginas de vista previa (docs/p/) están al día con propiedades.js', () => {
+  const { pagina, cargar } = require('../scripts/generar-paginas');
+  const cfg = cargar('config.js', 'CONFIG');
+  for (const p of cargar('data/propiedades.js', 'PROPIEDADES')) {
+    const archivo = path.join(DOCS, 'p', `${p.id}.html`);
+    assert.ok(fs.existsSync(archivo), `falta docs/p/${p.id}.html: corre "npm run paginas"`);
+    assert.equal(fs.readFileSync(archivo, 'utf8'), pagina(p, cfg), `docs/p/${p.id}.html desactualizada: corre "npm run paginas"`);
+  }
 });

@@ -8,6 +8,19 @@ window.CONFIG = {
   // Pago con tarjeta: recargo sobre el total con transferencia (0.07 = 7%), redondeado a la luca.
   // El sitio lo muestra como "descuento por transferencia". Pon 0 para no mostrar la opción.
   recargoTarjeta: 0.07,
+  // Dirección pública del sitio (para enlaces y vistas previas al compartir). Termina en "/".
+  urlSitio: 'https://ignacio-soto1.github.io/claude-arriendocl/docs/',
+  // Estadísticas (GoatCounter, gratis): crea una cuenta en goatcounter.com y pon aquí tu código, ej. 'arriendoencl'.
+  goatcounter: '',
+  // Condiciones generales de reserva (cada propiedad puede cambiar alguna en su campo "condiciones").
+  // ⚠️ Revisa y ajusta estos textos: son las reglas que verán tus huéspedes.
+  condiciones: {
+    llegada: '15:00',
+    salida: '12:00',
+    cancelacion: 'Cancelación sin costo hasta 7 días antes de la llegada. Después, se retiene el 50% del total.',
+    garantia: 'Puede pedirse una garantía reembolsable al llegar, que se devuelve al revisar la propiedad.',
+    reglas: ['No se permiten fiestas ni eventos sin autorización.', 'Silencio desde las 23:00.', 'No fumar dentro de la propiedad.'],
+  },
   // Mapa base: 'osm' (OpenStreetMap) o 'contorno' (dibujo de Chile incluido en el sitio, sin conexión externa).
   mapaBase: 'osm',
 };

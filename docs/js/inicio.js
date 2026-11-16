@@ -174,7 +174,7 @@
         : 'Se abre WhatsApp con tus datos ya escritos: solo tienes que enviarlo.';
     };
     btnPub.addEventListener('click', (e) => {
-      if (!btnPub.classList.contains('pendiente')) return;
+      if (!btnPub.classList.contains('pendiente')) { UI.contar('publicar-whatsapp'); return; }
       e.preventDefault();
       const vacio = ['nombre', 'tipo', 'ubicacion'].map((k) => formPub.elements[k]).find((el) => !el.value.trim());
       if (vacio) vacio.focus();

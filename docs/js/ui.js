@@ -27,6 +27,7 @@
     quincho: svg('<path d="M3.5 10.5h17a8.5 8.5 0 0 1-17 0Z"/><path d="M8 18l-2 4M16 18l2 4M12 19v3M8.5 2.5c-1 1.4 1 2.3 0 4.2M12 2.5c-1 1.4 1 2.3 0 4.2M15.5 2.5c-1 1.4 1 2.3 0 4.2"/>'),
     arbol: svg('<path d="M12 22v-8.5M12 15.5l-3-2.8M12 17.5l3.2-3"/><path d="M12 2a5.6 5.6 0 0 0-5.3 7.4A4.6 4.6 0 0 0 9 18h6a4.6 4.6 0 0 0 2.3-8.6A5.6 5.6 0 0 0 12 2Z"/>'),
     publicar: svg('<path d="M2.5 11.5 12 3l9.5 8.5M5 9.3V21h8M19 9.3V13"/><path d="M18 15.5v6M15 18.5h6"/>'),
+    compartir: svg('<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v7.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V12"/>'),
     personas: svg('<circle cx="12" cy="7" r="3"/><circle cx="5" cy="9.2" r="2.3"/><circle cx="19" cy="9.2" r="2.3"/><path d="M6.5 20.5v-2a5.5 5.5 0 0 1 11 0v2M1.5 19.5v-1A3.5 3.5 0 0 1 6 15M22.5 19.5v-1A3.5 3.5 0 0 0 18 15"/>'),
   };
 
@@ -44,7 +45,22 @@
     return CFG.unaPagina || document.getElementById('publica') ? '#publica' : './#publica';
   }
 
+  // Estadísticas (GoatCounter): carga el script si CONFIG.goatcounter tiene un código.
+  function iniciarEstadisticas() {
+    if (!CFG.goatcounter || document.querySelector('script[data-goatcounter]')) return;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://gc.zgo.at/count.js';
+    s.dataset.goatcounter = `https://${encodeURIComponent(CFG.goatcounter)}.goatcounter.com/count`;
+    document.head.appendChild(s);
+  }
+  // Cuenta un evento (ej. 'reservar-whatsapp' de una propiedad). No hace nada si no hay estadísticas.
+  function contar(evento, detalle = '') {
+    try { window.goatcounter?.count?.({ path: `${evento}/${detalle}`, title: evento, event: true }); } catch (_) { /* sin estadísticas */ }
+  }
+
   function montarMarco() {
+    iniciarEstadisticas();
     const ig = `https://www.instagram.com/${CFG.instagram}/`;
     const publica = enlacePublica();
     const wa = waUrl(`Hola ${CFG.marca}, tengo una consulta sobre arriendos.`);
@@ -88,5 +104,5 @@
     return `propiedad.html?${q}`;
   }
 
-  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha };
+  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar };
 })();
