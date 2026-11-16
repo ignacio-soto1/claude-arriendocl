@@ -148,8 +148,11 @@ test('formatos chilenos', () => {
   assert.equal(C.hoyChile(new Date('2026-01-01T02:00:00Z')), '2025-12-31');
 });
 
-test('las páginas de vista previa (docs/p/) están al día con propiedades.js', () => {
-  const { pagina, cargar } = require('../scripts/generar-paginas');
+test('las páginas de vista previa (docs/p/) y catalogo.json están al día con propiedades.js', () => {
+  const { pagina, cargar, catalogoJson } = require('../scripts/generar-paginas');
+  assert.equal(fs.readFileSync(path.join(DOCS, 'data', 'catalogo.json'), 'utf8'),
+    catalogoJson(cargar('config.js', 'CONFIG'), cargar('data/propiedades.js', 'PROPIEDADES')),
+    'docs/data/catalogo.json desactualizado: corre "npm run paginas"');
   const cfg = cargar('config.js', 'CONFIG');
   for (const p of cargar('data/propiedades.js', 'PROPIEDADES')) {
     const archivo = path.join(DOCS, 'p', `${p.id}.html`);

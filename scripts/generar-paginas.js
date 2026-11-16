@@ -1,6 +1,8 @@
 'use strict';
 // Genera docs/p/<id>.html: una página por propiedad con vista previa (foto, título y precio) para
 // cuando se comparte el enlace en WhatsApp, Instagram o Facebook. Cada página lleva a la ficha.
+// También genera docs/data/catalogo.json: las propiedades y la configuración como datos, que la app
+// descarga al abrirse para mostrar siempre lo último publicado.
 // Uso: npm run paginas   (correrlo después de editar docs/data/propiedades.js o docs/config.js)
 const fs = require('node:fs');
 const path = require('node:path');
@@ -63,6 +65,12 @@ function pagina(p, cfg) {
 `;
 }
 
+// Datos que la app toma del sitio (no incluye ajustes propios de cada versión, como el mapa).
+function catalogoJson(cfg, props) {
+  const { unaPagina, mapaBase, ...config } = cfg;
+  return JSON.stringify({ version: 1, config, propiedades: props }, null, 1) + '\n';
+}
+
 function generar() {
   const cfg = cargar('config.js', 'CONFIG');
   const props = cargar('data/propiedades.js', 'PROPIEDADES');
@@ -76,8 +84,9 @@ function generar() {
     fs.writeFileSync(path.join(dir, archivo), pagina(p, cfg));
   }
   for (const f of fs.readdirSync(dir)) if (f.endsWith('.html') && !esperados.has(f)) fs.rmSync(path.join(dir, f));
+  fs.writeFileSync(path.join(DOCS, 'data', 'catalogo.json'), catalogoJson(cfg, props));
   return [...esperados];
 }
 
 if (require.main === module) console.log(`Generadas ${generar().length} páginas en docs/p/`);
-module.exports = { pagina, cargar };
+module.exports = { pagina, cargar, catalogoJson };

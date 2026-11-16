@@ -1,0 +1,28 @@
+# Cuando se editan las propiedades o la configuración (por ejemplo, directo en GitHub),
+# regenera docs/data/catalogo.json (lo que lee la app) y las vistas previas de docs/p/.
+name: Actualizar datos del sitio y la app
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/data/propiedades.js', 'docs/config.js']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regenerar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/generar-paginas.js
+      - name: Guardar si hubo cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/p docs/data/catalogo.json
+          git diff --cached --quiet || (git commit -m "Actualizar catálogo y vistas previas" && git push)

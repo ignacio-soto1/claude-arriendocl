@@ -3,6 +3,11 @@
 La app es el mismo sitio de `docs/` empaquetado con [Capacitor](https://capacitorjs.com).
 Cada vez que cambias el sitio, GitHub compila la app de Android sola.
 
+**Las propiedades se actualizan solas:** al abrirse, la app descarga `docs/data/catalogo.json` del sitio
+publicado (propiedades, precios, fechas ocupadas, WhatsApp y condiciones). Si no hay internet usa lo último
+guardado. Por eso, cambiar propiedades **no** requiere publicar una versión nueva en las tiendas; solo los
+cambios de diseño o funciones. `catalogo.json` se regenera solo en GitHub al editar `propiedades.js` o `config.js`.
+
 ## Probar la app en Android (sin publicarla)
 
 1. En GitHub: pestaña **Actions** → **App Android** → la última ejecución con ✓ verde.
