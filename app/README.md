@@ -33,16 +33,27 @@ cambios de diseño o funciones. `catalogo.json` se regenera solo en GitHub al ed
 Para la ficha de Play Console necesitarás: ícono 512×512 (`../docs/img/app/icono-512.png`), al menos 2 capturas de pantalla,
 descripción corta y larga, y una **política de privacidad** publicada.
 
-## Publicar en la App Store (iPhone)
+## Publicar en la App Store (iPhone) — sin necesidad de Mac
 
-Requiere una cuenta de Apple Developer (US$99/año) y compilar en un **Mac con Xcode** (o un servicio en la nube como Codemagic):
+La app de iPhone se compila en un Mac de GitHub (`.github/workflows/app-ios.yml`) con la última versión de Xcode.
+Sin configurar nada, cada cambio la compila para verificar que funcione.
 
-```bash
-cd app && npm ci && npm run sync
-npx cap open ios   # abre Xcode: elige tu equipo de firma y usa Product → Archive
-```
+Para que además se **firme y suba sola a TestFlight**:
 
-Apple revisa que la app aporte más que el sitio web; conviene sumar funciones propias de app (por ejemplo notificaciones) antes de enviarla.
+1. Inscríbete en **Apple Developer** (<https://developer.apple.com/programs/>, US$99/año).
+2. En **App Store Connect** (<https://appstoreconnect.apple.com>) → **Apps → +** → nueva app iOS con el identificador
+   `cl.arriendoencl.app` (si no aparece, regístralo antes en developer.apple.com → Identifiers).
+3. En App Store Connect → **Usuarios y acceso → Integraciones → App Store Connect API** → genera una clave con rol
+   **Admin**. Descarga el archivo `.p8` (solo se puede descargar una vez) y anota el **Key ID** y el **Issuer ID**.
+4. Tu **Team ID** está en developer.apple.com → Account → Membership details.
+5. En GitHub: **Settings → Secrets and variables → Actions → New repository secret**, crea:
+   - `APPSTORE_KEY_P8`: el contenido completo del archivo `.p8` (ábrelo con un editor de texto y copia todo)
+   - `APPSTORE_KEY_ID`, `APPSTORE_ISSUER_ID`, `APPLE_TEAM_ID`
+6. Desde ahí, cada cambio sube una versión nueva a **TestFlight**. Instala la app **TestFlight** en tu iPhone para probarla,
+   y cuando esté lista, envíala a revisión desde App Store Connect.
+
+Apple revisa que la app aporte más que el sitio web: por eso la app trae navegación propia, notificaciones,
+"Mis solicitudes", vibración y compartir nativo.
 
 ## Datos de la app
 
