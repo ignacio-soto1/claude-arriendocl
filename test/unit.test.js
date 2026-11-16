@@ -107,7 +107,7 @@ test('mensaje para publicar una propiedad', () => {
     capacidad: 10, precio: 120000, comentarios: 'Piscina y quincho' });
   assert.match(m, /^Hola Arriendo en CL, quiero publicar mi propiedad:/);
   assert.match(m, /\*Tipo:\* Parcela\n\*Ubicación:\* Peñaflor\n\*Capacidad:\* 10 personas/);
-  assert.match(m, /\*Precio por noche que espero:\* \$\s?120\.000/);
+  assert.match(m, /\*Precio que espero:\* \$\s?120\.000/);
   assert.doesNotMatch(mensajePublicar({ marca: 'X', nombre: 'A', tipo: 'Casa', ubicacion: 'B' }), /Precio|Capacidad/);
 });
 

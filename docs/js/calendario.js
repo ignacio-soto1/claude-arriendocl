@@ -31,7 +31,7 @@
         else if (ocupada(f)) clases.push('ocupado');
         if (f === op.hoy) clases.push('hoy');
         if (f === llegada) clases.push('sel', 'inicio');
-        if (f === salida) clases.push('sel', 'fin');
+        if (f === salida && !op.unDia) clases.push('sel', 'fin');
         if (llegada && salida && f > llegada && f < salida) clases.push('rango');
         const etiqueta = `${d} de ${MESES[m - 1]}${clases.includes('ocupado') ? ', reservado' : ''}`;
         celdas += `<button type="button" class="${clases.join(' ')}" data-f="${f}" aria-label="${etiqueta}"${f < op.hoy ? ' disabled' : ''}>${d}</button>`;
@@ -45,11 +45,11 @@
       const puedeAtras = inicio > op.hoy.slice(0, 7);
       el.innerHTML = `<div class="cal-nav">
           <button type="button" data-nav="-1" aria-label="Mes anterior"${puedeAtras ? '' : ' disabled'}>‹</button>
-          <span class="cal-ayuda">${!llegada || salida ? 'Toca el día de llegada' : 'Ahora toca el día de salida'}</span>
+          <span class="cal-ayuda">${op.unDia ? 'Toca el día de tu evento' : !llegada || salida ? 'Toca el día de llegada' : 'Ahora toca el día de salida'}</span>
           <button type="button" data-nav="1" aria-label="Mes siguiente">›</button>
         </div>
         <div class="cal-meses">${meses}</div>
-        <p class="cal-leyenda"><span class="muestra ocupado"></span> Reservado <span class="muestra sel"></span> Tu estadía</p>`;
+        <p class="cal-leyenda"><span class="muestra ocupado"></span> Reservado <span class="muestra sel"></span> ${op.unDia ? 'Tu fecha' : 'Tu estadía'}</p>`;
     }
 
     el.addEventListener('click', (e) => {
@@ -58,7 +58,11 @@
       const b = e.target.closest('button[data-f]');
       if (!b || b.disabled) return;
       const f = b.dataset.f;
-      if (!llegada || salida || f <= llegada) {
+      if (op.unDia) {
+        if (ocupada(f)) { op.alAvisar('Ese día ya está reservado. Elige otro.'); return; }
+        llegada = f; salida = C.sumarDias(f, 1);
+        op.alElegir(llegada, salida);
+      } else if (!llegada || salida || f <= llegada) {
         if (ocupada(f)) { op.alAvisar('Ese día ya está reservado. Elige otro día de llegada.'); return; }
         llegada = f; salida = '';
         op.alElegir(llegada, '');

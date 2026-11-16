@@ -1,6 +1,10 @@
 // 🏡 Propiedades del catálogo. Para agregar una, copia un bloque y cambia los datos.
 //
 // - id:        identificador único sin espacios (se usa en el enlace: propiedad.html?id=...)
+// - modalidad: 'noche' (alojamiento, por defecto) o 'dia' (eventos o día de piscina, se arrienda por día).
+//              Para 'dia' se usan: precio_dia, precio_dia_fin_semana (sábado y domingo, opcional),
+//              horario_dia: { desde: '10:00', hasta: '20:00' } y por_persona: { incluidas: 40, extra: 5000 } (opcional).
+//              En temporadas, usa precio_dia en vez de precio_noche. "ocupado" marca días: { desde: '2026-12-05', hasta: '2026-12-06' }.
 // - tipo:      'parcela' | 'departamento' | 'casa' | 'cabana'
 // - lat / lng: ubicación aproximada (clic derecho en Google Maps → copiar coordenadas).
 //              No pongas la dirección exacta: el mapa muestra un área aproximada.
@@ -67,16 +71,34 @@ window.PROPIEDADES = [
   },
   {
     id: 'parcela-pirque-piscina',
-    titulo: 'Parcela de agrado en Pirque con piscina y quincho',
+    modalidad: 'dia',
+    titulo: 'Parcela de agrado en Pirque para eventos, con piscina y quincho',
     tipo: 'parcela', region: 'Metropolitana de Santiago', comuna: 'Pirque', lat: -33.6400, lng: -70.5750,
-    superficie_m2: 10000, precio_noche: 180000, tarifa_limpieza: 40000,
-    precio_fin_semana: 220000,
-    temporadas: [{ nombre: 'Fiestas Patrias', desde: '09-16', hasta: '09-20', precio_noche: 260000 }],
-    capacidad: 12, dormitorios: 5, banos: 3, min_noches: 2,
-    amenities: ['wifi', 'estacionamiento', 'piscina', 'quincho', 'mascotas', 'agua_potable', 'terraza'],
-    descripcion: 'Una hectárea a 40 minutos de Santiago, junto a la Viña Concha y Toro. Casa patronal con piscina, gran quincho para eventos familiares y canchas de pasto. Perfecta para celebraciones y fines de semana largos.',
+    superficie_m2: 10000,
+    precio_dia: 250000, precio_dia_fin_semana: 320000, tarifa_limpieza: 40000,
+    por_persona: { incluidas: 40, extra: 5000 },
+    horario_dia: { desde: '10:00', hasta: '20:00' },
+    temporadas: [{ nombre: 'Fiestas Patrias', desde: '09-16', hasta: '09-20', precio_dia: 400000 }],
+    capacidad: 80, dormitorios: 5, banos: 3, min_noches: 1,
+    amenities: ['estacionamiento', 'piscina', 'quincho', 'mascotas', 'agua_potable', 'terraza'],
+    descripcion: 'Una hectárea a 40 minutos de Santiago, junto a la Viña Concha y Toro. Piscina, gran quincho techado con parrillas, mesas para 80 personas y canchas de pasto. Ideal para cumpleaños, matrimonios, paseos de empresa y celebraciones familiares.',
     fotos: [],
-    ocupado: [{ desde: '2026-12-31', hasta: '2027-01-02' }],
+    ocupado: [{ desde: '2026-12-05', hasta: '2026-12-06' }, { desde: '2026-12-19', hasta: '2026-12-20' }],
+  },
+  {
+    id: 'parcela-talagante-eventos',
+    modalidad: 'dia',
+    titulo: 'Parcela con piscina y áreas verdes para día de piscina en Talagante',
+    tipo: 'parcela', region: 'Metropolitana de Santiago', comuna: 'Talagante', lat: -33.6650, lng: -70.9300,
+    superficie_m2: 5000,
+    precio_dia: 150000, precio_dia_fin_semana: 190000, tarifa_limpieza: 25000,
+    por_persona: { incluidas: 25, extra: 4000 },
+    horario_dia: { desde: '11:00', hasta: '20:00' },
+    capacidad: 50, dormitorios: 0, banos: 2, min_noches: 1,
+    amenities: ['estacionamiento', 'piscina', 'quincho', 'terraza', 'agua_potable'],
+    descripcion: 'Media hectárea con piscina, quincho equipado y amplias áreas verdes con sombra. Perfecta para un día de piscina con la familia, cumpleaños o asados con amigos. Baños y estacionamiento para 15 autos.',
+    fotos: [],
+    ocupado: [{ desde: '2026-11-28', hasta: '2026-11-29' }],
   },
   {
     id: 'casa-la-serena-playa',

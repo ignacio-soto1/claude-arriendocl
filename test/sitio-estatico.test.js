@@ -27,7 +27,10 @@ test('cada propiedad del catálogo tiene datos válidos', () => {
     assert.ok(p.titulo && p.descripcion && p.region && p.comuna, `${ctx}: faltan textos`);
     // Chile continental + insular aproximado
     assert.ok(p.lat < -17 && p.lat > -56 && p.lng < -66 && p.lng > -110, `${ctx}: coordenadas fuera de Chile`);
-    for (const k of ['precio_noche', 'capacidad', 'dormitorios', 'banos', 'min_noches']) {
+    assert.ok(!p.modalidad || C.MODALIDADES[p.modalidad], `${ctx}: modalidad inválida`);
+    const precios = C.esDia(p) ? ['precio_dia'] : ['precio_noche'];
+    if (C.esDia(p)) assert.ok(p.horario_dia && p.horario_dia.desde && p.horario_dia.hasta, `${ctx}: falta horario_dia`);
+    for (const k of [...precios, 'capacidad', 'dormitorios', 'banos', 'min_noches']) {
       assert.ok(Number.isInteger(p[k]) && p[k] >= 0, `${ctx}: ${k} inválido`);
     }
     for (const a of p.amenities || []) assert.ok(C.COMODIDADES[a], `${ctx}: comodidad desconocida "${a}"`);
@@ -69,13 +72,15 @@ test('filtrar por región, tipo, huéspedes, precio, texto sin tildes y fechas',
   assert.ok(C.filtrar(todas, { tipo: 'parcela' }).every((p) => p.tipo === 'parcela'));
   assert.ok(C.filtrar(todas, { region: 'Coquimbo' }).every((p) => p.region === 'Coquimbo'));
   assert.ok(C.filtrar(todas, { huespedes: 8 }).every((p) => p.capacidad >= 8));
-  assert.ok(C.filtrar(todas, { precio_max: 50000 }).every((p) => p.precio_noche <= 50000));
+  assert.ok(C.filtrar(todas, { precio_max: 50000 }).every((p) => C.precioBase(p) <= 50000));
+  assert.ok(C.filtrar(todas, { modo: 'dia' }).length >= 2 && C.filtrar(todas, { modo: 'dia' }).every(C.esDia));
+  assert.ok(C.filtrar(todas, { modo: 'noche' }).every((p) => !C.esDia(p)));
   assert.ok(C.filtrar(todas, { texto: 'pucon' }).some((p) => p.comuna === 'Pucón'), 'buscar sin tilde');
   assert.ok(C.filtrar(todas, { texto: 'tinaja' }).length >= 2);
   const pucon = todas.find((p) => p.comuna === 'Pucón');
   const o = pucon.ocupado[0];
   assert.ok(!C.filtrar(todas, { llegada: o.desde, salida: C.sumarDias(o.desde, 3) }).includes(pucon));
-  const precios = C.filtrar(todas, { orden: 'precio_asc' }).map((p) => p.precio_noche);
+  const precios = C.filtrar(todas, { orden: 'precio_asc' }).map(C.precioBase);
   assert.deepEqual(precios, [...precios].sort((a, b) => a - b));
   const lats = C.filtrar(todas, { orden: 'norte_sur' }).map((p) => p.lat);
   assert.deepEqual(lats, [...lats].sort((a, b) => b - a));
@@ -108,6 +113,18 @@ test('condiciones: generales + propiedad, con regla de mascotas', () => {
   assert.equal(c.salida, '12:00');
   assert.deepEqual(c.reglas, ['Se aceptan mascotas (avísanos al reservar).', 'Sin fiestas']);
   assert.match(C.condiciones({ amenities: [] }, {}).reglas[0], /No se aceptan mascotas/);
+});
+
+test('eventos de día: precio por día, fin de semana, personas adicionales y disponibilidad', () => {
+  const p = { modalidad: 'dia', precio_dia: 200000, precio_dia_fin_semana: 260000, tarifa_limpieza: 30000, capacidad: 60,
+    por_persona: { incluidas: 40, extra: 5000 }, ocupado: [{ desde: '2026-12-05', hasta: '2026-12-06' }] };
+  const q = C.cotizarDia(p, '2026-12-12', 50); // sábado
+  assert.deepEqual([q.precio, q.etiqueta, q.adicionales, q.extra, q.total], [260000, 'Fin de semana', 10, 50000, 340000]);
+  assert.equal(C.cotizarDia(p, '2026-12-09', 30).total, 230000); // miércoles, sin adicionales
+  assert.match(C.validarDia(p, { fecha: '2026-12-05' }, '2026-11-15').error, /ya está reservado/);
+  assert.match(C.validarDia(p, { fecha: '2026-12-12', asistentes: 70 }, '2026-11-15').error, /Capacidad máxima: 60/);
+  assert.equal(C.validarDia(p, { fecha: '2026-12-12', asistentes: 50 }, '2026-11-15').ok, true);
+  assert.equal(C.condiciones(p, { alojamiento: { llegada: '15:00' }, eventos: { garantia: 'G' } }).garantia, 'G');
 });
 
 test('total con tarjeta: 7% sobre transferencia, redondeado a la luca', () => {

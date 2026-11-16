@@ -52,11 +52,47 @@
 
   // Precio de una noche: temporada > fin de semana (noches de viernes y sábado) > precio normal.
   function precioNoche(p, fecha) {
-    const t = (p.temporadas || []).find((x) => enTemporada(fecha, x));
+    const t = (p.temporadas || []).find((x) => x.precio_noche && enTemporada(fecha, x));
     if (t) return { precio: t.precio_noche, etiqueta: t.nombre };
     const dia = new Date(fecha + 'T00:00:00Z').getUTCDay();
     if (p.precio_fin_semana && (dia === 5 || dia === 6)) return { precio: p.precio_fin_semana, etiqueta: 'Fin de semana' };
     return { precio: p.precio_noche, etiqueta: 'Normal' };
+  }
+
+  // ---- Arriendo por día (eventos) ----
+  const MODALIDADES = { noche: 'Alojamiento', dia: 'Eventos de día' };
+  const esDia = (p) => p.modalidad === 'dia';
+  const precioBase = (p) => (esDia(p) ? p.precio_dia : p.precio_noche); // precio "desde" que se muestra
+  const unidad = (p) => (esDia(p) ? 'día' : 'noche');
+
+  // Precio del arriendo de un día: temporada > fin de semana (sábado y domingo) > normal.
+  function precioDia(p, fecha) {
+    const t = (p.temporadas || []).find((x) => x.precio_dia && enTemporada(fecha, x));
+    if (t) return { precio: t.precio_dia, etiqueta: t.nombre };
+    const dia = new Date(fecha + 'T00:00:00Z').getUTCDay();
+    if (p.precio_dia_fin_semana && (dia === 0 || dia === 6)) return { precio: p.precio_dia_fin_semana, etiqueta: 'Fin de semana' };
+    return { precio: p.precio_dia, etiqueta: 'Normal' };
+  }
+
+  // Cotización de un evento de día. por_persona (opcional): { incluidas, extra } cobra cada asistente sobre "incluidas".
+  function cotizarDia(p, fecha, asistentes) {
+    if (!esFecha(fecha)) return null;
+    const { precio, etiqueta } = precioDia(p, fecha);
+    const pp = p.por_persona;
+    const adicionales = pp && asistentes ? Math.max(0, asistentes - pp.incluidas) : 0;
+    const extra = adicionales * (pp ? pp.extra : 0);
+    const limpieza = p.tarifa_limpieza || 0;
+    return { dias: 1, precio, etiqueta, adicionales, extra, limpieza, subtotal: precio + extra, total: precio + extra + limpieza };
+  }
+
+  function validarDia(p, { fecha, asistentes }, hoy = hoyChile()) {
+    if (!fecha) return { ok: false };
+    if (!esFecha(fecha)) return { ok: false, error: 'Fecha no válida.' };
+    if (fecha < hoy) return { ok: false, error: 'La fecha no puede ser en el pasado.' };
+    const q = cotizarDia(p, fecha, asistentes);
+    if (!disponible(p, fecha, sumarDias(fecha, 1))) return { ok: false, error: 'Ese día ya está reservado. Prueba con otro o pregúntanos por WhatsApp.', cotizacion: q };
+    if (asistentes && asistentes > p.capacidad) return { ok: false, error: `Capacidad máxima: ${p.capacidad} personas.`, cotizacion: q };
+    return { ok: true, cotizacion: q };
   }
 
   // Cotización noche a noche. detalle agrupa las noches por precio: [{ etiqueta, precio, noches }].
@@ -76,8 +112,10 @@
   }
 
   // Condiciones de la propiedad: las generales de CONFIG con lo propio de cada propiedad encima.
+  // generales puede traer { alojamiento: {...}, eventos: {...} } o un solo objeto (compatibilidad).
   function condiciones(p, generales = {}) {
-    const c = Object.assign({}, generales, p.condiciones || {});
+    const base = generales.alojamiento || generales.eventos ? (esDia(p) ? generales.eventos : generales.alojamiento) || {} : generales;
+    const c = Object.assign({}, base, p.condiciones || {});
     const reglas = [...(c.reglas || [])];
     reglas.unshift((p.amenities || []).includes('mascotas') ? 'Se aceptan mascotas (avísanos al reservar).' : 'No se aceptan mascotas.');
     return { ...c, reglas };
@@ -106,22 +144,26 @@
     const conFechas = esFecha(f.llegada) && esFecha(f.salida) && f.llegada < f.salida;
     const n = conFechas ? noches(f.llegada, f.salida) : null;
     const out = lista.filter((p) => {
+      if (f.modo && (p.modalidad || 'noche') !== f.modo) return false;
       if (f.region && p.region !== f.region) return false;
       if (f.comuna && p.comuna !== f.comuna) return false;
       if (f.tipo && p.tipo !== f.tipo) return false;
       if (f.huespedes && p.capacidad < f.huespedes) return false;
-      if (f.precio_max && p.precio_noche > f.precio_max) return false;
-      if (conFechas && (!disponible(p, f.llegada, f.salida) || p.min_noches > n)) return false;
+      if (f.precio_max && precioBase(p) > f.precio_max) return false;
+      if (esDia(p)) {
+        // Evento de día: basta con que el día de llegada esté libre
+        if (esFecha(f.llegada) && !disponible(p, f.llegada, sumarDias(f.llegada, 1))) return false;
+      } else if (conFechas && (!disponible(p, f.llegada, f.salida) || p.min_noches > n)) return false;
       if (texto) {
-        const hay = normalizar([p.titulo, p.descripcion, p.comuna, p.region, TIPOS[p.tipo],
+        const hay = normalizar([p.titulo, p.descripcion, p.comuna, p.region, TIPOS[p.tipo], MODALIDADES[p.modalidad || 'noche'],
           ...(p.amenities || []).map((a) => COMODIDADES[a])].join(' '));
         if (!texto.split(/\s+/).every((t) => hay.includes(t))) return false;
       }
       return true;
     });
     const orden = {
-      precio_asc: (a, b) => a.precio_noche - b.precio_noche,
-      precio_desc: (a, b) => b.precio_noche - a.precio_noche,
+      precio_asc: (a, b) => precioBase(a) - precioBase(b),
+      precio_desc: (a, b) => precioBase(b) - precioBase(a),
       norte_sur: (a, b) => b.lat - a.lat,
     }[f.orden];
     return orden ? out.sort(orden) : out;
@@ -168,7 +210,7 @@
   }
 
   return {
-    TIPOS, ICONOS, COMODIDADES, ORDENES,
+    TIPOS, ICONOS, COMODIDADES, ORDENES, MODALIDADES, esDia, precioBase, unidad, precioDia, cotizarDia, validarDia,
     formatCLP, formatFecha, hoyChile, esFecha, noches, seSolapan, disponible, cotizar, validarReserva,
     filtrar, regiones, superficie, precioCorto, sumarDias, normalizar, totalTarjeta, precioNoche, enTemporada, condiciones,
   };

@@ -15,11 +15,20 @@ window.CONFIG = {
   // Condiciones generales de reserva (cada propiedad puede cambiar alguna en su campo "condiciones").
   // ⚠️ Revisa y ajusta estos textos: son las reglas que verán tus huéspedes.
   condiciones: {
-    llegada: '15:00',
-    salida: '12:00',
-    cancelacion: 'Cancelación sin costo hasta 7 días antes de la llegada. Después, se retiene el 50% del total.',
-    garantia: 'Puede pedirse una garantía reembolsable al llegar, que se devuelve al revisar la propiedad.',
-    reglas: ['No se permiten fiestas ni eventos sin autorización.', 'Silencio desde las 23:00.', 'No fumar dentro de la propiedad.'],
+    // Alojamiento (arriendo por noche)
+    alojamiento: {
+      llegada: '15:00',
+      salida: '12:00',
+      cancelacion: 'Cancelación sin costo hasta 7 días antes de la llegada. Después, se retiene el 50% del total.',
+      garantia: 'Puede pedirse una garantía reembolsable al llegar, que se devuelve al revisar la propiedad.',
+      reglas: ['No se permiten fiestas ni eventos sin autorización.', 'Silencio desde las 23:00.', 'No fumar dentro de la propiedad.'],
+    },
+    // Eventos de día (el horario sale de horario_dia de cada propiedad)
+    eventos: {
+      cancelacion: 'Cancelación sin costo hasta 14 días antes del evento. Después, se retiene el 50% del total.',
+      garantia: 'Se pide una garantía reembolsable para cubrir daños, que se devuelve después de revisar el lugar.',
+      reglas: ['Música hasta el término del horario contratado.', 'Uso de piscina bajo responsabilidad de los adultos a cargo.', 'Retirar la basura y dejar el quincho limpio al terminar.'],
+    },
   },
   // Mapa base: 'osm' (OpenStreetMap) o 'contorno' (dibujo de Chile incluido en el sitio, sin conexión externa).
   mapaBase: 'osm',

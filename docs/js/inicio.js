@@ -30,11 +30,22 @@
   }
 
   // Estado ⇄ URL (para compartir una búsqueda)
-  const CAMPOS = ['region', 'comuna', 'tipo', 'llegada', 'salida', 'huespedes', 'precio_max', 'texto', 'orden'];
+  const CAMPOS = ['modo', 'region', 'comuna', 'tipo', 'llegada', 'salida', 'huespedes', 'precio_max', 'texto', 'orden'];
+
+  // En "Eventos de día" se busca un solo día y por cantidad de personas.
+  function ajustarModo() {
+    const dia = form.modo.value === 'dia';
+    form.querySelector('[data-etq="llegada"]').textContent = dia ? 'Fecha' : 'Llegada';
+    form.querySelector('[data-etq="huespedes"]').textContent = dia ? 'Personas' : 'Huéspedes';
+    form.querySelector('[data-campo="salida"]').hidden = dia;
+    if (dia) form.salida.value = '';
+  }
   function leerURL() {
     const q = new URLSearchParams(location.search);
     form.region.value = q.get('region') || '';
     llenarComunas(form.region.value, q.get('comuna'));
+    form.modo.value = C.MODALIDADES[q.get('modo')] ? q.get('modo') : '';
+    ajustarModo();
     for (const k of ['tipo', 'llegada', 'salida', 'huespedes', 'precio_max', 'texto', 'orden']) {
       if (q.has(k)) form[k].value = q.get(k);
     }
@@ -62,14 +73,16 @@
   const enlace = UI.enlaceFicha;
 
   function tarjeta(p, f) {
-    const q = f.llegada && f.salida ? C.cotizar(p, f.llegada, f.salida) : null;
+    const dia = C.esDia(p);
+    const q = dia ? (f.llegada ? C.cotizarDia(p, f.llegada, f.huespedes) : null)
+      : (f.llegada && f.salida ? C.cotizar(p, f.llegada, f.salida) : null);
     return `<a class="card" href="${esc(enlace(p, f))}" data-id="${esc(p.id)}">
-      <div class="card-img">${foto(p)}<span class="tag">${esc(C.TIPOS[p.tipo])}</span></div>
+      <div class="card-img">${foto(p)}<span class="tag">${esc(C.TIPOS[p.tipo])}</span>${dia ? '<span class="tag tag-dia">Eventos de día</span>' : ''}</div>
       <div class="card-body">
         <div><strong>${esc(p.comuna)}</strong> <span class="muted small">· ${esc(p.region)}</span></div>
         <div class="muted small titulo">${esc(p.titulo)}</div>
-        <div class="muted small">${p.capacidad} huéspedes · ${p.dormitorios} dorm.${p.tipo === 'parcela' && p.superficie_m2 ? ' · ' + esc(C.superficie(p.superficie_m2)) : ''}</div>
-        <div><strong>${esc(C.formatCLP(p.precio_noche))}</strong> <span class="muted">noche</span>${q ? ` <span class="muted small">· ${esc(C.formatCLP(q.total))} total</span>` : ''}</div>
+        <div class="muted small">${dia ? `Hasta ${p.capacidad} personas · ${esc(p.horario_dia.desde)} a ${esc(p.horario_dia.hasta)}` : `${p.capacidad} huéspedes · ${p.dormitorios} dorm.`}${p.tipo === 'parcela' && p.superficie_m2 ? ' · ' + esc(C.superficie(p.superficie_m2)) : ''}</div>
+        <div><strong>${esc(C.formatCLP(C.precioBase(p)))}</strong> <span class="muted">${C.unidad(p)}</span>${q ? ` <span class="muted small">· ${esc(C.formatCLP(q.total))} total</span>` : ''}</div>
       </div></a>`;
   }
 
@@ -78,7 +91,7 @@
       <div class="popup-img">${foto(p)}</div>
       <strong>${esc(p.titulo)}</strong>
       <span>${esc(C.TIPOS[p.tipo])} · ${esc(p.comuna)}</span>
-      <span><b>${esc(C.formatCLP(p.precio_noche))}</b> noche</span></a>`;
+      <span><b>${esc(C.formatCLP(C.precioBase(p)))}</b> ${C.unidad(p)}</span></a>`;
   }
 
   let primeraVez = true;
@@ -92,7 +105,8 @@
     const res = C.filtrar(TODAS, f);
     const lugar = f.comuna || f.region;
     conteo.textContent = `${res.length} ${res.length === 1 ? 'propiedad' : 'propiedades'}${lugar ? ` en ${lugar}` : ''}` +
-      (f.llegada && f.salida ? ` disponibles del ${C.formatFecha(f.llegada)} al ${C.formatFecha(f.salida)}` : '');
+      (f.modo === 'dia' && f.llegada ? ` disponibles el ${C.formatFecha(f.llegada)}`
+        : f.llegada && f.salida ? ` disponibles del ${C.formatFecha(f.llegada)} al ${C.formatFecha(f.salida)}` : '');
     lista.innerHTML = res.length ? res.map((p) => tarjeta(p, f)).join('')
       : '<p class="empty">No encontramos propiedades con esos filtros. Prueba con otras fechas o amplía la zona.</p>';
 
@@ -100,7 +114,7 @@
     marcadores.clear();
     for (const p of res) {
       const m = L.marker([p.lat, p.lng], {
-        icon: L.divIcon({ className: 'pin', html: `<span>${esc(C.precioCorto(p.precio_noche))}</span>`, iconSize: null }),
+        icon: L.divIcon({ className: 'pin', html: `<span>${esc(C.precioCorto(C.precioBase(p)))}</span>`, iconSize: null }),
         title: p.titulo, riseOnHover: true,
       }).bindPopup(popup(p, f), { maxWidth: 240, minWidth: 220 });
       m.addTo(capa);
@@ -121,15 +135,16 @@
   lista.addEventListener('mouseleave', () => marcadores.forEach((m) => m.getElement()?.classList.remove('activo')));
 
   form.region.addEventListener('change', () => llenarComunas(form.region.value, ''));
+  form.querySelectorAll('input[name="modo"]').forEach((r) => r.addEventListener('change', ajustarModo));
   form.llegada.addEventListener('change', () => {
     if (!form.llegada.value) return;
     form.salida.min = C.sumarDias(form.llegada.value, 1);
-    if (!form.salida.value || form.salida.value <= form.llegada.value) form.salida.value = C.sumarDias(form.llegada.value, 2);
+    if (form.modo.value !== 'dia' && (!form.salida.value || form.salida.value <= form.llegada.value)) form.salida.value = C.sumarDias(form.llegada.value, 2);
   });
   form.addEventListener('input', render);
   form.addEventListener('change', render);
   form.addEventListener('submit', (e) => e.preventDefault());
-  form.addEventListener('reset', () => setTimeout(() => { llenarComunas('', ''); form.orden.value = 'recomendadas'; render(); }));
+  form.addEventListener('reset', () => setTimeout(() => { llenarComunas('', ''); form.orden.value = 'recomendadas'; ajustarModo(); render(); }));
 
   // "Más filtros" en pantallas angostas (se abre solo si ya hay filtros secundarios activos)
   const btnMas = form.querySelector('.mas-filtros');
@@ -160,7 +175,7 @@
     const campo = (k) => formPub.elements[k].value.trim();
     const actualizarPub = () => {
       const datos = {
-        marca: window.CONFIG.marca, nombre: campo('nombre'), tipo: campo('tipo'), ubicacion: campo('ubicacion'),
+        marca: window.CONFIG.marca, nombre: campo('nombre'), tipo: campo('tipo'), uso: campo('uso'), ubicacion: campo('ubicacion'),
         capacidad: Number(campo('capacidad')) || null,
         precio: Number(campo('precio').replace(/\D/g, '')) || null,
         comentarios: campo('comentarios'),

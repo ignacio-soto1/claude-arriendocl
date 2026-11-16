@@ -12,11 +12,18 @@
   const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
 
   // d: { marca, titulo, tipo, comuna, region, url, llegada?, salida?, noches?, huespedes?,
-  //      precio_noche?, detalle?, limpieza?, total?, total_tarjeta?, pago?, horario?, nombre? }
+  //      precio_noche?, detalle?, limpieza?, total?, total_tarjeta?, pago?, horario?, nombre?,
+  //      modalidad?: 'dia', fecha?, asistentes?, evento?, precio_dia?, etiqueta?, adicionales?, extra_persona? }
   function mensajeReserva(d) {
     // Sin emojis: el enlace de WhatsApp en iPhone los muestra como un signo de reemplazo.
-    const l = [`Hola ${d.marca}, quiero reservar:`, '', `*${d.titulo}*`, `${d.tipo} en ${d.comuna}, ${d.region}`, ''];
-    if (d.llegada && d.salida) {
+    const dia = d.modalidad === 'dia';
+    const l = [`Hola ${d.marca}, quiero reservar${dia ? ' para un evento de día' : ''}:`, '', `*${d.titulo}*`, `${d.tipo} en ${d.comuna}, ${d.region}`, ''];
+    if (dia) {
+      l.push(d.fecha ? `*Fecha:* ${fmtFecha(d.fecha)}` : '*Fecha:* por definir');
+      if (d.horario) l.push(`*Horario:* ${d.horario}`);
+      if (d.asistentes) l.push(`*Asistentes:* ${d.asistentes}`);
+      if (d.evento) l.push(`*Tipo de evento:* ${d.evento}`);
+    } else if (d.llegada && d.salida) {
       l.push(`*Llegada:* ${fmtFecha(d.llegada)}`, `*Salida:* ${fmtFecha(d.salida)}`);
       if (d.noches) l.push(`*Noches:* ${d.noches}`);
       if (d.huespedes) l.push(`*Huéspedes:* ${d.huespedes}`);
@@ -27,7 +34,10 @@
     }
     if (d.total) {
       l.push('', '*Resumen del precio*');
-      if (d.detalle && d.detalle.length) {
+      if (dia) {
+        l.push(`Arriendo del día${d.etiqueta && d.etiqueta !== 'Normal' ? ` (${d.etiqueta.toLowerCase()})` : ''}: ${clp.format(d.precio_dia)}`);
+        if (d.adicionales) l.push(`${plural(d.adicionales, 'persona adicional', 'personas adicionales')} × ${clp.format(d.extra_persona)} = ${clp.format(d.adicionales * d.extra_persona)}`);
+      } else if (d.detalle && d.detalle.length) {
         // Desglose por tipo de noche (temporada, fin de semana, normal)
         const varios = d.detalle.length > 1 || d.detalle[0].etiqueta !== 'Normal';
         for (const g of d.detalle) {
@@ -55,9 +65,10 @@
     const l = [`Hola ${d.marca}, quiero publicar mi propiedad:`, ''];
     if (d.nombre) l.push(`*Nombre:* ${d.nombre}`);
     if (d.tipo) l.push(`*Tipo:* ${d.tipo}`);
+    if (d.uso) l.push(`*Para:* ${d.uso}`);
     if (d.ubicacion) l.push(`*Ubicación:* ${d.ubicacion}`);
     if (d.capacidad) l.push(`*Capacidad:* ${d.capacidad} ${d.capacidad === 1 ? 'persona' : 'personas'}`);
-    if (d.precio) l.push(`*Precio por noche que espero:* ${clp.format(d.precio)}`);
+    if (d.precio) l.push(`*Precio que espero:* ${clp.format(d.precio)}`);
     if (d.comentarios) l.push(`*Lo que ofrece:* ${d.comentarios}`);
     l.push('', '¿Cómo seguimos?');
     return l.join('\n');

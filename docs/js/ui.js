@@ -71,7 +71,7 @@
         <a href="${esc(ig)}" target="_blank" rel="noopener" class="icon-link">${IG_ICON}<span>@${esc(CFG.instagram)}</span></a>
       </nav>`;
     document.querySelector('footer.bottom').innerHTML = `
-      <p>${esc(CFG.marca)} · Arriendos por noche de Arica a Magallanes. Precios en pesos chilenos (CLP).</p>
+      <p>${esc(CFG.marca)} · Alojamiento y parcelas para eventos de día, de Arica a Magallanes. Precios en pesos chilenos (CLP).</p>
       <p><a href="${esc(ig)}" target="_blank" rel="noopener">Instagram @${esc(CFG.instagram)}</a> ·
          <a href="${esc(wa)}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> ·
          <a href="${publica}">Publica tu propiedad con nosotros</a></p>`;
@@ -99,7 +99,8 @@
   function enlaceFicha(p, f = {}) {
     if (CFG.unaPagina) return `#p-${p.id}`;
     const q = new URLSearchParams({ id: p.id });
-    if (f.llegada && f.salida) { q.set('llegada', f.llegada); q.set('salida', f.salida); }
+    if (p.modalidad === 'dia' && f.llegada) q.set('fecha', f.llegada);
+    else if (f.llegada && f.salida) { q.set('llegada', f.llegada); q.set('salida', f.salida); }
     if (f.huespedes) q.set('huespedes', f.huespedes);
     return `propiedad.html?${q}`;
   }

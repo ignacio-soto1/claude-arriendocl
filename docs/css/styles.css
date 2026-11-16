@@ -318,3 +318,17 @@ legend { font-weight: 700; padding: 0 6px; }
 .resena p { margin: 0 0 8px; }
 .resena footer { font-size: .85rem; color: var(--muted); }
 .estrellas { color: var(--gold); letter-spacing: .1em; }
+
+/* Selector Alojamiento / Eventos de día */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.modos { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; border: 0; padding: 0; margin: 0 0 4px; background: none; }
+.modos label { flex-direction: row; }
+.modos input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.modos span { display: inline-block; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface);
+  color: var(--text); font-weight: 600; font-size: .9rem; cursor: pointer; }
+.modos input:checked + span { background: var(--navy); color: var(--bg); border-color: var(--navy); }
+.modos input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 2px; }
+.tag-dia { left: auto; right: 10px; background: var(--gold); color: #13293a; }
+
+.pill-dia { display: inline-block; background: var(--gold); color: #13293a; font-size: .72rem; font-weight: 700; letter-spacing: .05em;
+  text-transform: uppercase; padding: 2px 8px; border-radius: 999px; vertical-align: 1px; }

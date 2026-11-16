@@ -16,7 +16,7 @@
   <meta property="og:description" content="Parcelas, departamentos y cabañas para arrendar en todo Chile. Reserva directo por WhatsApp.">
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="css/styles.css?v=202611160234">
+  <link rel="stylesheet" href="css/styles.css?v=202611160238">
 </head>
 <body class="inicio">
 <header class="top"></header>
@@ -24,7 +24,7 @@
   <div class="hero-inner">
     <div id="hero-logo"></div>
     <h1>¡Los mejores panoramas se viven al aire libre!</h1>
-    <p>Parcelas, cabañas y departamentos para arrendar en Chile. Elige tus fechas y reserva directo por WhatsApp.</p>
+    <p>Alojamiento y parcelas para eventos y días de piscina en Chile. Elige tu fecha y reserva directo por WhatsApp.</p>
     <ul class="destacados">
       <li><span data-icono="piscina"></span>Piscina</li>
       <li><span data-icono="quincho"></span>Quincho equipado</li>
@@ -36,14 +36,20 @@
 <main>
 
   <form class="search" id="filtros" role="search">
+    <fieldset class="modos">
+      <legend class="sr">Tipo de arriendo</legend>
+      <label><input type="radio" name="modo" value="" checked><span>Todos</span></label>
+      <label><input type="radio" name="modo" value="noche"><span>Alojamiento</span></label>
+      <label><input type="radio" name="modo" value="dia"><span>Eventos de día</span></label>
+    </fieldset>
     <label>Región <select name="region"><option value="">Todo Chile</option></select></label>
     <label>Comuna <select name="comuna"><option value="">Todas</option></select></label>
     <label>Tipo <select name="tipo"><option value="">Todos</option></select></label>
-    <label>Llegada <input type="date" name="llegada" data-llegada></label>
-    <label>Salida <input type="date" name="salida" data-salida></label>
+    <label><span data-etq="llegada">Llegada</span> <input type="date" name="llegada" data-llegada></label>
+    <label data-campo="salida">Salida <input type="date" name="salida" data-salida></label>
     <button type="button" class="btn ghost mas-filtros" aria-expanded="false" aria-controls="filtros">Más filtros</button>
-    <label class="extra">Huéspedes <input type="number" name="huespedes" min="1" max="50" placeholder="2"></label>
-    <label class="extra">Máx. por noche <select name="precio_max">
+    <label class="extra"><span data-etq="huespedes">Huéspedes</span> <input type="number" name="huespedes" min="1" max="50" placeholder="2"></label>
+    <label class="extra">Precio máximo <select name="precio_max">
       <option value="">Sin límite</option><option value="50000">$50.000</option><option value="75000">$75.000</option>
       <option value="100000">$100.000</option><option value="150000">$150.000</option></select></label>
     <label class="grow extra">Buscar <input type="search" name="texto" placeholder="tinaja, lago, playa…"></label>
@@ -65,7 +71,7 @@
     <div class="publica-texto">
       <span class="publica-icono" data-icono="publicar"></span>
       <h2 id="publica-titulo">Publica con nosotros</h2>
-      <p>¿Tienes una parcela, cabaña, casa o departamento? Lo mostramos en este sitio y en Instagram @arriendoencl, y te llegan las reservas con fechas y precio ya calculados.</p>
+      <p>¿Tienes una parcela, cabaña, casa o departamento, para alojamiento o para eventos de día? Lo mostramos en este sitio y en Instagram @arriendoencl, y te llegan las reservas con fechas y precio ya calculados.</p>
       <ol class="publica-pasos">
         <li><strong>Cuéntanos de tu propiedad</strong> con este formulario.</li>
         <li><strong>Coordinamos por WhatsApp</strong> fotos, precio y disponibilidad.</li>
@@ -83,8 +89,13 @@
         </label>
         <label>Capacidad <input type="number" name="capacidad" id="pub-capacidad" min="1" max="50" placeholder="Personas"></label>
       </div>
+      <label>¿Para qué la arriendas?
+        <select name="uso" id="pub-uso">
+          <option>Alojamiento (por noche)</option><option>Eventos de día</option><option>Ambos</option>
+        </select>
+      </label>
       <label>Comuna o sector <input name="ubicacion" id="pub-ubicacion" placeholder="Ej: Peñaflor, Lago Rapel, Pucón"></label>
-      <label>Precio por noche que esperas (opcional) <input name="precio" id="pub-precio" inputmode="numeric" placeholder="Ej: 120.000"></label>
+      <label>Precio que esperas, por noche o por día (opcional) <input name="precio" id="pub-precio" inputmode="numeric" placeholder="Ej: 120.000"></label>
       <label>Lo que ofrece (opcional) <textarea name="comentarios" id="pub-comentarios" rows="3" placeholder="Piscina, quincho, tinaja, estacionamiento…"></textarea></label>
       <a class="btn block wa" id="btn-publica" target="_blank" rel="noopener"><span data-wa-icono></span> <span data-pub="btn">Enviar por WhatsApp</span></a>
       <p class="muted small center" data-pub="ayuda"></p>
@@ -93,12 +104,12 @@
 </main>
 <footer class="bottom"></footer>
 
-<script src="config.js?v=202611160234"></script>
-<script src="data/propiedades.js?v=202611160234"></script>
+<script src="config.js?v=202611160238"></script>
+<script src="data/propiedades.js?v=202611160238"></script>
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="js/catalogo.js?v=202611160234"></script>
-<script src="js/whatsapp.js?v=202611160234"></script>
-<script src="js/ui.js?v=202611160234"></script>
-<script src="js/inicio.js?v=202611160234"></script>
+<script src="js/catalogo.js?v=202611160238"></script>
+<script src="js/whatsapp.js?v=202611160238"></script>
+<script src="js/ui.js?v=202611160238"></script>
+<script src="js/inicio.js?v=202611160238"></script>
 </body>
 </html>

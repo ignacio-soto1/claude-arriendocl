@@ -14,11 +14,22 @@
     return `${location.origin}${location.pathname.replace(/[^/]*$/, '')}propiedad.html?id=${encodeURIComponent(p.id)}`;
   }
 
+  function seccionPreciosDia(p) {
+    const filas = [`<tr><td>Arriendo del día</td><td>${esc(C.formatCLP(p.precio_dia))}</td></tr>`];
+    if (p.precio_dia_fin_semana) filas.push(`<tr><td>Sábado y domingo</td><td>${esc(C.formatCLP(p.precio_dia_fin_semana))}</td></tr>`);
+    for (const t of p.temporadas || []) {
+      if (t.precio_dia) filas.push(`<tr><td>${esc(t.nombre)} <small>(${esc(diaMes(t.desde))} al ${esc(diaMes(t.hasta))})</small></td><td>${esc(C.formatCLP(t.precio_dia))}</td></tr>`);
+    }
+    const pp = p.por_persona;
+    return `<section><h2>Precios</h2><table class="tabla-precios">${filas.join('')}</table>
+      <p class="muted small">Horario de ${esc(p.horario_dia.desde)} a ${esc(p.horario_dia.hasta)}.${pp ? ` Incluye hasta ${pp.incluidas} personas; cada persona adicional, ${esc(C.formatCLP(pp.extra))}.` : ''}</p></section>`;
+  }
+
   function seccionPrecios(p) {
     const filas = [`<tr><td>Normal</td><td>${esc(C.formatCLP(p.precio_noche))}</td></tr>`];
     if (p.precio_fin_semana) filas.push(`<tr><td>Fin de semana <small>(noches de viernes y sábado)</small></td><td>${esc(C.formatCLP(p.precio_fin_semana))}</td></tr>`);
     for (const t of p.temporadas || []) {
-      filas.push(`<tr><td>${esc(t.nombre)} <small>(${esc(diaMes(t.desde))} al ${esc(diaMes(t.hasta))})</small></td><td>${esc(C.formatCLP(t.precio_noche))}</td></tr>`);
+      if (t.precio_noche) filas.push(`<tr><td>${esc(t.nombre)} <small>(${esc(diaMes(t.desde))} al ${esc(diaMes(t.hasta))})</small></td><td>${esc(C.formatCLP(t.precio_noche))}</td></tr>`);
     }
     if (filas.length === 1) return '';
     return `<section><h2>Precios por noche</h2><table class="tabla-precios">${filas.join('')}</table>
@@ -30,6 +41,7 @@
     if (cond.llegada || cond.salida) {
       items.push(`<li><strong>Horario:</strong> ${[cond.llegada && `llegada desde las ${esc(cond.llegada)}`, cond.salida && `salida hasta las ${esc(cond.salida)}`].filter(Boolean).join(', ')}.</li>`);
     }
+    if (cond.horarioDia) items.push(`<li><strong>Horario:</strong> ${esc(cond.horarioDia)}.</li>`);
     if (cond.cancelacion) items.push(`<li><strong>Cancelación:</strong> ${esc(cond.cancelacion)}</li>`);
     if (cond.garantia) items.push(`<li><strong>Garantía:</strong> ${esc(cond.garantia)}</li>`);
     for (const r of cond.reglas || []) items.push(`<li>${esc(r)}</li>`);
@@ -58,8 +70,11 @@
     const hoy = C.hoyChile();
     document.title = `${p.titulo} · ${CFG.marca}`;
     const conTarjeta = Number(CFG.recargoTarjeta) > 0;
+    const dia = C.esDia(p);
     const cond = C.condiciones(p, CFG.condiciones);
-    const variable = Boolean(p.precio_fin_semana || (p.temporadas || []).length);
+    if (dia) { cond.llegada = ''; cond.salida = ''; cond.horarioDia = `de ${p.horario_dia.desde} a ${p.horario_dia.hasta}`; }
+    const variable = Boolean(dia ? p.precio_dia_fin_semana || (p.temporadas || []).some((t) => t.precio_dia)
+      : p.precio_fin_semana || (p.temporadas || []).some((t) => t.precio_noche));
     const ocupado = (p.ocupado || []).filter((o) => o.hasta > hoy);
     const fotos = p.fotos || [];
     const galeria = fotos.length
@@ -76,7 +91,7 @@
       <div class="titulo-fila">
         <div>
           <h1>${esc(p.titulo)}</h1>
-          <p class="muted">${esc(C.TIPOS[p.tipo])} en ${esc(p.comuna)}, ${esc(p.region)}</p>
+          <p class="muted">${dia ? '<span class="pill-dia">Eventos de día</span> ' : ''}${esc(C.TIPOS[p.tipo])} en ${esc(p.comuna)}, ${esc(p.region)}</p>
         </div>
         <div class="compartir">
           <button type="button" class="btn ghost sm" id="btn-compartir">${UI.ICONOS_MARCA.compartir} <span>Compartir</span></button>
@@ -88,12 +103,15 @@
       ${p.credito_foto ? `<p class="credito">Foto referencial del destino: <a href="${esc(p.credito_foto.enlace)}" target="_blank" rel="noopener">${esc(p.credito_foto.autor)}</a>, ${esc(p.credito_foto.licencia)}, vía Wikimedia Commons.</p>` : ''}
       <div class="detalle-cols">
         <div>
-          <section class="facts">
+          <section class="facts">${dia ? `
+            <span>Hasta <strong>${p.capacidad}</strong> personas</span>
+            <span>Horario <strong>${esc(p.horario_dia.desde)} a ${esc(p.horario_dia.hasta)}</strong></span>
+            <span><strong>${p.banos}</strong> ${p.banos === 1 ? 'baño' : 'baños'}</span>` : `
             <span><strong>${p.capacidad}</strong> huéspedes</span>
             <span><strong>${p.dormitorios}</strong> ${p.dormitorios === 1 ? 'dormitorio' : 'dormitorios'}</span>
-            <span><strong>${p.banos}</strong> ${p.banos === 1 ? 'baño' : 'baños'}</span>
+            <span><strong>${p.banos}</strong> ${p.banos === 1 ? 'baño' : 'baños'}</span>`}
             ${p.superficie_m2 ? `<span><strong>${esc(C.superficie(p.superficie_m2))}</strong> ${p.tipo === 'parcela' ? 'de terreno' : 'construidos'}</span>` : ''}
-            <span>Mínimo <strong>${p.min_noches}</strong> ${p.min_noches === 1 ? 'noche' : 'noches'}</span>
+            ${dia ? '' : `<span>Mínimo <strong>${p.min_noches}</strong> ${p.min_noches === 1 ? 'noche' : 'noches'}</span>`}
           </section>
           <section><h2>Sobre este lugar</h2><p class="desc">${esc(p.descripcion)}</p></section>
           ${(p.amenities || []).length ? `<section><h2>Lo que ofrece</h2><ul class="amenities">${p.amenities.map((a) => `<li>${esc(C.COMODIDADES[a] || a)}</li>`).join('')}</ul></section>` : ''}
@@ -101,7 +119,7 @@
             <h2>Disponibilidad</h2>
             <div class="calendario" id="calendario"></div>
           </section>
-          ${seccionPrecios(p)}
+          ${dia ? seccionPreciosDia(p) : seccionPrecios(p)}
           ${seccionCondiciones(cond)}
           ${seccionResenas(p)}
           <section>
@@ -112,14 +130,20 @@
         </div>
 
         <aside class="reserva-box">
-          <p><strong class="precio">${esc(C.formatCLP(p.precio_noche))}</strong> <span class="muted">/ noche</span>
-            ${variable ? '<br><span class="muted small">Varía según temporada y fin de semana</span>' : ''}</p>
-          <form id="form-reserva">
+          <p><strong class="precio">${esc(C.formatCLP(C.precioBase(p)))}</strong> <span class="muted">/ ${C.unidad(p)}</span>
+            ${variable ? `<br><span class="muted small">Varía según ${dia ? 'fin de semana y temporada' : 'temporada y fin de semana'}</span>` : ''}</p>
+          <form id="form-reserva">${dia ? `
+            <div class="row2">
+              <label>Fecha del evento <input type="date" name="llegada" min="${hoy}"></label>
+              <label>Asistentes <input type="number" name="huespedes" min="1" max="${p.capacidad}" value="${p.por_persona ? p.por_persona.incluidas : 10}"></label>
+            </div>
+            <input type="hidden" name="salida">
+            <label>Tipo de evento (opcional) <input name="evento" maxlength="60" placeholder="Cumpleaños, matrimonio, día de piscina…"></label>` : `
             <div class="row2">
               <label>Llegada <input type="date" name="llegada" min="${hoy}"></label>
               <label>Salida <input type="date" name="salida" min="${C.sumarDias(hoy, 1)}"></label>
             </div>
-            <label>Huéspedes <input type="number" name="huespedes" min="1" max="${p.capacidad}" value="1"></label>
+            <label>Huéspedes <input type="number" name="huespedes" min="1" max="${p.capacidad}" value="1"></label>`}
             <div class="cotizacion" hidden>
               <div data-q="filas"></div>
               ${p.tarifa_limpieza ? `<div class="row between"><span>Limpieza</span><span>${esc(C.formatCLP(p.tarifa_limpieza))}</span></div>` : ''}
@@ -139,6 +163,7 @@
             <p class="aviso" data-q="aviso" hidden></p>
             <a class="btn block wa" id="btn-whatsapp" target="_blank" rel="noopener">${UI.WA_ICON} <span data-q="btn">Reservar por WhatsApp</span></a>
             <p class="muted small center" data-q="ayuda"></p>
+            ${dia ? `<p class="muted small center">Horario ${esc(cond.horarioDia)}</p>` : ''}
             ${cond.llegada || cond.salida ? `<p class="muted small center">Llegada desde ${esc(cond.llegada || '—')} · Salida hasta ${esc(cond.salida || '—')}</p>` : ''}
           </form>
         </aside>
@@ -152,7 +177,7 @@
     mapa.on('click', () => mapa.scrollWheelZoom.enable());
 
     // Compartir
-    const textoCompartir = `${p.titulo} en ${p.comuna}, desde ${C.formatCLP(p.precio_noche)} la noche`;
+    const textoCompartir = `${p.titulo} en ${p.comuna}, desde ${C.formatCLP(C.precioBase(p))} ${dia ? 'el día' : 'la noche'}`;
     const avisoCompartir = document.getElementById('compartir-aviso');
     document.getElementById('btn-amigo').href = `https://wa.me/?text=${encodeURIComponent(`Mira esta ${C.TIPOS[p.tipo].toLowerCase()}: ${textoCompartir}\n${url}`)}`;
     document.getElementById('btn-amigo').addEventListener('click', () => UI.contar('compartir-whatsapp', p.id));
@@ -178,17 +203,18 @@
     const $ = (k) => form.querySelector(`[data-q="${k}"]`);
     let avisoCalendario = '';
 
-    if (C.esFecha(q.get('llegada')) && q.get('llegada') >= hoy) form.llegada.value = q.get('llegada');
-    if (C.esFecha(q.get('salida'))) form.salida.value = q.get('salida');
+    if (dia && C.esFecha(q.get('fecha')) && q.get('fecha') >= hoy) { form.llegada.value = q.get('fecha'); form.salida.value = C.sumarDias(q.get('fecha'), 1); }
+    if (!dia && C.esFecha(q.get('llegada')) && q.get('llegada') >= hoy) form.llegada.value = q.get('llegada');
+    if (!dia && C.esFecha(q.get('salida'))) form.salida.value = q.get('salida');
     if (Number(q.get('huespedes'))) form.huespedes.value = Math.min(Number(q.get('huespedes')), p.capacidad);
 
     const calendario = window.Calendario.montar(document.getElementById('calendario'), {
-      hoy, ocupado, meses: window.matchMedia('(max-width: 600px)').matches ? 1 : 2,
+      hoy, ocupado, unDia: dia, meses: window.matchMedia('(max-width: 600px)').matches ? 1 : 2,
       alElegir(llegada, salida) {
         avisoCalendario = '';
         form.llegada.value = llegada;
         form.salida.value = salida;
-        if (llegada) form.salida.min = C.sumarDias(llegada, 1);
+        if (llegada && !dia) form.salida.min = C.sumarDias(llegada, 1);
         actualizar(false);
       },
       alAvisar(texto) { avisoCalendario = texto; actualizar(false); },
@@ -199,14 +225,20 @@
       const llegada = form.llegada.value;
       const salida = form.salida.value;
       const huespedes = Number(form.huespedes.value) || null;
-      const r = C.validarReserva(p, { llegada, salida, huespedes }, hoy);
+      if (dia) form.salida.value = llegada ? C.sumarDias(llegada, 1) : '';
+      const r = dia ? C.validarDia(p, { fecha: llegada, asistentes: huespedes }, hoy) : C.validarReserva(p, { llegada, salida, huespedes }, hoy);
       const cot = r.cotizacion;
       if (sincronizar) calendario.marcar(llegada, salida);
 
       box.hidden = !r.ok;
       if (r.ok) {
+        if (dia) {
+          $('filas').innerHTML = `<div class="row between"><span>Arriendo del día${cot.etiqueta !== 'Normal' ? ` <small>(${esc(cot.etiqueta.toLowerCase())})</small>` : ''}</span><span>${esc(C.formatCLP(cot.precio))}</span></div>`
+            + (cot.adicionales ? `<div class="row between"><span>${cot.adicionales} ${cot.adicionales === 1 ? 'persona adicional' : 'personas adicionales'} × ${esc(C.formatCLP(p.por_persona.extra))}</span><span>${esc(C.formatCLP(cot.extra))}</span></div>` : '');
+        } else {
         const varios = cot.detalle.length > 1 || cot.detalle[0].etiqueta !== 'Normal';
         $('filas').innerHTML = cot.detalle.map((g) => `<div class="row between"><span>${esc(C.formatCLP(g.precio))} × ${g.noches} ${g.noches === 1 ? 'noche' : 'noches'}${varios ? ` <small>(${esc(g.etiqueta.toLowerCase())})</small>` : ''}</span><span>${esc(C.formatCLP(g.precio * g.noches))}</span></div>`).join('');
+        }
         $('total').textContent = C.formatCLP(cot.total);
         if (conTarjeta) {
           const conT = C.totalTarjeta(cot.total, CFG.recargoTarjeta);
@@ -222,21 +254,24 @@
         marca: CFG.marca, titulo: p.titulo, tipo: C.TIPOS[p.tipo], comuna: p.comuna, region: p.region, url, huespedes,
       };
       // Incluye las fechas aunque no calcen (así pueden preguntar), y el total solo si es válido.
-      if (cot) Object.assign(datos, { llegada, salida, noches: cot.noches });
-      if (cot && (cond.llegada || cond.salida)) {
+      if (dia) {
+        Object.assign(datos, { modalidad: 'dia', fecha: llegada, asistentes: huespedes, evento: (form.evento.value || '').trim(), horario: cond.horarioDia });
+        if (r.ok) Object.assign(datos, { precio_dia: cot.precio, etiqueta: cot.etiqueta, adicionales: cot.adicionales, extra_persona: p.por_persona ? p.por_persona.extra : 0 });
+      } else if (cot) Object.assign(datos, { llegada, salida, noches: cot.noches });
+      if (!dia && cot && (cond.llegada || cond.salida)) {
         datos.horario = [cond.llegada && `llegada desde ${cond.llegada}`, cond.salida && `salida hasta ${cond.salida}`].filter(Boolean).join(', ');
       }
-      if (r.ok) Object.assign(datos, { detalle: cot.detalle, limpieza: cot.limpieza, total: cot.total });
+      if (r.ok) Object.assign(datos, { detalle: dia ? null : cot.detalle, limpieza: cot.limpieza, total: cot.total });
       if (r.ok && conTarjeta) datos.total_tarjeta = C.totalTarjeta(cot.total, CFG.recargoTarjeta);
       if (pago) datos.pago = pago === 'tarjeta' ? 'Tarjeta de crédito o débito (link de pago)' : 'Transferencia bancaria';
       btn.href = UI.waUrl(window.WhatsApp.mensajeReserva(datos));
 
       // Sin fechas, el botón lleva al calendario en vez de abrir WhatsApp.
-      const faltanFechas = !llegada || !salida;
+      const faltanFechas = !llegada || (!dia && !salida);
       btn.classList.toggle('pendiente', faltanFechas);
-      $('btn').textContent = faltanFechas ? 'Elige tus fechas para reservar' : (r.ok ? 'Reservar por WhatsApp' : 'Consultar por WhatsApp');
+      $('btn').textContent = faltanFechas ? (dia ? 'Elige la fecha de tu evento' : 'Elige tus fechas para reservar') : (r.ok ? 'Reservar por WhatsApp' : 'Consultar por WhatsApp');
       $('ayuda').textContent = faltanFechas
-        ? 'Elige llegada y salida en el calendario: te armamos el mensaje con las fechas y el precio.'
+        ? (dia ? 'Elige el día en el calendario: te armamos el mensaje con la fecha y el precio.' : 'Elige llegada y salida en el calendario: te armamos el mensaje con las fechas y el precio.')
         : 'Se abre WhatsApp con tu reserva ya escrita: fechas, propiedad y precio. Solo tienes que enviarla.';
     }
 
@@ -247,7 +282,7 @@
     });
 
     form.llegada.addEventListener('change', () => {
-      if (!form.llegada.value) return;
+      if (!form.llegada.value || dia) return;
       form.salida.min = C.sumarDias(form.llegada.value, 1);
       if (!form.salida.value || form.salida.value <= form.llegada.value) {
         form.salida.value = C.sumarDias(form.llegada.value, Math.max(p.min_noches, 1));

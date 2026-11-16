@@ -30,6 +30,7 @@ El mapa usa [Leaflet](https://leafletjs.com) (incluido en `docs/vendor/`) con ma
 | Ajustar el % extra con tarjeta | `docs/config.js` | `recargoTarjeta` (0 lo desactiva) |
 | Cambiar horarios, cancelación, garantía y reglas | `docs/config.js` | `condiciones` (y `condiciones` en una propiedad para excepciones) |
 | Precio de fin de semana o por temporada | `docs/data/propiedades.js` | `precio_fin_semana`, `temporadas` |
+| Publicar una parcela para eventos de día | `docs/data/propiedades.js` | `modalidad: 'dia'`, `precio_dia`, `precio_dia_fin_semana`, `horario_dia`, `por_persona` |
 | Marcar fechas reservadas | `docs/data/propiedades.js` | `ocupado` |
 | Agregar opiniones reales de huéspedes | `docs/data/propiedades.js` | `resenas` |
 
@@ -61,7 +62,7 @@ git clone https://github.com/ignacio-soto1/claude-arriendocl && cd claude-arrien
 npm install
 npm run seed      # crea data/arriendos.db con 12 propiedades de ejemplo
 WHATSAPP_RESERVAS="+56 9 1234 5678" npm start   # http://localhost:3000
-npm test          # 34 tests (app + sitio estático) (unitarios + flujo completo HTTP)
+npm test          # 35 tests (app + sitio estático) (unitarios + flujo completo HTTP)
 ```
 
 Usuarios de demo (contraseña `demo1234`):
