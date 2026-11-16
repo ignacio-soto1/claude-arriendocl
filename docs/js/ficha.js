@@ -328,7 +328,9 @@
           ? `<span><strong>${esc(fmt(tot))}</strong> <span class="muted">total</span></span><small>${esc(textoFechas)}</small>`
           : `<span><s>${esc(fmt(tot))}</s> <strong>${esc(fmt(cot.total))}</strong> <span class="muted">total</span></span><small>${esc(textoFechas)}</small>`;
       } else {
-        barraPrecio.innerHTML = `<span>${conTarjeta ? `<s>${esc(fmt(lista))}</s> ` : ''}<strong>${esc(fmt(base))}</strong> <span class="muted">${C.unidad(p)}</span></span><small>${esc(textoFechas)}</small>`;
+        barraPrecio.innerHTML = porTarjeta
+          ? `<span><strong>${esc(fmt(lista))}</strong> <span class="muted">${C.unidad(p)}</span></span><small>${esc(textoFechas)}</small>`
+          : `<span>${conTarjeta ? `<s>${esc(fmt(lista))}</s> ` : ''}<strong>${esc(fmt(base))}</strong> <span class="muted">${C.unidad(p)}</span></span><small>${esc(textoFechas)}</small>`;
       }
 
       const faltanFechas = !llegada || (!dia && !salida);

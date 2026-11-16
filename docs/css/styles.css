@@ -1,6 +1,6 @@
 /* Paleta de Arriendo en CL: azul piscina, turquesa, dorado de la llave y celeste del cielo */
 :root {
-  --bg: #f8f7f3; --surface: #fff; --text: #13293a; --muted: #5d6b76; --line: #e2e4e3;
+  --bg: #ffffff; --surface: #fff; --text: #13293a; --muted: #5d6b76; --line: #e2e4e3;
   --brand: #0e6ba8; --brand-ink: #fff; --brand-soft: #e2f0f8; --accent: #b98a1f;
   --gold: #d9a935; --aqua: #26ada4; --sky: #4aa8d8; --navy: #0f2a3d;
   --ok: #1f7a5a; --warn: #a86b00; --err: #b3261e; --radius: 14px;
@@ -441,3 +441,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   .compartir .btn { padding: 8px 10px; }
   .compartir .btn[id="btn-compartir"]::after { content: "Compartir"; }
 }
+
+.modos { flex-direction: row; }
+.modos label { flex: 0 0 auto; width: auto; display: inline-flex; }
+@media (max-width: 520px) { .modos { gap: 4px; flex-wrap: nowrap; } .modos span { padding: 7px 11px; font-size: .8rem; } }
