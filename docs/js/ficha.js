@@ -121,10 +121,6 @@
           </section>
           <section><h2>Sobre este lugar</h2><p class="desc">${esc(p.descripcion)}</p></section>
           ${(p.amenities || []).length ? `<section><h2>Lo que ofrece</h2><ul class="amenities">${p.amenities.map((a) => `<li>${esc(C.COMODIDADES[a] || a)}</li>`).join('')}</ul></section>` : ''}
-          <section>
-            <h2>Disponibilidad</h2>
-            <div class="calendario" id="calendario"></div>
-          </section>
           ${dia ? seccionPreciosDia(p) : seccionPrecios(p)}
           ${seccionCondiciones(cond)}
           ${seccionResenas(p)}
@@ -139,17 +135,15 @@
           <p class="precio-caja">${UI.conTarjeta(C.precioBase(p)) ? `<s class="precio-lista">${esc(C.formatCLP(UI.conTarjeta(C.precioBase(p))))}</s> ` : ''}<span class="precio">${esc(C.formatCLP(C.precioBase(p)))}</span> <span class="muted">/ ${C.unidad(p)}</span>
             ${UI.conTarjeta(C.precioBase(p)) ? '<br><span class="descuento">Descuento pagando con transferencia</span>' : ''}
             ${variable ? `<br><span class="muted small">Varía según ${dia ? 'fin de semana y temporada' : 'temporada y fin de semana'}</span>` : ''}</p>
-          <form id="form-reserva">${dia ? `
+          <form id="form-reserva">
+            <p class="caja-titulo">${dia ? 'Elige el día de tu evento' : 'Elige tus fechas'}</p>
+            <div class="calendario" id="calendario" aria-label="Calendario de disponibilidad"></div>
+            <input type="hidden" name="llegada"><input type="hidden" name="salida">
+            <div class="fechas-elegidas" data-q="fechas" hidden></div>${dia ? `
             <div class="row2">
-              <label>Fecha del evento <input type="date" name="llegada" min="${hoy}"></label>
               <label>Asistentes <input type="number" name="huespedes" min="1" max="${p.capacidad}" value="${p.por_persona ? p.por_persona.incluidas : 10}"></label>
-            </div>
-            <input type="hidden" name="salida">
-            <label>Tipo de evento (opcional) <input name="evento" maxlength="60" placeholder="Cumpleaños, matrimonio, día de piscina…"></label>` : `
-            <div class="row2">
-              <label>Llegada <input type="date" name="llegada" min="${hoy}"></label>
-              <label>Salida <input type="date" name="salida" min="${C.sumarDias(hoy, 1)}"></label>
-            </div>
+              <label>Tipo de evento <input name="evento" maxlength="60" placeholder="Opcional"></label>
+            </div>` : `
             <label>Huéspedes <input type="number" name="huespedes" min="1" max="${p.capacidad}" value="1"></label>`}
             <div class="cotizacion" hidden>
               <div data-q="filas"></div>
@@ -217,15 +211,31 @@
     if (Number(q.get('huespedes'))) form.huespedes.value = Math.min(Number(q.get('huespedes')), p.capacidad);
 
     const calendario = window.Calendario.montar(document.getElementById('calendario'), {
-      hoy, ocupado, unDia: dia, meses: window.matchMedia('(max-width: 600px)').matches ? 1 : 2,
+      hoy, ocupado, unDia: dia, meses: 1,
       alElegir(llegada, salida) {
         avisoCalendario = '';
         form.llegada.value = llegada;
         form.salida.value = salida;
-        if (llegada && !dia) form.salida.min = C.sumarDias(llegada, 1);
         actualizar(false);
       },
       alAvisar(texto) { avisoCalendario = texto; actualizar(false); },
+    });
+
+    // Muestra las fechas elegidas bajo el calendario, con opción de borrarlas.
+    const resumen = $('fechas');
+    function mostrarFechas(llegada, salida) {
+      resumen.hidden = !llegada;
+      if (!llegada) { resumen.innerHTML = ''; return; }
+      const f = (x) => esc(window.WhatsApp ? new Intl.DateTimeFormat('es-CL', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(x + 'T00:00:00Z')) : x);
+      const texto = dia ? `<strong>${f(llegada)}</strong>`
+        : salida ? `<strong>${f(llegada)}</strong> → <strong>${f(salida)}</strong> · ${C.noches(llegada, salida)} ${C.noches(llegada, salida) === 1 ? 'noche' : 'noches'}`
+          : `Llegada <strong>${f(llegada)}</strong> · ahora elige la salida`;
+      resumen.innerHTML = `<span>${texto}</span><button type="button" class="link" data-borrar>Borrar</button>`;
+    }
+    resumen.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-borrar]')) return;
+      form.llegada.value = ''; form.salida.value = ''; avisoCalendario = '';
+      actualizar();
     });
 
     function actualizar(sincronizar = true) {
@@ -237,6 +247,7 @@
       const r = dia ? C.validarDia(p, { fecha: llegada, asistentes: huespedes }, hoy) : C.validarReserva(p, { llegada, salida, huespedes }, hoy);
       const cot = r.cotizacion;
       if (sincronizar) calendario.marcar(llegada, salida);
+      mostrarFechas(llegada, salida);
 
       box.hidden = !r.ok;
       if (r.ok) {
@@ -279,7 +290,7 @@
       btn.classList.toggle('pendiente', faltanFechas);
       $('btn').textContent = faltanFechas ? (dia ? 'Elige la fecha de tu evento' : 'Elige tus fechas para reservar') : (r.ok ? 'Reservar por WhatsApp' : 'Consultar por WhatsApp');
       $('ayuda').textContent = faltanFechas
-        ? (dia ? 'Elige el día en el calendario: te armamos el mensaje con la fecha y el precio.' : 'Elige llegada y salida en el calendario: te armamos el mensaje con las fechas y el precio.')
+        ? (dia ? 'Toca el día en el calendario: te armamos el mensaje con la fecha y el precio.' : 'Toca la llegada y la salida en el calendario: te armamos el mensaje con las fechas y el precio.')
         : 'Se abre WhatsApp con tu reserva ya escrita: fechas, propiedad y precio. Solo tienes que enviarla.';
     }
 
@@ -289,13 +300,6 @@
       document.getElementById('calendario').scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
-    form.llegada.addEventListener('change', () => {
-      if (!form.llegada.value || dia) return;
-      form.salida.min = C.sumarDias(form.llegada.value, 1);
-      if (!form.salida.value || form.salida.value <= form.llegada.value) {
-        form.salida.value = C.sumarDias(form.llegada.value, Math.max(p.min_noches, 1));
-      }
-    });
     form.addEventListener('input', () => { avisoCalendario = ''; actualizar(); });
     form.addEventListener('change', () => { avisoCalendario = ''; actualizar(); });
     actualizar();

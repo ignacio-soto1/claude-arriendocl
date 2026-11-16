@@ -361,3 +361,14 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 .tabla-precios th.col-desc { color: var(--ok); }
 .precio-caja .precio-lista { font-size: 1.05rem; }
 .cotizacion .total.ahorro { font-size: 1rem; }
+
+/* Calendario dentro de la caja de reserva */
+.caja-titulo { margin: 4px 0 -4px; font-weight: 600; }
+.reserva-box .calendario { padding: 10px; border-radius: 12px; }
+.reserva-box .cal-meses { grid-template-columns: 1fr; }
+.reserva-box .cal-grid { gap: 2px; }
+.reserva-box .cal-grid button { font-size: .85rem; border-radius: 6px; }
+.reserva-box .cal-leyenda { margin-top: 6px; }
+.fechas-elegidas { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--brand-soft); border-radius: 10px; padding: 8px 12px; font-size: .9rem; }
+.fechas-elegidas .link { color: var(--brand); text-decoration: underline; }
