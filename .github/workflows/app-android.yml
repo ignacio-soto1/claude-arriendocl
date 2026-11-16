@@ -1,0 +1,69 @@
+# Compila la app de Android cada vez que cambia el sitio (docs/) o la app (app/).
+# - Siempre genera un APK de prueba (app-prueba.apk) para instalar directo en un teléfono Android.
+# - Si están los secretos de firma, genera además el AAB para subir a Google Play. Ver app/README.md.
+name: App Android
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', 'app/**', '.github/workflows/app-android.yml']
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VERSION_CODE: ${{ github.run_number }}
+      VERSION_NAME: 1.0.${{ github.run_number }}
+      FIRMA_LISTA: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Preparar la app con el sitio
+        working-directory: app
+        run: |
+          npm ci
+          npm run web
+          npx cap sync android
+
+      - name: Compilar APK de prueba
+        working-directory: app/android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Guardar APK de prueba
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-prueba-${{ env.VERSION_NAME }}
+          path: app/android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Compilar AAB firmado para Google Play
+        if: ${{ env.FIRMA_LISTA == 'true' }}
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        working-directory: app/android
+        run: |
+          echo "$KEYSTORE" | base64 -d > "$RUNNER_TEMP/arriendoencl.keystore"
+          export ANDROID_KEYSTORE_PATH="$RUNNER_TEMP/arriendoencl.keystore"
+          ./gradlew bundleRelease --no-daemon
+
+      - name: Guardar AAB para Google Play
+        if: ${{ env.FIRMA_LISTA == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-google-play-${{ env.VERSION_NAME }}
+          path: app/android/app/build/outputs/bundle/release/app-release.aab
