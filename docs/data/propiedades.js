@@ -39,7 +39,8 @@ window.PROPIEDADES = [
     capacidad: 5, dormitorios: 2, banos: 2, min_noches: 2,
     amenities: ['wifi', 'estacionamiento', 'lago_rio', 'lena', 'cocina', 'terraza', 'tinaja'],
     descripcion: 'Cabaña de alerce con acceso privado al lago y vista a los volcanes Osorno y Calbuco. Muelle propio, kayaks disponibles. A 8 km del centro de Puerto Varas.',
-    fotos: [],
+    fotos: ['img/destinos/cabana-puerto-varas-lago.jpg'],
+    credito_foto: {"autor": "Jorge Morales Piderit", "licencia": "CC BY-SA 4.0", "enlace": "https://commons.wikimedia.org/wiki/File:Volc%C3%A1n_Osorno_y_lago_Llanquihue_desde_el_sector_Los_Riscos.jpg"},
     ocupado: [],
   },
   {
@@ -94,7 +95,8 @@ window.PROPIEDADES = [
     capacidad: 4, dormitorios: 2, banos: 1, min_noches: 2,
     amenities: ['wifi', 'estacionamiento', 'cocina', 'terraza', 'calefaccion'],
     descripcion: 'Casa tradicional de adobe a 10 minutos caminando de la calle Caracoles. Patio con vista al volcán Licancabur. Ideal para visitar Valle de la Luna, géiseres del Tatio y lagunas altiplánicas.',
-    fotos: [],
+    fotos: ['img/destinos/casa-adobe-san-pedro.jpg'],
+    credito_foto: {"autor": "Pierre cb", "licencia": "Public domain", "enlace": "https://commons.wikimedia.org/wiki/File:San_Pedro_de_Atacama_view_of_Licancabur_volcano.jpg"},
     ocupado: [],
   },
   {
@@ -105,7 +107,8 @@ window.PROPIEDADES = [
     capacidad: 3, dormitorios: 1, banos: 1, min_noches: 1,
     amenities: ['wifi', 'estacionamiento', 'calefaccion', 'cocina', 'conserje'],
     descripcion: 'Departamento a 3 cuadras de la Plaza de la Independencia y cerca de la Universidad de Concepción. Edificio nuevo con estacionamiento subterráneo.',
-    fotos: [],
+    fotos: ['img/destinos/depto-concepcion-centro.jpg'],
+    credito_foto: {"autor": "Cris.tbl", "licencia": "CC BY 4.0", "enlace": "https://commons.wikimedia.org/wiki/File:Vista_de_Concepci%C3%B3n.jpg"},
     ocupado: [],
   },
   {
@@ -116,7 +119,8 @@ window.PROPIEDADES = [
     capacidad: 6, dormitorios: 3, banos: 2, min_noches: 3,
     amenities: ['wifi', 'estacionamiento', 'lena', 'cocina', 'calefaccion', 'agua_potable'],
     descripcion: 'Dos hectáreas en las afueras de Puerto Natales con vista al seno Última Esperanza. Casa con calefacción central y estufa a leña. Punto de partida perfecto hacia el Parque Nacional Torres del Paine.',
-    fotos: [],
+    fotos: ['img/destinos/parcela-puerto-natales.jpg'],
+    credito_foto: {"autor": "Draceane", "licencia": "CC BY-SA 4.0", "enlace": "https://commons.wikimedia.org/wiki/File:Seno_%C3%9Altima_Esperanza,_Puerto_Natales_01.jpg"},
     ocupado: [{ desde: '2027-01-05', hasta: '2027-01-12' }],
   },
   {
@@ -138,7 +142,8 @@ window.PROPIEDADES = [
     capacidad: 6, dormitorios: 3, banos: 2, min_noches: 2,
     amenities: ['wifi', 'estacionamiento', 'vista_mar', 'quincho', 'terraza', 'mascotas'],
     descripcion: 'Casa a 400 metros de Punta de Lobos, una de las mejores olas de Sudamérica. Ducha exterior, guardatablas y quincho con vista al mar.',
-    fotos: [],
+    fotos: ['img/destinos/casa-surf-pichilemu.jpg'],
+    credito_foto: {"autor": "Christian Córdova from Santiago, Chile", "licencia": "CC BY 2.0", "enlace": "https://commons.wikimedia.org/wiki/File:Surfer_in_Punta_de_Lobos,_Pichilemu_-_1.jpg"},
     ocupado: [],
   },
 ];
