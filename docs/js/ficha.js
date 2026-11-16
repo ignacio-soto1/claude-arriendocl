@@ -338,7 +338,7 @@
       $('btn').textContent = faltanFechas ? (dia ? 'Elige la fecha de tu evento' : 'Elige tus fechas para reservar') : (r.ok ? 'Reservar por WhatsApp' : 'Consultar por WhatsApp');
       $('ayuda').textContent = faltanFechas
         ? (dia ? 'Toca el día en el calendario: te armamos el mensaje con la fecha y el precio.' : 'Toca la llegada y la salida en el calendario: te armamos el mensaje con las fechas y el precio.')
-        : 'Se abre WhatsApp con tu reserva ya escrita: fechas, propiedad y precio. Solo tienes que enviarla.';
+        : 'Se abre WhatsApp con tu reserva ya escrita. Te responde una persona de nuestro equipo para confirmar disponibilidad y resolver tus dudas.';
     }
 
     // Barra fija: "Reservar" lleva al cuadro de reserva; se oculta cuando el cuadro ya está en pantalla.
