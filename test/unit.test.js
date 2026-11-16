@@ -101,6 +101,16 @@ test('mensaje de WhatsApp incluye propiedad, fechas, huéspedes y total', () => 
   assert.equal(decodeURIComponent(url.split('text=')[1]), m);
 });
 
+test('mensaje para publicar una propiedad', () => {
+  const { mensajePublicar } = require('../public/whatsapp');
+  const m = mensajePublicar({ marca: 'Arriendo en CL', nombre: 'Carolina', tipo: 'Parcela', ubicacion: 'Peñaflor',
+    capacidad: 10, precio: 120000, comentarios: 'Piscina y quincho' });
+  assert.match(m, /^Hola Arriendo en CL, quiero publicar mi propiedad:/);
+  assert.match(m, /\*Tipo:\* Parcela\n\*Ubicación:\* Peñaflor\n\*Capacidad:\* 10 personas/);
+  assert.match(m, /\*Precio por noche que espero:\* \$\s?120\.000/);
+  assert.doesNotMatch(mensajePublicar({ marca: 'X', nombre: 'A', tipo: 'Casa', ubicacion: 'B' }), /Precio|Capacidad/);
+});
+
 test('normalizarWhatsapp acepta celulares chilenos', () => {
   const { normalizarWhatsapp } = require('../src/marca');
   assert.equal(normalizarWhatsapp('+56 9 1234 5678'), '56912345678');

@@ -49,7 +49,7 @@
   function escribirURL() {
     const q = new URLSearchParams();
     for (const k of CAMPOS) { const v = form[k].value.trim(); if (v && !(k === 'orden' && v === 'recomendadas')) q.set(k, v); }
-    if (!window.CONFIG.unaPagina) history.replaceState(null, '', q.toString() ? `?${q}` : location.pathname);
+    if (!window.CONFIG.unaPagina) history.replaceState(null, '', (q.toString() ? `?${q}` : location.pathname) + location.hash);
   }
 
   // Mapa
@@ -146,11 +146,51 @@
     explorar.scrollIntoView({ block: 'start' });
   });
   window.addEventListener('resize', () => mapa.invalidateSize());
+  // El botón flotante no tapa el formulario de "Publica con nosotros".
+  const seccionPub = document.getElementById('publica');
+  if (seccionPub && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => toggle.classList.toggle('oculto', e.isIntersecting)).observe(seccionPub);
+  }
+
+  // "Publica con nosotros": arma el WhatsApp del dueño con los datos del formulario.
+  const formPub = document.getElementById('form-publica');
+  if (formPub) {
+    const btnPub = document.getElementById('btn-publica');
+    formPub.querySelector('[data-wa-icono]').outerHTML = UI.WA_ICON;
+    const campo = (k) => formPub.elements[k].value.trim();
+    const actualizarPub = () => {
+      const datos = {
+        marca: window.CONFIG.marca, nombre: campo('nombre'), tipo: campo('tipo'), ubicacion: campo('ubicacion'),
+        capacidad: Number(campo('capacidad')) || null,
+        precio: Number(campo('precio').replace(/\D/g, '')) || null,
+        comentarios: campo('comentarios'),
+      };
+      const falta = !datos.nombre || !datos.tipo || !datos.ubicacion;
+      btnPub.href = UI.waUrl(window.WhatsApp.mensajePublicar(datos));
+      btnPub.classList.toggle('pendiente', falta);
+      formPub.querySelector('[data-pub="btn"]').textContent = falta ? 'Completa nombre, tipo y comuna' : 'Enviar por WhatsApp';
+      formPub.querySelector('[data-pub="ayuda"]').textContent = falta
+        ? 'Con esos tres datos te armamos el mensaje.'
+        : 'Se abre WhatsApp con tus datos ya escritos: solo tienes que enviarlo.';
+    };
+    btnPub.addEventListener('click', (e) => {
+      if (!btnPub.classList.contains('pendiente')) return;
+      e.preventDefault();
+      const vacio = ['nombre', 'tipo', 'ubicacion'].map((k) => formPub.elements[k]).find((el) => !el.value.trim());
+      if (vacio) vacio.focus();
+    });
+    formPub.addEventListener('input', actualizarPub);
+    formPub.addEventListener('change', actualizarPub);
+    formPub.addEventListener('submit', (e) => e.preventDefault());
+    actualizarPub();
+  }
 
   // Para el modo de una sola página: filtros actuales y reajuste del mapa al volver.
   window.Inicio = { filtros: filtrosActuales, alVolver: () => { mapa.invalidateSize(); encuadrar(false); } };
 
   leerURL();
+  // Al llegar con #publica, baja a la sección cuando la lista ya está dibujada.
+  if (location.hash === '#publica') setTimeout(() => document.getElementById('publica')?.scrollIntoView(), 0);
   abrirMas(['huespedes', 'precio_max', 'texto'].some((k) => form[k].value) || (form.orden.value !== 'recomendadas'));
   render();
 })();

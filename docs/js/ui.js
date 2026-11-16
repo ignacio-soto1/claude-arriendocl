@@ -26,6 +26,7 @@
     casa: svg('<path d="M2.5 11.5 12 3l9.5 8.5M5 9.3V21h14V9.3M9.8 21v-6.2h4.4V21"/>'),
     quincho: svg('<path d="M3.5 10.5h17a8.5 8.5 0 0 1-17 0Z"/><path d="M8 18l-2 4M16 18l2 4M12 19v3M8.5 2.5c-1 1.4 1 2.3 0 4.2M12 2.5c-1 1.4 1 2.3 0 4.2M15.5 2.5c-1 1.4 1 2.3 0 4.2"/>'),
     arbol: svg('<path d="M12 22v-8.5M12 15.5l-3-2.8M12 17.5l3.2-3"/><path d="M12 2a5.6 5.6 0 0 0-5.3 7.4A4.6 4.6 0 0 0 9 18h6a4.6 4.6 0 0 0 2.3-8.6A5.6 5.6 0 0 0 12 2Z"/>'),
+    publicar: svg('<path d="M2.5 11.5 12 3l9.5 8.5M5 9.3V21h8M19 9.3V13"/><path d="M18 15.5v6M15 18.5h6"/>'),
     personas: svg('<circle cx="12" cy="7" r="3"/><circle cx="5" cy="9.2" r="2.3"/><circle cx="19" cy="9.2" r="2.3"/><path d="M6.5 20.5v-2a5.5 5.5 0 0 1 11 0v2M1.5 19.5v-1A3.5 3.5 0 0 1 6 15M22.5 19.5v-1A3.5 3.5 0 0 0 18 15"/>'),
   };
 
@@ -38,19 +39,27 @@
     </span>`;
   }
 
+  // Enlace a la sección "Publica con nosotros" de la portada.
+  function enlacePublica() {
+    return CFG.unaPagina || document.getElementById('publica') ? '#publica' : './#publica';
+  }
+
   function montarMarco() {
     const ig = `https://www.instagram.com/${CFG.instagram}/`;
+    const publica = enlacePublica();
     const wa = waUrl(`Hola ${CFG.marca}, tengo una consulta sobre arriendos.`);
     document.querySelector('header.top').innerHTML = `
       <a class="logo-link" href="${CFG.unaPagina ? '#inicio' : './'}" aria-label="${esc(CFG.marca)}, inicio">${logo('chico')}</a>
       <nav>
+        <a href="${publica}" class="btn sm publica">${ICONOS_MARCA.publicar}<span class="largo">Publica con nosotros</span><span class="corto">Publica</span></a>
         <a href="${esc(ig)}" target="_blank" rel="noopener" class="icon-link">${IG_ICON}<span>@${esc(CFG.instagram)}</span></a>
         <a href="${esc(wa)}" target="_blank" rel="noopener" class="btn sm wa">${WA_ICON}<span>WhatsApp</span></a>
       </nav>`;
     document.querySelector('footer.bottom').innerHTML = `
       <p>${esc(CFG.marca)} · Arriendos por noche de Arica a Magallanes. Precios en pesos chilenos (CLP).</p>
       <p><a href="${esc(ig)}" target="_blank" rel="noopener">Instagram @${esc(CFG.instagram)}</a> ·
-         <a href="${esc(wa)}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a></p>`;
+         <a href="${esc(wa)}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> ·
+         <a href="${publica}">Publica tu propiedad con nosotros</a></p>`;
   }
 
   // Capa de mapa base: OpenStreetMap, o el contorno de Chile (data/contorno.js) si CONFIG.mapaBase = 'contorno'.

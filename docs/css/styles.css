@@ -250,3 +250,28 @@ legend { font-weight: 700; padding: 0 6px; }
 .opcion small { color: var(--muted); font-size: .8rem; }
 .opcion:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); }
 .cotizacion .ahorro { color: var(--ok); font-size: .9rem; }
+
+/* Botón "Publica con nosotros" en el encabezado */
+.top nav a.btn.publica { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--navy);
+  border: 1.5px solid var(--gold); }
+.top nav a.btn.publica svg { width: 18px; height: 18px; color: var(--gold); }
+.top nav a.btn.publica:hover { background: var(--brand-soft); }
+.btn.publica .corto { display: none; }
+@media (max-width: 520px) {
+  .top { gap: 8px; } .top nav { gap: 8px; }
+  .btn.publica .largo { display: none; } .btn.publica .corto { display: inline; }
+  .top nav a.btn.wa span { display: none; }
+}
+
+/* Sección "Publica con nosotros" */
+.publica-seccion { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start;
+  margin-top: 48px; padding: 28px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--line);
+  border-top: 4px solid var(--gold); scroll-margin-top: 90px; }
+.publica-icono svg { width: 44px; height: 44px; color: var(--gold); }
+.publica-seccion h2 { margin: .3em 0 .4em; font-size: 1.8rem; }
+.publica-texto p { margin: 0 0 12px; max-width: 52ch; }
+.publica-pasos { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 8px; }
+.publica-form { display: flex; flex-direction: column; gap: 12px; }
+@media (max-width: 860px) { .publica-seccion { grid-template-columns: 1fr; gap: 16px; padding: 20px 16px; } }
+
+.toggle-mapa.oculto { display: none !important; }

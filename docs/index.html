@@ -13,7 +13,7 @@
   <meta property="og:description" content="Parcelas, departamentos y cabañas para arrendar en todo Chile. Reserva directo por WhatsApp.">
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="css/styles.css?v=202611160214">
+  <link rel="stylesheet" href="css/styles.css?v=202611160225">
 </head>
 <body class="inicio">
 <header class="top"></header>
@@ -57,15 +57,45 @@
     <div class="mapa-wrap"><div id="mapa" aria-label="Mapa de propiedades"></div></div>
   </div>
   <button type="button" class="btn toggle-mapa" id="toggle-mapa" aria-controls="explorar">🗺️ Ver mapa</button>
+
+  <section class="publica-seccion" id="publica" aria-labelledby="publica-titulo">
+    <div class="publica-texto">
+      <span class="publica-icono" data-icono="publicar"></span>
+      <h2 id="publica-titulo">Publica con nosotros</h2>
+      <p>¿Tienes una parcela, cabaña, casa o departamento? Lo mostramos en este sitio y en Instagram @arriendoencl, y te llegan las reservas con fechas y precio ya calculados.</p>
+      <ol class="publica-pasos">
+        <li><strong>Cuéntanos de tu propiedad</strong> con este formulario.</li>
+        <li><strong>Coordinamos por WhatsApp</strong> fotos, precio y disponibilidad.</li>
+        <li><strong>La publicamos</strong> y empiezas a recibir reservas.</li>
+      </ol>
+    </div>
+    <form class="publica-form" id="form-publica" novalidate>
+      <label>Tu nombre <input name="nombre" id="pub-nombre" autocomplete="name" placeholder="Ej: Carolina Muñoz"></label>
+      <div class="row2">
+        <label>Tipo de propiedad
+          <select name="tipo" id="pub-tipo">
+            <option value="">Elige…</option>
+            <option>Parcela</option><option>Cabaña</option><option>Casa</option><option>Departamento</option>
+          </select>
+        </label>
+        <label>Capacidad <input type="number" name="capacidad" id="pub-capacidad" min="1" max="50" placeholder="Personas"></label>
+      </div>
+      <label>Comuna o sector <input name="ubicacion" id="pub-ubicacion" placeholder="Ej: Peñaflor, Lago Rapel, Pucón"></label>
+      <label>Precio por noche que esperas (opcional) <input name="precio" id="pub-precio" inputmode="numeric" placeholder="Ej: 120.000"></label>
+      <label>Lo que ofrece (opcional) <textarea name="comentarios" id="pub-comentarios" rows="3" placeholder="Piscina, quincho, tinaja, estacionamiento…"></textarea></label>
+      <a class="btn block wa" id="btn-publica" target="_blank" rel="noopener"><span data-wa-icono></span> <span data-pub="btn">Enviar por WhatsApp</span></a>
+      <p class="muted small center" data-pub="ayuda"></p>
+    </form>
+  </section>
 </main>
 <footer class="bottom"></footer>
 
-<script src="config.js?v=202611160214"></script>
-<script src="data/propiedades.js?v=202611160214"></script>
+<script src="config.js?v=202611160225"></script>
+<script src="data/propiedades.js?v=202611160225"></script>
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="js/catalogo.js?v=202611160214"></script>
-<script src="js/whatsapp.js?v=202611160214"></script>
-<script src="js/ui.js?v=202611160214"></script>
-<script src="js/inicio.js?v=202611160214"></script>
+<script src="js/catalogo.js?v=202611160225"></script>
+<script src="js/whatsapp.js?v=202611160225"></script>
+<script src="js/ui.js?v=202611160225"></script>
+<script src="js/inicio.js?v=202611160225"></script>
 </body>
 </html>

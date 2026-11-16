@@ -40,9 +40,23 @@
     return l.join('\n');
   }
 
+  // Mensaje de un dueño que quiere publicar su propiedad.
+  // d: { marca, nombre, tipo, ubicacion, capacidad?, precio?, comentarios? }
+  function mensajePublicar(d) {
+    const l = [`Hola ${d.marca}, quiero publicar mi propiedad:`, ''];
+    if (d.nombre) l.push(`*Nombre:* ${d.nombre}`);
+    if (d.tipo) l.push(`*Tipo:* ${d.tipo}`);
+    if (d.ubicacion) l.push(`*Ubicación:* ${d.ubicacion}`);
+    if (d.capacidad) l.push(`*Capacidad:* ${d.capacidad} ${d.capacidad === 1 ? 'persona' : 'personas'}`);
+    if (d.precio) l.push(`*Precio por noche que espero:* ${clp.format(d.precio)}`);
+    if (d.comentarios) l.push(`*Lo que ofrece:* ${d.comentarios}`);
+    l.push('', '¿Cómo seguimos?');
+    return l.join('\n');
+  }
+
   function waUrl(numero, texto) {
     return `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
   }
 
-  return { mensajeReserva, waUrl };
+  return { mensajeReserva, mensajePublicar, waUrl };
 });
