@@ -64,7 +64,7 @@
   // Mensaje de un dueño que quiere publicar su propiedad.
   // d: { marca, nombre, tipo, ubicacion, capacidad?, precio?, comentarios? }
   function mensajePublicar(d) {
-    const l = [`Hola ${d.marca}, me gustaría postular mi propiedad para publicarla con ustedes:`, ''];
+    const l = [`Hola ${d.marca}, me gustaría publicar mi propiedad con ustedes:`, ''];
     if (d.nombre) l.push(`*Nombre:* ${d.nombre}`);
     if (d.tipo) l.push(`*Tipo:* ${d.tipo}`);
     if (d.uso) l.push(`*Para:* ${d.uso}`);
