@@ -5,6 +5,7 @@
 // - lat / lng: ubicación aproximada (clic derecho en Google Maps → copiar coordenadas).
 //              No pongas la dirección exacta: el mapa muestra un área aproximada.
 // - fotos:     rutas dentro de docs/img/, ej: ['img/pucon-1.jpg', 'img/pucon-2.jpg']
+// - credito_foto: solo si la foto NO es tuya (ej. Wikimedia): { autor, licencia, enlace }. Bórralo al poner tus fotos.
 // - ocupado:   fechas ya reservadas [{ desde: 'AAAA-MM-DD', hasta: 'AAAA-MM-DD' }] (hasta = día de salida)
 // - amenities: claves de la lista COMODIDADES en js/catalogo.js
 window.PROPIEDADES = [

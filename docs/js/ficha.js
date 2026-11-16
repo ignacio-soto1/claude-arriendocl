@@ -31,6 +31,7 @@
     <h1>${esc(p.titulo)}</h1>
     <p class="muted">${esc(C.TIPOS[p.tipo])} en ${esc(p.comuna)}, ${esc(p.region)}</p>
     <div class="galeria ${fotos.length > 1 ? 'multi' : ''}">${galeria}</div>
+    ${p.credito_foto ? `<p class="credito">Foto referencial del destino: <a href="${esc(p.credito_foto.enlace)}" target="_blank" rel="noopener">${esc(p.credito_foto.autor)}</a>, ${esc(p.credito_foto.licencia)}, vía Wikimedia Commons.</p>` : ''}
     <div class="detalle-cols">
       <div>
         <section class="facts">

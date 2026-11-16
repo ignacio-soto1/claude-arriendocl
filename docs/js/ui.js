@@ -7,7 +7,7 @@
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   function foto(p, clase = '') {
-    if (p.fotos && p.fotos.length) return `<img class="${clase}" src="${esc(p.fotos[0])}" alt="${esc(p.titulo)}" loading="lazy">`;
+    if (p.fotos && p.fotos.length) return `<img class="${clase}" src="${esc(p.fotos[0])}" alt="${esc(p.titulo)}" loading="lazy">${p.credito_foto ? '<span class="referencial">Foto referencial</span>' : ''}`;
     return `<div class="ph ph-${esc(p.tipo)} ${clase}" role="img" aria-label="${esc(p.titulo)}"><span>${C.ICONOS[p.tipo] || ''}</span></div>`;
   }
 

@@ -233,3 +233,10 @@ legend { font-weight: 700; padding: 0 6px; }
 
 /* Mapa base sin teselas: contorno de Chile sobre el mar */
 .mapa-contorno { background: #cfe8f3; }
+
+/* Fotos referenciales con crédito */
+.credito { font-size: .75rem; color: var(--muted); margin: 6px 0 0; }
+.credito a { color: inherit; }
+.referencial { position: absolute; right: 8px; bottom: 8px; background: rgb(0 0 0 / .55); color: #fff; font-size: .62rem;
+  letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; }
+.popup-img { position: relative; }
