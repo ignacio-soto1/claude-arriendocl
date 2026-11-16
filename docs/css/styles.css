@@ -240,3 +240,13 @@ legend { font-weight: 700; padding: 0 6px; }
 .referencial { position: absolute; right: 8px; bottom: 8px; background: rgb(0 0 0 / .55); color: #fff; font-size: .62rem;
   letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; }
 .popup-img { position: relative; }
+
+/* Forma de pago */
+.pago { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; background: none; }
+.pago legend { font-weight: 600; font-size: .9rem; padding: 0; margin-bottom: 4px; color: var(--text); }
+.opcion { flex-direction: row; align-items: flex-start; gap: 10px; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; color: var(--text); font-size: .92rem; }
+.opcion input { width: auto; margin-top: 3px; accent-color: var(--brand); }
+.opcion span { display: flex; flex-direction: column; gap: 2px; }
+.opcion small { color: var(--muted); font-size: .8rem; }
+.opcion:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); }
+.cotizacion .ahorro { color: var(--ok); font-size: .9rem; }

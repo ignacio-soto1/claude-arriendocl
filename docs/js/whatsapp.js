@@ -12,7 +12,7 @@
   const plural = (n, uno, varios) => `${n} ${n === 1 ? uno : varios}`;
 
   // d: { marca, titulo, tipo, comuna, region, url, llegada?, salida?, noches?, huespedes?,
-  //      precio_noche?, limpieza?, total?, nombre? }
+  //      precio_noche?, limpieza?, total?, total_tarjeta?, pago?, nombre? }
   function mensajeReserva(d) {
     // Sin emojis: el enlace de WhatsApp en iPhone los muestra como un signo de reemplazo.
     const l = [`Hola ${d.marca}, quiero reservar:`, '', `*${d.titulo}*`, `${d.tipo} en ${d.comuna}, ${d.region}`, ''];
@@ -28,8 +28,13 @@
       l.push('', '*Resumen del precio*');
       if (d.precio_noche && d.noches) l.push(`${clp.format(d.precio_noche)} × ${plural(d.noches, 'noche', 'noches')} = ${clp.format(d.precio_noche * d.noches)}`);
       if (d.limpieza) l.push(`Limpieza: ${clp.format(d.limpieza)}`);
-      l.push(`*Total: ${clp.format(d.total)} CLP*`);
+      if (d.total_tarjeta) {
+        l.push(`*Total con transferencia: ${clp.format(d.total)} CLP*`, `*Total con tarjeta: ${clp.format(d.total_tarjeta)} CLP*`);
+      } else {
+        l.push(`*Total: ${clp.format(d.total)} CLP*`);
+      }
     }
+    if (d.pago) l.push('', `*Forma de pago:* ${d.pago}`);
     if (d.nombre) l.push('', `*Mi nombre:* ${d.nombre}`);
     l.push('', `Ver propiedad: ${d.url}`, '', '¿Está disponible?');
     return l.join('\n');

@@ -16,6 +16,7 @@
 
   const hoy = C.hoyChile();
   document.title = `${p.titulo} · ${CFG.marca}`;
+  const conTarjeta = Number(CFG.recargoTarjeta) > 0;
   const ocupado = (p.ocupado || []).filter((o) => o.hasta > hoy).sort((a, b) => a.desde.localeCompare(b.desde));
   const fotos = p.fotos || [];
   const galeria = fotos.length
@@ -62,8 +63,19 @@
           <div class="cotizacion" hidden>
             <div class="row between"><span data-q="detalle"></span><span data-q="subtotal"></span></div>
             ${p.tarifa_limpieza ? `<div class="row between"><span>Limpieza</span><span>${esc(C.formatCLP(p.tarifa_limpieza))}</span></div>` : ''}
-            <div class="row between total"><span>Total</span><span data-q="total"></span></div>
+            ${conTarjeta ? `
+            <div class="row between total"><span>Total con tarjeta</span><span data-q="total-tarjeta"></span></div>
+            <div class="row between ahorro"><span>Con transferencia</span><span data-q="total"></span></div>`
+            : `<div class="row between total"><span>Total</span><span data-q="total"></span></div>`}
           </div>
+          ${conTarjeta ? `
+          <fieldset class="pago">
+            <legend>¿Cómo quieres pagar?</legend>
+            <label class="opcion"><input type="radio" name="pago" value="tarjeta" checked>
+              <span><strong>Tarjeta de crédito o débito</strong><small>Te enviamos un link de pago por WhatsApp. Puedes pagar en cuotas.</small></span></label>
+            <label class="opcion"><input type="radio" name="pago" value="transferencia">
+              <span><strong>Transferencia bancaria</strong><small>Precio con descuento. Te enviamos los datos por WhatsApp.</small></span></label>
+          </fieldset>` : ''}
           <p class="aviso" data-q="aviso" hidden></p>
           <a class="btn block wa" id="btn-whatsapp" target="_blank" rel="noopener">${UI.WA_ICON} <span data-q="btn">Reservar por WhatsApp</span></a>
           <p class="muted small center" data-q="ayuda"></p>
@@ -93,6 +105,7 @@
   if (Number(q.get('huespedes'))) form.huespedes.value = Math.min(Number(q.get('huespedes')), p.capacidad);
 
   function actualizar() {
+    const pago = conTarjeta ? (form.querySelector('input[name="pago"]:checked') || {}).value : null;
     const llegada = form.llegada.value;
     const salida = form.salida.value;
     const huespedes = Number(form.huespedes.value) || null;
@@ -104,6 +117,11 @@
       $('detalle').textContent = `${C.formatCLP(p.precio_noche)} × ${cot.noches} ${cot.noches === 1 ? 'noche' : 'noches'}`;
       $('subtotal').textContent = C.formatCLP(cot.subtotal);
       $('total').textContent = C.formatCLP(cot.total);
+      if (conTarjeta) {
+        const ahorro = C.totalTarjeta(cot.total, CFG.recargoTarjeta) - cot.total;
+        $('total-tarjeta').textContent = C.formatCLP(C.totalTarjeta(cot.total, CFG.recargoTarjeta));
+        $('total').textContent = `${C.formatCLP(cot.total)} (ahorras ${C.formatCLP(ahorro)})`;
+      }
     }
     aviso.hidden = !r.error;
     aviso.textContent = r.error || '';
@@ -115,6 +133,8 @@
     // Incluye las fechas aunque no calcen (así pueden preguntar), y el total solo si es válido.
     if (cot) Object.assign(datos, { llegada, salida, noches: cot.noches });
     if (r.ok) Object.assign(datos, { precio_noche: p.precio_noche, limpieza: cot.limpieza, total: cot.total });
+    if (r.ok && conTarjeta) datos.total_tarjeta = C.totalTarjeta(cot.total, CFG.recargoTarjeta);
+    if (pago) datos.pago = pago === 'tarjeta' ? 'Tarjeta de crédito o débito (link de pago)' : 'Transferencia bancaria';
     btn.href = UI.waUrl(window.WhatsApp.mensajeReserva(datos));
 
     // Sin fechas, el botón lleva al calendario en vez de abrir WhatsApp.

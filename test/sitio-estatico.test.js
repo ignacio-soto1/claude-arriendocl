@@ -87,6 +87,12 @@ test('regiones ordenadas de norte a sur, sin repetir', () => {
   assert.equal(new Set(r.map((x) => x.region)).size, r.length);
 });
 
+test('total con tarjeta: 7% sobre transferencia, redondeado a la luca', () => {
+  assert.equal(C.totalTarjeta(215000, 0.07), 230000);
+  assert.equal(C.totalTarjeta(100000, 0.07), 107000);
+  assert.equal(C.totalTarjeta(215000, 0), 215000);
+});
+
 test('formatos chilenos', () => {
   assert.equal(C.superficie(5000), '5.000 m²');
   assert.equal(C.superficie(20000), '2 ha');

@@ -123,6 +123,12 @@
     return `$${Math.round(n / 1000)} mil`;
   }
 
+  // Total con tarjeta: total con transferencia + recargo, redondeado a la luca (o al múltiplo indicado).
+  function totalTarjeta(total, recargo, redondeo = 1000) {
+    if (!recargo) return total;
+    return Math.round((total * (1 + recargo)) / redondeo) * redondeo;
+  }
+
   function sumarDias(iso, d) {
     const x = new Date(iso + 'T00:00:00Z');
     x.setUTCDate(x.getUTCDate() + d);
@@ -132,6 +138,6 @@
   return {
     TIPOS, ICONOS, COMODIDADES, ORDENES,
     formatCLP, formatFecha, hoyChile, esFecha, noches, seSolapan, disponible, cotizar, validarReserva,
-    filtrar, regiones, superficie, precioCorto, sumarDias, normalizar,
+    filtrar, regiones, superficie, precioCorto, sumarDias, normalizar, totalTarjeta,
   };
 });
