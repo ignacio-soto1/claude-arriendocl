@@ -503,3 +503,4 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 .card-img img, .card-img .ph { transition: transform .3s; }
 @media (prefers-reduced-motion: reduce) { .card-img img, .card-img .ph { transition: none; } }
 .card-precio .transf { display: block; margin-top: 1px; }
+.publica-antetitulo { margin: 4px 0 0; font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }

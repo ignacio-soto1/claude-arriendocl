@@ -214,10 +214,10 @@
       const falta = !datos.nombre || !datos.tipo || !datos.ubicacion;
       btnPub.href = UI.waUrl(window.WhatsApp.mensajePublicar(datos));
       btnPub.classList.toggle('pendiente', falta);
-      formPub.querySelector('[data-pub="btn"]').textContent = falta ? 'Completa nombre, tipo y comuna' : 'Enviar por WhatsApp';
+      formPub.querySelector('[data-pub="btn"]').textContent = falta ? 'Completa nombre, tipo y comuna' : 'Enviar postulación';
       formPub.querySelector('[data-pub="ayuda"]').textContent = falta
-        ? 'Con esos tres datos te armamos el mensaje.'
-        : 'Se abre WhatsApp con tus datos ya escritos: solo tienes que enviarlo.';
+        ? 'Con esos tres datos podemos empezar a revisar tu propiedad.'
+        : 'Tu postulación se envía por WhatsApp. Nuestro equipo la revisará y te contactará.';
     };
     btnPub.addEventListener('click', (e) => {
       if (!btnPub.classList.contains('pendiente')) { UI.contar('publicar-whatsapp'); return; }

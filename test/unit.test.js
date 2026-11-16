@@ -108,7 +108,7 @@ test('mensaje para publicar una propiedad', () => {
   const { mensajePublicar } = require('../public/whatsapp');
   const m = mensajePublicar({ marca: 'Arriendo en CL', nombre: 'Carolina', tipo: 'Parcela', ubicacion: 'Peñaflor',
     capacidad: 10, precio: 120000, comentarios: 'Piscina y quincho' });
-  assert.match(m, /^Hola Arriendo en CL, quiero publicar mi propiedad:/);
+  assert.match(m, /^Hola Arriendo en CL, me gustaría postular mi propiedad para publicarla con ustedes:/);
   assert.match(m, /\*Tipo:\* Parcela\n\*Ubicación:\* Peñaflor\n\*Capacidad:\* 10 personas/);
   assert.match(m, /\*Precio que espero:\* \$\s?120\.000/);
   assert.doesNotMatch(mensajePublicar({ marca: 'X', nombre: 'A', tipo: 'Casa', ubicacion: 'B' }), /Precio|Capacidad/);

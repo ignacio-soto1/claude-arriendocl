@@ -64,7 +64,7 @@
   // Mensaje de un dueño que quiere publicar su propiedad.
   // d: { marca, nombre, tipo, ubicacion, capacidad?, precio?, comentarios? }
   function mensajePublicar(d) {
-    const l = [`Hola ${d.marca}, quiero publicar mi propiedad:`, ''];
+    const l = [`Hola ${d.marca}, me gustaría postular mi propiedad para publicarla con ustedes:`, ''];
     if (d.nombre) l.push(`*Nombre:* ${d.nombre}`);
     if (d.tipo) l.push(`*Tipo:* ${d.tipo}`);
     if (d.uso) l.push(`*Para:* ${d.uso}`);
@@ -72,7 +72,7 @@
     if (d.capacidad) l.push(`*Capacidad:* ${d.capacidad} ${d.capacidad === 1 ? 'persona' : 'personas'}`);
     if (d.precio) l.push(`*Precio que espero:* ${clp.format(d.precio)}`);
     if (d.comentarios) l.push(`*Lo que ofrece:* ${d.comentarios}`);
-    l.push('', '¿Cómo seguimos?');
+    l.push('', 'Quedo atento a su contacto. ¡Gracias!');
     return l.join('\n');
   }
 
