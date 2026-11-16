@@ -132,13 +132,13 @@
         </div>
 
         <aside class="reserva-box">
-          <p class="precio-caja"><span data-c="cabecera">${UI.precios(C.precioBase(p), `/ ${C.unidad(p)}`)}</span>
-            ${variable ? `<span class="muted small">Varía según ${dia ? 'fin de semana y temporada' : 'temporada y fin de semana'}</span>` : ''}</p>
           <form id="form-reserva">
             <p class="caja-titulo">${dia ? 'Elige el día de tu evento' : 'Elige tus fechas'}</p>
             <div class="calendario" id="calendario" aria-label="Calendario de disponibilidad"></div>
             <input type="hidden" name="llegada"><input type="hidden" name="salida">
-            <div class="fechas-elegidas" data-q="fechas" hidden></div>${dia ? `
+            <div class="fechas-elegidas" data-q="fechas" hidden></div>
+            <p class="precio-caja"><span data-c="cabecera">${UI.precios(C.precioBase(p), `/ ${C.unidad(p)}`)}</span>
+            ${variable ? `<span class="muted small">Varía según ${dia ? 'fin de semana y temporada' : 'temporada y fin de semana'}</span>` : ''}</p>${dia ? `
             <div class="row2">
               <label>Asistentes <input type="number" name="huespedes" min="1" max="${p.capacidad}" value="${p.por_persona ? p.por_persona.incluidas : 10}"></label>
               <label>Tipo de evento <input name="evento" maxlength="60" placeholder="Opcional"></label>

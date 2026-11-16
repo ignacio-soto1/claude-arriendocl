@@ -387,3 +387,11 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
   .destacados li:nth-child(even) { border-left: 1px solid rgb(255 255 255 / .5); }
   .destacados small { font-size: .7rem; }
 }
+
+/* Precio bajo el calendario */
+.reserva-box .precio-caja { margin: 2px 0 0; padding-top: 10px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+/* Botones de opción propios (en iPhone oscuro el nativo se veía relleno negro) */
+.opcion input[type="radio"] { -webkit-appearance: none; appearance: none; flex: 0 0 auto; width: 20px; height: 20px; margin: 2px 0 0;
+  border: 2px solid var(--muted); border-radius: 50%; background: var(--surface); }
+.opcion input[type="radio"]:checked { border-color: var(--brand); background: radial-gradient(circle, var(--brand) 0 45%, var(--surface) 50%); }
+.opcion input[type="radio"]:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
