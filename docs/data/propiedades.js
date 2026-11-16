@@ -17,7 +17,8 @@ window.PROPIEDADES = [
     capacidad: 6, dormitorios: 3, banos: 2, min_noches: 2,
     amenities: ['wifi', 'estacionamiento', 'tinaja', 'quincho', 'lena', 'cocina', 'mascotas'],
     descripcion: 'Parcela de media hectárea a 10 minutos del centro de Pucón, camino a Caburgua. Casa de madera nativa con estufa a leña, tinaja de ciprés para 6 personas y quincho techado. Ideal para familias y grupos de amigos.\n\nA 5 minutos del río Trancura (rafting) y a 30 del centro de ski.',
-    fotos: [],
+    fotos: ['img/destinos/parcela-pucon-tinaja.jpg'],
+    credito_foto: {"autor": "Falk2", "licencia": "CC BY-SA 4.0", "enlace": "https://commons.wikimedia.org/wiki/File:J25_045_Lago,_Volc%C3%A1n_Villarrica.jpg"},
     ocupado: [{ desde: '2026-12-26', hasta: '2027-01-02' }, { desde: '2027-02-10', hasta: '2027-02-17' }],
   },
   {
@@ -51,7 +52,8 @@ window.PROPIEDADES = [
     capacidad: 2, dormitorios: 1, banos: 1, min_noches: 1,
     amenities: ['wifi', 'aire', 'calefaccion', 'cocina', 'lavadora', 'conserje'],
     descripcion: 'Studio equipado a 2 cuadras del metro Los Leones. Perfecto para viajes de trabajo: escritorio, Wi-Fi de fibra 600 Mbps y check-in autónomo.',
-    fotos: [],
+    fotos: ['img/destinos/studio-providencia.jpg'],
+    credito_foto: {"autor": "Carlos Figueroa Rojas", "licencia": "CC BY-SA 4.0", "enlace": "https://commons.wikimedia.org/wiki/File:Mall_Costanera_Center,_Providencia,_Santiago_20230423.jpg"},
     ocupado: [],
   },
   {
@@ -73,7 +75,8 @@ window.PROPIEDADES = [
     capacidad: 8, dormitorios: 4, banos: 2, min_noches: 3,
     amenities: ['wifi', 'estacionamiento', 'quincho', 'cocina', 'lavadora', 'terraza'],
     descripcion: 'Casa de dos pisos en sector Avenida del Mar, a 200 metros de la playa. Patio con quincho, estacionamiento para 2 autos. Excelente base para recorrer el Valle de Elqui.',
-    fotos: [],
+    fotos: ['img/destinos/casa-la-serena-playa.jpg'],
+    credito_foto: {"autor": "Christian Córdova from Santiago, Chile", "licencia": "CC BY 2.0", "enlace": "https://commons.wikimedia.org/wiki/File:Playa_de_La_Serena.jpg"},
     ocupado: [],
   },
   {
