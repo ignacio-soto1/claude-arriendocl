@@ -185,6 +185,7 @@
     document.getElementById('btn-amigo').addEventListener('click', () => UI.contar('compartir-whatsapp', p.id));
     document.getElementById('btn-compartir').addEventListener('click', async () => {
       UI.contar('compartir', p.id);
+      if (window.Nativo && window.Nativo.esApp && await window.Nativo.compartir({ title: p.titulo, text: textoCompartir, url })) return;
       if (navigator.share) {
         try { await navigator.share({ title: p.titulo, text: textoCompartir, url }); return; } catch (e) { if (e.name === 'AbortError') return; }
       }
@@ -238,6 +239,7 @@
       actualizar();
     });
 
+    let ultimaSolicitud = null;
     function actualizar(sincronizar = true) {
       const pago = conTarjeta ? (form.querySelector('input[name="pago"]:checked') || {}).value : null;
       const llegada = form.llegada.value;
@@ -316,6 +318,12 @@
       }
       if (pago) datos.pago = pago === 'tarjeta' ? 'Tarjeta de crédito o débito (link de pago)' : 'Transferencia bancaria';
       btn.href = UI.waUrl(window.WhatsApp.mensajeReserva(datos));
+      // Datos para "Mis solicitudes" (se guardan al tocar el botón)
+      ultimaSolicitud = {
+        propId: p.id, titulo: p.titulo, evento: dia, llegada, salida: dia ? '' : salida, personas: huespedes,
+        total: r.ok ? (porTarjeta ? C.cotizacionTarjeta(cot, CFG.recargoTarjeta).total : cot.total) : null,
+        pago: datos.pago ? (porTarjeta ? 'tarjeta' : 'transferencia') : '', whatsapp: btn.href,
+      };
 
       // Sin fechas, el botón lleva al calendario en vez de abrir WhatsApp.
       // Barra fija del celular: precio (o total) y fechas elegidas
@@ -353,7 +361,11 @@
     }
 
     btn.addEventListener('click', (e) => {
-      if (!btn.classList.contains('pendiente')) { UI.contar('reservar-whatsapp', p.id); return; }
+      if (!btn.classList.contains('pendiente')) {
+        UI.contar('reservar-whatsapp', p.id);
+        if (window.Nativo && ultimaSolicitud) window.Nativo.reservaEnviada(ultimaSolicitud);
+        return;
+      }
       e.preventDefault();
       document.getElementById('calendario').scrollIntoView({ behavior: 'smooth', block: 'center' });
     });

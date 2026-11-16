@@ -87,7 +87,8 @@
       <p><a href="${esc(ig)}" target="_blank" rel="noopener">Instagram @${esc(CFG.instagram)}</a> ·
          ${CFG.tiktok ? `<a href="https://www.tiktok.com/@${esc(CFG.tiktok)}" target="_blank" rel="noopener">TikTok @${esc(CFG.tiktok)}</a> ·` : ''}
          <a href="${esc(wa)}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> ·
-         <a href="${publica}">Publica tu propiedad con nosotros</a></p>`;
+         <a href="${publica}">Publica tu propiedad con nosotros</a> ·
+         <a href="solicitudes.html">Mis solicitudes</a></p>`;
   }
 
   // Capa de mapa base: OpenStreetMap, o el contorno de Chile (data/contorno.js) si CONFIG.mapaBase = 'contorno'.
@@ -145,6 +146,7 @@
       x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); x.setAttribute('aria-label', on ? 'Quitar de guardados' : 'Guardar');
     });
     contar(on ? 'guardar' : 'quitar-guardado', b.dataset.fav);
+    if (window.Nativo) window.Nativo.vibrar(on ? 'MEDIUM' : 'LIGHT');
     document.dispatchEvent(new CustomEvent('favoritos'));
   }, true);
 
