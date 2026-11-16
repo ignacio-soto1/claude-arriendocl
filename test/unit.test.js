@@ -84,13 +84,15 @@ test('mensaje de WhatsApp incluye propiedad, fechas, huéspedes y total', () => 
   const m = mensajeReserva({ ...base, llegada: '2027-01-14', salida: '2027-01-17', noches: 3, huespedes: 4, total: 338500, nombre: 'Javiera' });
   assert.match(m, /^Hola Arriendo en CL/);
   assert.match(m, /\*Parcela en Pucón\*/);
-  assert.match(m, /📅 Llegada: .*14.*ene.*2027\n📅 Salida: .*17.*ene.*2027\n🌙 3 noches · 👥 4 huéspedes/);
+  assert.match(m, /\*Llegada:\* .*14.*ene.*2027\n\*Salida:\* .*17.*ene.*2027\n\*Noches:\* 3\n\*Huéspedes:\* 4/);
+  // Solo caracteres del plano básico: WhatsApp en iPhone rompe los emojis del enlace
+  assert.ok([...m].every((c) => c.codePointAt(0) < 0x2000 || '×·¿'.includes(c)), 'el mensaje no debe tener emojis');
   assert.match(m, /\*Total: \$\s?338\.500 CLP\*/);
   const conDesglose = mensajeReserva({ ...base, llegada: '2027-01-14', salida: '2027-01-17', noches: 3, precio_noche: 95000, limpieza: 25000, total: 310000 });
   assert.match(conDesglose, /\$\s?95\.000 × 3 noches = \$\s?285\.000\nLimpieza: \$\s?25\.000\n\*Total: \$\s?310\.000 CLP\*/);
-  assert.match(m, /Mi nombre: Javiera/);
+  assert.match(m, /\*Mi nombre:\* Javiera/);
   assert.match(m, /https:\/\/ejemplo\.cl\/propiedades\/1/);
-  assert.match(mensajeReserva(base), /Fechas: por definir/);
+  assert.match(mensajeReserva(base), /\*Fechas:\* por definir/);
   const url = waUrl('56912345678', m);
   assert.ok(url.startsWith('https://wa.me/56912345678?text='));
   assert.equal(decodeURIComponent(url.split('text=')[1]), m);

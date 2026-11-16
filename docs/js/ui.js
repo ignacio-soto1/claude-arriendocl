@@ -40,7 +40,7 @@
 
   function montarMarco() {
     const ig = `https://www.instagram.com/${CFG.instagram}/`;
-    const wa = waUrl(`Hola ${CFG.marca} 👋 Tengo una consulta sobre arriendos.`);
+    const wa = waUrl(`Hola ${CFG.marca}, tengo una consulta sobre arriendos.`);
     document.querySelector('header.top').innerHTML = `
       <a class="logo-link" href="${CFG.unaPagina ? '#inicio' : './'}" aria-label="${esc(CFG.marca)}, inicio">${logo('chico')}</a>
       <nav>

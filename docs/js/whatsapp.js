@@ -14,23 +14,24 @@
   // d: { marca, titulo, tipo, comuna, region, url, llegada?, salida?, noches?, huespedes?,
   //      precio_noche?, limpieza?, total?, nombre? }
   function mensajeReserva(d) {
-    const l = [`Hola ${d.marca} 👋 Quiero reservar:`, '', `🏡 *${d.titulo}*`, `📍 ${d.tipo} en ${d.comuna}, ${d.region}`, ''];
+    // Sin emojis: el enlace de WhatsApp en iPhone los muestra como "�".
+    const l = [`Hola ${d.marca}, quiero reservar:`, '', `*${d.titulo}*`, `${d.tipo} en ${d.comuna}, ${d.region}`, ''];
     if (d.llegada && d.salida) {
-      l.push(`📅 Llegada: ${fmtFecha(d.llegada)}`, `📅 Salida: ${fmtFecha(d.salida)}`);
-      const extra = [d.noches && `🌙 ${plural(d.noches, 'noche', 'noches')}`, d.huespedes && `👥 ${plural(d.huespedes, 'huésped', 'huéspedes')}`].filter(Boolean);
-      if (extra.length) l.push(extra.join(' · '));
+      l.push(`*Llegada:* ${fmtFecha(d.llegada)}`, `*Salida:* ${fmtFecha(d.salida)}`);
+      if (d.noches) l.push(`*Noches:* ${d.noches}`);
+      if (d.huespedes) l.push(`*Huéspedes:* ${d.huespedes}`);
     } else {
-      l.push('📅 Fechas: por definir');
-      if (d.huespedes) l.push(`👥 ${plural(d.huespedes, 'huésped', 'huéspedes')}`);
+      l.push('*Fechas:* por definir');
+      if (d.huespedes) l.push(`*Huéspedes:* ${d.huespedes}`);
     }
     if (d.total) {
-      l.push('', '💰 *Resumen del precio*');
+      l.push('', '*Resumen del precio*');
       if (d.precio_noche && d.noches) l.push(`${clp.format(d.precio_noche)} × ${plural(d.noches, 'noche', 'noches')} = ${clp.format(d.precio_noche * d.noches)}`);
       if (d.limpieza) l.push(`Limpieza: ${clp.format(d.limpieza)}`);
       l.push(`*Total: ${clp.format(d.total)} CLP*`);
     }
-    if (d.nombre) l.push('', `🙋 Mi nombre: ${d.nombre}`);
-    l.push('', `🔗 ${d.url}`, '', '¿Está disponible?');
+    if (d.nombre) l.push('', `*Mi nombre:* ${d.nombre}`);
+    l.push('', `Ver propiedad: ${d.url}`, '', '¿Está disponible?');
     return l.join('\n');
   }
 
