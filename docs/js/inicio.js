@@ -83,7 +83,7 @@
         <div class="muted small titulo">${esc(p.titulo)}</div>
         <div class="muted small">${dia ? `Hasta ${p.capacidad} personas · ${esc(p.horario_dia.desde)} a ${esc(p.horario_dia.hasta)}` : `${p.capacidad} huéspedes · ${p.dormitorios} dorm.`}${p.tipo === 'parcela' && p.superficie_m2 ? ' · ' + esc(C.superficie(p.superficie_m2)) : ''}</div>
         <div class="card-precio">${UI.precios(C.precioBase(p), C.unidad(p))}</div>
-        ${q ? `<div class="muted small">Total: ${UI.conTarjeta(q.total) ? `<s>${esc(C.formatCLP(UI.conTarjeta(q.total)))}</s> ` : ''}${esc(C.formatCLP(q.total))}${UI.conTarjeta(q.total) ? ' con transferencia' : ''}</div>` : ''}
+        ${q ? `<div class="muted small">Total: ${UI.conTarjeta(q.total) ? `<s>${esc(C.formatCLP(C.cotizacionTarjeta(q, window.CONFIG.recargoTarjeta).total))}</s> ` : ''}${esc(C.formatCLP(q.total))}${UI.conTarjeta(q.total) ? ' con transferencia' : ''}</div>` : ''}
       </div></a>`;
   }
 

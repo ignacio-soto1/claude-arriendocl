@@ -13,7 +13,7 @@
 
   // d: { marca, titulo, tipo, comuna, region, url, llegada?, salida?, noches?, huespedes?,
   //      precio_noche?, detalle?, limpieza?, total?, total_tarjeta?, pago?, horario?, nombre?,
-  //      modalidad?: 'dia', fecha?, asistentes?, evento?, precio_dia?, etiqueta?, adicionales?, extra_persona? }
+  //      por_tarjeta? (desglose a precio normal y total con tarjeta), modalidad?: 'dia', fecha?, asistentes?, evento?, precio_dia?, etiqueta?, adicionales?, extra_persona? }
   function mensajeReserva(d) {
     // Sin emojis: el enlace de WhatsApp en iPhone los muestra como un signo de reemplazo.
     const dia = d.modalidad === 'dia';
@@ -47,7 +47,9 @@
         l.push(`${clp.format(d.precio_noche)} × ${plural(d.noches, 'noche', 'noches')} = ${clp.format(d.precio_noche * d.noches)}`);
       }
       if (d.limpieza) l.push(`Limpieza: ${clp.format(d.limpieza)}`);
-      if (d.total_tarjeta) {
+      if (d.total_tarjeta && d.por_tarjeta) {
+        l.push(`*Total: ${clp.format(d.total_tarjeta)} CLP*`, `(Con transferencia sería ${clp.format(d.total)})`);
+      } else if (d.total_tarjeta) {
         l.push(`*Precio total: ${clp.format(d.total_tarjeta)} CLP*`, `*Con descuento por transferencia: ${clp.format(d.total)} CLP*`);
       } else {
         l.push(`*Total: ${clp.format(d.total)} CLP*`);

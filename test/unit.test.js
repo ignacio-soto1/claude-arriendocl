@@ -92,6 +92,9 @@ test('mensaje de WhatsApp incluye propiedad, fechas, huéspedes y total', () => 
   const conPago = mensajeReserva({ ...base, llegada: '2027-01-14', salida: '2027-01-17', noches: 2, precio_noche: 95000, limpieza: 25000,
     total: 215000, total_tarjeta: 230000, pago: 'Transferencia bancaria' });
   assert.match(conPago, /\*Precio total: \$\s?230\.000 CLP\*\n\*Con descuento por transferencia: \$\s?215\.000 CLP\*\n\n\*Forma de pago:\* Transferencia bancaria/);
+  const conTarjetaMsg = mensajeReserva({ ...base, llegada: '2027-01-14', salida: '2027-01-17', noches: 3, detalle: [{ etiqueta: 'Normal', precio: 77000, noches: 3 }],
+    limpieza: 16100, total: 231000, total_tarjeta: 247100, por_tarjeta: true, pago: 'Tarjeta de crédito o débito (link de pago)' });
+  assert.match(conTarjetaMsg, /\$\s?77\.000 × 3 noches = \$\s?231\.000\nLimpieza: \$\s?16\.100\n\*Total: \$\s?247\.100 CLP\*\n\(Con transferencia sería \$\s?231\.000\)/);
   assert.match(conDesglose, /\$\s?95\.000 × 3 noches = \$\s?285\.000\nLimpieza: \$\s?25\.000\n\*Total: \$\s?310\.000 CLP\*/);
   assert.match(m, /\*Mi nombre:\* Javiera/);
   assert.match(m, /https:\/\/ejemplo\.cl\/propiedades\/1/);

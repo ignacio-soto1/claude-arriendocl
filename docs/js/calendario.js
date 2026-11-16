@@ -81,7 +81,9 @@
       // Sincroniza desde los campos de fecha
       marcar(a, b) {
         llegada = a || ''; salida = b || '';
-        if (llegada && llegada.slice(0, 7) !== inicio && llegada.slice(0, 7) !== sumarMes(inicio, 1)) inicio = llegada.slice(0, 7);
+        // Si la llegada no está entre los meses visibles, abre el calendario en ese mes
+        const visibles = Array.from({ length: op.meses || 2 }, (_, i) => sumarMes(inicio, i));
+        if (llegada && !visibles.includes(llegada.slice(0, 7))) inicio = llegada.slice(0, 7);
         dibujar();
       },
     };

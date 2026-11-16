@@ -372,3 +372,7 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 .fechas-elegidas { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
   background: var(--brand-soft); border-radius: 10px; padding: 8px 12px; font-size: .9rem; }
 .fechas-elegidas .link { color: var(--brand); text-decoration: underline; }
+
+.descuento-nota { color: var(--ok); font-size: .85rem; }
+.precio-caja .precios .precio { font-size: 1.5rem; }
+.precio-caja .precios strong { font-size: 1.5rem; }

@@ -82,7 +82,7 @@
     const adicionales = pp && asistentes ? Math.max(0, asistentes - pp.incluidas) : 0;
     const extra = adicionales * (pp ? pp.extra : 0);
     const limpieza = p.tarifa_limpieza || 0;
-    return { dias: 1, precio, etiqueta, adicionales, extra, limpieza, subtotal: precio + extra, total: precio + extra + limpieza };
+    return { dias: 1, precio, etiqueta, adicionales, extra, extraPersona: pp ? pp.extra : 0, limpieza, subtotal: precio + extra, total: precio + extra + limpieza };
   }
 
   function validarDia(p, { fecha, asistentes }, hoy = hoyChile()) {
@@ -198,9 +198,22 @@
   }
 
   // Total con tarjeta: total con transferencia + recargo, redondeado a la luca (o al múltiplo indicado).
-  function totalTarjeta(total, recargo, redondeo = 1000) {
+  // Precio con tarjeta de un monto: + recargo, redondeado a la luca (a la centena si es menor a $20.000).
+  function totalTarjeta(total, recargo, redondeo = total >= 20000 ? 1000 : 100) {
     if (!recargo) return total;
     return Math.round((total * (1 + recargo)) / redondeo) * redondeo;
+  }
+
+  // Cotización a precio normal (tarjeta), línea por línea, para que el desglose sume exacto.
+  // Devuelve { lineas: [{ texto, etiqueta?, monto }], limpieza, total }.
+  function cotizacionTarjeta(cot, recargo) {
+    const t = (n) => totalTarjeta(n, recargo);
+    const lineas = cot.detalle
+      ? cot.detalle.map((g) => ({ precio: t(g.precio), noches: g.noches, etiqueta: g.etiqueta, monto: t(g.precio) * g.noches }))
+      : [{ precio: t(cot.precio), etiqueta: cot.etiqueta, monto: t(cot.precio) },
+        ...(cot.adicionales ? [{ adicionales: cot.adicionales, precio: t(cot.extraPersona), monto: t(cot.extraPersona) * cot.adicionales }] : [])];
+    const limpieza = cot.limpieza ? t(cot.limpieza) : 0;
+    return { lineas, limpieza, total: lineas.reduce((a, l) => a + l.monto, 0) + limpieza };
   }
 
   function sumarDias(iso, d) {
@@ -212,6 +225,6 @@
   return {
     TIPOS, ICONOS, COMODIDADES, ORDENES, MODALIDADES, esDia, precioBase, unidad, precioDia, cotizarDia, validarDia,
     formatCLP, formatFecha, hoyChile, esFecha, noches, seSolapan, disponible, cotizar, validarReserva,
-    filtrar, regiones, superficie, precioCorto, sumarDias, normalizar, totalTarjeta, precioNoche, enTemporada, condiciones,
+    filtrar, regiones, superficie, precioCorto, sumarDias, normalizar, totalTarjeta, cotizacionTarjeta, precioNoche, enTemporada, condiciones,
   };
 });

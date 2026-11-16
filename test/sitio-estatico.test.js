@@ -131,6 +131,13 @@ test('total con tarjeta: 7% sobre transferencia, redondeado a la luca', () => {
   assert.equal(C.totalTarjeta(215000, 0.07), 230000);
   assert.equal(C.totalTarjeta(100000, 0.07), 107000);
   assert.equal(C.totalTarjeta(215000, 0), 215000);
+  assert.equal(C.totalTarjeta(5000, 0.07), 5400); // montos chicos: a la centena
+  // Desglose a precio normal: cada línea con recargo y el total es la suma exacta
+  const cot = C.cotizar({ precio_noche: 72000, tarifa_limpieza: 15000, ocupado: [] }, '2026-12-01', '2026-12-04');
+  const ct = C.cotizacionTarjeta(cot, 0.07);
+  assert.deepEqual([ct.lineas[0].precio, ct.limpieza, ct.total], [77000, 16100, 77000 * 3 + 16100]);
+  const dia = C.cotizarDia({ precio_dia: 150000, tarifa_limpieza: 25000, por_persona: { incluidas: 25, extra: 4000 } }, '2026-12-02', 30);
+  assert.equal(C.cotizacionTarjeta(dia, 0.07).total, 161000 + 5 * 4300 + 27000);
 });
 
 test('formatos chilenos', () => {

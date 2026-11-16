@@ -132,9 +132,8 @@
         </div>
 
         <aside class="reserva-box">
-          <p class="precio-caja">${UI.conTarjeta(C.precioBase(p)) ? `<s class="precio-lista">${esc(C.formatCLP(UI.conTarjeta(C.precioBase(p))))}</s> ` : ''}<span class="precio">${esc(C.formatCLP(C.precioBase(p)))}</span> <span class="muted">/ ${C.unidad(p)}</span>
-            ${UI.conTarjeta(C.precioBase(p)) ? '<br><span class="descuento">Descuento pagando con transferencia</span>' : ''}
-            ${variable ? `<br><span class="muted small">Varía según ${dia ? 'fin de semana y temporada' : 'temporada y fin de semana'}</span>` : ''}</p>
+          <p class="precio-caja"><span data-c="cabecera">${UI.precios(C.precioBase(p), `/ ${C.unidad(p)}`)}</span>
+            ${variable ? `<span class="muted small">Varía según ${dia ? 'fin de semana y temporada' : 'temporada y fin de semana'}</span>` : ''}</p>
           <form id="form-reserva">
             <p class="caja-titulo">${dia ? 'Elige el día de tu evento' : 'Elige tus fechas'}</p>
             <div class="calendario" id="calendario" aria-label="Calendario de disponibilidad"></div>
@@ -145,15 +144,6 @@
               <label>Tipo de evento <input name="evento" maxlength="60" placeholder="Opcional"></label>
             </div>` : `
             <label>Huéspedes <input type="number" name="huespedes" min="1" max="${p.capacidad}" value="1"></label>`}
-            <div class="cotizacion" hidden>
-              <div data-q="filas"></div>
-              ${p.tarifa_limpieza ? `<div class="row between"><span>Limpieza</span><span>${esc(C.formatCLP(p.tarifa_limpieza))}</span></div>` : ''}
-              ${conTarjeta ? `
-              <div class="row between"><span>Precio total</span><s data-q="total-tarjeta"></s></div>
-              <div class="row between total ahorro"><span>Con descuento por transferencia</span><span data-q="total"></span></div>
-              <div class="row between"><span class="muted small">Ahorras</span><span class="muted small" data-q="ahorro"></span></div>`
-              : `<div class="row between total"><span>Total</span><span data-q="total"></span></div>`}
-            </div>
             ${conTarjeta ? `
             <fieldset class="pago">
               <legend>¿Cómo quieres pagar?</legend>
@@ -162,6 +152,11 @@
               <label class="opcion"><input type="radio" name="pago" value="transferencia">
                 <span><strong>Transferencia bancaria</strong><small>Con descuento. Te enviamos los datos por WhatsApp.</small></span></label>
             </fieldset>` : ''}
+            <div class="cotizacion" hidden>
+              <div data-q="filas"></div>
+              ${p.tarifa_limpieza ? `<div class="row between"><span>Limpieza</span><span data-q="limpieza"></span></div>` : ''}
+              <div data-q="totales"></div>
+            </div>
             <p class="aviso" data-q="aviso" hidden></p>
             <a class="btn block wa" id="btn-whatsapp" target="_blank" rel="noopener">${UI.WA_ICON} <span data-q="btn">Reservar por WhatsApp</span></a>
             <p class="muted small center" data-q="ayuda"></p>
@@ -249,21 +244,39 @@
       if (sincronizar) calendario.marcar(llegada, salida);
       mostrarFechas(llegada, salida);
 
+      // Precios según la forma de pago: tarjeta = precio normal; transferencia = con descuento.
+      const fmt = C.formatCLP;
+      const porTarjeta = conTarjeta && pago === 'tarjeta';
+      const base = C.precioBase(p);
+      const lista = UI.conTarjeta(base);
+      document.querySelector('[data-c="cabecera"]').innerHTML = !conTarjeta ? UI.precios(base, `/ ${C.unidad(p)}`)
+        : porTarjeta
+          ? `<span class="precios"><span><span class="precio">${esc(fmt(lista))}</span> <span class="muted">/ ${C.unidad(p)}</span></span><span class="descuento">o ${esc(fmt(base))} pagando con transferencia</span></span>`
+          : UI.precios(base, `/ ${C.unidad(p)}`);
+
       box.hidden = !r.ok;
       if (r.ok) {
+        const ct = conTarjeta ? C.cotizacionTarjeta(cot, CFG.recargoTarjeta) : null;
+        const etq = (e) => (e && e !== 'Normal' ? ` <small>(${esc(e.toLowerCase())})</small>` : '');
         if (dia) {
-          $('filas').innerHTML = `<div class="row between"><span>Arriendo del día${cot.etiqueta !== 'Normal' ? ` <small>(${esc(cot.etiqueta.toLowerCase())})</small>` : ''}</span><span>${esc(C.formatCLP(cot.precio))}</span></div>`
-            + (cot.adicionales ? `<div class="row between"><span>${cot.adicionales} ${cot.adicionales === 1 ? 'persona adicional' : 'personas adicionales'} × ${esc(C.formatCLP(p.por_persona.extra))}</span><span>${esc(C.formatCLP(cot.extra))}</span></div>` : '');
+          const precioDia = porTarjeta ? ct.lineas[0].precio : cot.precio;
+          const extraP = porTarjeta && cot.adicionales ? ct.lineas[1].precio : cot.extraPersona;
+          $('filas').innerHTML = `<div class="row between"><span>Arriendo del día${etq(cot.etiqueta)}</span><span>${esc(fmt(precioDia))}</span></div>`
+            + (cot.adicionales ? `<div class="row between"><span>${cot.adicionales} ${cot.adicionales === 1 ? 'persona adicional' : 'personas adicionales'} × ${esc(fmt(extraP))}</span><span>${esc(fmt(extraP * cot.adicionales))}</span></div>` : '');
         } else {
-        const varios = cot.detalle.length > 1 || cot.detalle[0].etiqueta !== 'Normal';
-        $('filas').innerHTML = cot.detalle.map((g) => `<div class="row between"><span>${esc(C.formatCLP(g.precio))} × ${g.noches} ${g.noches === 1 ? 'noche' : 'noches'}${varios ? ` <small>(${esc(g.etiqueta.toLowerCase())})</small>` : ''}</span><span>${esc(C.formatCLP(g.precio * g.noches))}</span></div>`).join('');
+          const varios = cot.detalle.length > 1 || cot.detalle[0].etiqueta !== 'Normal';
+          const filas = porTarjeta ? ct.lineas : cot.detalle.map((g) => ({ ...g, monto: g.precio * g.noches }));
+          $('filas').innerHTML = filas.map((g) => `<div class="row between"><span>${esc(fmt(g.precio))} × ${g.noches} ${g.noches === 1 ? 'noche' : 'noches'}${varios ? etq(g.etiqueta) || ' <small>(normal)</small>' : ''}</span><span>${esc(fmt(g.monto))}</span></div>`).join('');
         }
-        $('total').textContent = C.formatCLP(cot.total);
-        if (conTarjeta) {
-          const conT = C.totalTarjeta(cot.total, CFG.recargoTarjeta);
-          $('total-tarjeta').textContent = C.formatCLP(conT);
-          $('ahorro').textContent = C.formatCLP(conT - cot.total);
-        }
+        if ($('limpieza')) $('limpieza').textContent = fmt(porTarjeta ? ct.limpieza : cot.limpieza);
+        $('totales').innerHTML = !conTarjeta
+          ? `<div class="row between total"><span>Total</span><span>${esc(fmt(cot.total))}</span></div>`
+          : porTarjeta
+            ? `<div class="row between total"><span>Total</span><span>${esc(fmt(ct.total))}</span></div>
+               <div class="row between descuento-nota"><span>Con transferencia pagarías</span><span>${esc(fmt(cot.total))}</span></div>`
+            : `<div class="row between"><span>Precio total</span><s>${esc(fmt(ct.total))}</s></div>
+               <div class="row between total ahorro"><span>Total con transferencia</span><span>${esc(fmt(cot.total))}</span></div>
+               <div class="row between"><span class="muted small">Ahorras</span><span class="muted small">${esc(fmt(ct.total - cot.total))}</span></div>`;
       }
       const error = avisoCalendario || r.error;
       aviso.hidden = !error;
@@ -281,7 +294,21 @@
         datos.horario = [cond.llegada && `llegada desde ${cond.llegada}`, cond.salida && `salida hasta ${cond.salida}`].filter(Boolean).join(', ');
       }
       if (r.ok) Object.assign(datos, { detalle: dia ? null : cot.detalle, limpieza: cot.limpieza, total: cot.total });
-      if (r.ok && conTarjeta) datos.total_tarjeta = C.totalTarjeta(cot.total, CFG.recargoTarjeta);
+      if (r.ok && conTarjeta) {
+        const ct = C.cotizacionTarjeta(cot, CFG.recargoTarjeta);
+        datos.total_tarjeta = ct.total;
+        if (porTarjeta) {
+          // Con tarjeta, el desglose del mensaje va a precio normal y el total es el de tarjeta.
+          datos.por_tarjeta = true;
+          datos.limpieza = ct.limpieza;
+          if (dia) {
+            datos.precio_dia = ct.lineas[0].precio;
+            if (cot.adicionales) datos.extra_persona = ct.lineas[1].precio;
+          } else {
+            datos.detalle = ct.lineas.map((l) => ({ etiqueta: l.etiqueta, precio: l.precio, noches: l.noches }));
+          }
+        }
+      }
       if (pago) datos.pago = pago === 'tarjeta' ? 'Tarjeta de crédito o débito (link de pago)' : 'Transferencia bancaria';
       btn.href = UI.waUrl(window.WhatsApp.mensajeReserva(datos));
 
