@@ -51,8 +51,28 @@
     }
     if (!form.orden.value) form.orden.value = 'recomendadas';
   }
+  // Fila de categorías (incluye "Guardados" si hay favoritos). Una a la vez; tocarla de nuevo la quita.
+  let categoria = new URLSearchParams(location.search).get('cat') || '';
+  const filaCat = document.getElementById('categorias');
+  function dibujarCategorias() {
+    const items = [...(UI.favoritos().length ? [['guardados', 'Guardados', 'corazon']] : []),
+      ...Object.entries(C.CATEGORIAS).map(([id, c]) => [id, c.nombre, id])];
+    if (categoria === 'guardados' && !UI.favoritos().length) categoria = '';
+    filaCat.innerHTML = items.map(([id, nombre, icono]) => `<button type="button" class="cat ${categoria === id ? 'on' : ''}" data-cat="${id}" aria-pressed="${categoria === id}">
+      ${UI.ICONOS_MARCA[icono] || ''}<span>${esc(nombre)}</span></button>`).join('');
+  }
+  filaCat.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-cat]');
+    if (!b) return;
+    categoria = categoria === b.dataset.cat ? '' : b.dataset.cat;
+    dibujarCategorias();
+    render();
+  });
+  document.addEventListener('favoritos', () => { dibujarCategorias(); if (categoria === 'guardados' || !UI.favoritos().length) render(); });
+
   function filtrosActuales() {
     const f = Object.fromEntries(CAMPOS.map((k) => [k, form[k].value.trim()]));
+    if (categoria === 'guardados') f.ids = UI.favoritos(); else if (categoria) f.cat = categoria;
     f.huespedes = Number(f.huespedes) || null;
     f.precio_max = Number(f.precio_max) || null;
     return f;
@@ -60,6 +80,7 @@
   function escribirURL() {
     const q = new URLSearchParams();
     for (const k of CAMPOS) { const v = form[k].value.trim(); if (v && !(k === 'orden' && v === 'recomendadas')) q.set(k, v); }
+    if (categoria) q.set('cat', categoria);
     if (!window.CONFIG.unaPagina) history.replaceState(null, '', (q.toString() ? `?${q}` : location.pathname) + location.hash);
   }
 
@@ -77,7 +98,7 @@
     const q = dia ? (f.llegada ? C.cotizarDia(p, f.llegada, f.huespedes) : null)
       : (f.llegada && f.salida ? C.cotizar(p, f.llegada, f.salida) : null);
     return `<a class="card" href="${esc(enlace(p, f))}" data-id="${esc(p.id)}">
-      <div class="card-img">${foto(p)}<span class="tag">${esc(C.TIPOS[p.tipo])}</span>${dia ? '<span class="tag tag-dia">Eventos de día</span>' : ''}</div>
+      <div class="card-img">${foto(p)}${UI.botonFavorito(p.id)}<span class="tag">${esc(C.TIPOS[p.tipo])}</span>${dia ? '<span class="tag tag-dia">Eventos de día</span>' : ''}</div>
       <div class="card-body">
         <div><strong>${esc(p.comuna)}</strong> <span class="muted small">· ${esc(p.region)}</span></div>
         <div class="muted small titulo">${esc(p.titulo)}</div>
@@ -105,7 +126,8 @@
     const f = filtrosActuales();
     const res = C.filtrar(TODAS, f);
     const lugar = f.comuna || f.region;
-    conteo.textContent = `${res.length} ${res.length === 1 ? 'propiedad' : 'propiedades'}${lugar ? ` en ${lugar}` : ''}` +
+    const nombreCat = categoria === 'guardados' ? 'guardadas' : categoria ? `con ${C.CATEGORIAS[categoria].nombre.toLowerCase()}` : '';
+    conteo.textContent = `${res.length} ${res.length === 1 ? 'propiedad' : 'propiedades'}${nombreCat ? ` ${nombreCat}` : ''}${lugar ? ` en ${lugar}` : ''}` +
       (f.modo === 'dia' && f.llegada ? ` disponibles el ${C.formatFecha(f.llegada)}`
         : f.llegada && f.salida ? ` disponibles del ${C.formatFecha(f.llegada)} al ${C.formatFecha(f.salida)}` : '');
     lista.innerHTML = res.length ? res.map((p) => tarjeta(p, f)).join('')
@@ -145,7 +167,7 @@
   form.addEventListener('input', render);
   form.addEventListener('change', render);
   form.addEventListener('submit', (e) => e.preventDefault());
-  form.addEventListener('reset', () => setTimeout(() => { llenarComunas('', ''); form.orden.value = 'recomendadas'; ajustarModo(); render(); }));
+  form.addEventListener('reset', () => setTimeout(() => { llenarComunas('', ''); form.orden.value = 'recomendadas'; ajustarModo(); categoria = ''; dibujarCategorias(); render(); }));
 
   // "Más filtros" en pantallas angostas (se abre solo si ya hay filtros secundarios activos)
   const btnMas = form.querySelector('.mas-filtros');
@@ -204,6 +226,7 @@
   // Para el modo de una sola página: filtros actuales y reajuste del mapa al volver.
   window.Inicio = { filtros: filtrosActuales, alVolver: () => { mapa.invalidateSize(); encuadrar(false); } };
 
+  dibujarCategorias();
   leerURL();
   // Al llegar con #publica, baja a la sección cuando la lista ya está dibujada.
   if (location.hash === '#publica') setTimeout(() => document.getElementById('publica')?.scrollIntoView(), 0);

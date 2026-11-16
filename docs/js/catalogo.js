@@ -59,6 +59,18 @@
     return { precio: p.precio_noche, etiqueta: 'Normal' };
   }
 
+  // Categorías de la fila de íconos de la portada: id → { nombre, prueba(p) }
+  const tiene = (a) => (p) => (p.amenities || []).includes(a);
+  const CATEGORIAS = {
+    piscina: { nombre: 'Piscina', prueba: tiene('piscina') },
+    tinaja: { nombre: 'Tinaja', prueba: tiene('tinaja') },
+    quincho: { nombre: 'Quincho', prueba: tiene('quincho') },
+    lago: { nombre: 'Lago o río', prueba: tiene('lago_rio') },
+    playa: { nombre: 'Playa', prueba: tiene('vista_mar') },
+    eventos: { nombre: 'Eventos', prueba: (p) => p.modalidad === 'dia' },
+    mascotas: { nombre: 'Mascotas', prueba: tiene('mascotas') },
+  };
+
   // ---- Arriendo por día (eventos) ----
   const MODALIDADES = { noche: 'Alojamiento', dia: 'Eventos de día' };
   const esDia = (p) => p.modalidad === 'dia';
@@ -145,6 +157,8 @@
     const n = conFechas ? noches(f.llegada, f.salida) : null;
     const out = lista.filter((p) => {
       if (f.modo && (p.modalidad || 'noche') !== f.modo) return false;
+      if (f.cat && CATEGORIAS[f.cat] && !CATEGORIAS[f.cat].prueba(p)) return false;
+      if (f.ids && !f.ids.includes(p.id)) return false;
       if (f.region && p.region !== f.region) return false;
       if (f.comuna && p.comuna !== f.comuna) return false;
       if (f.tipo && p.tipo !== f.tipo) return false;
@@ -223,7 +237,7 @@
   }
 
   return {
-    TIPOS, ICONOS, COMODIDADES, ORDENES, MODALIDADES, esDia, precioBase, unidad, precioDia, cotizarDia, validarDia,
+    TIPOS, ICONOS, COMODIDADES, ORDENES, MODALIDADES, CATEGORIAS, esDia, precioBase, unidad, precioDia, cotizarDia, validarDia,
     formatCLP, formatFecha, hoyChile, esFecha, noches, seSolapan, disponible, cotizar, validarReserva,
     filtrar, regiones, superficie, precioCorto, sumarDias, normalizar, totalTarjeta, cotizacionTarjeta, precioNoche, enTemporada, condiciones,
   };

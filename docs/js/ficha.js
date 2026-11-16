@@ -100,6 +100,7 @@
           <p class="muted">${dia ? '<span class="pill-dia">Eventos de día</span> ' : ''}${esc(C.TIPOS[p.tipo])} en ${esc(p.comuna)}, ${esc(p.region)}</p>
         </div>
         <div class="compartir">
+          ${UI.botonFavorito(p.id, 'en-ficha')}
           <button type="button" class="btn ghost sm" id="btn-compartir">${UI.ICONOS_MARCA.compartir} <span>Compartir</span></button>
           <a class="btn ghost sm" id="btn-amigo" target="_blank" rel="noopener">${UI.WA_ICON} <span>Enviar a un amigo</span></a>
           <span class="muted small" id="compartir-aviso" role="status"></span>
@@ -165,7 +166,11 @@
           </form>
         </aside>
       </div>
-    </article>`;
+    </article>
+    <div class="barra-reserva" id="barra-reserva">
+      <div class="barra-precio" data-b="precio"></div>
+      <button type="button" class="btn" data-b="ir">Reservar</button>
+    </div>`;
 
     // Mapa de la ficha con un círculo de ubicación aproximada
     const mapa = L.map('mapa-ficha', { scrollWheelZoom: false }).setView([p.lat, p.lng], 12);
@@ -313,12 +318,36 @@
       btn.href = UI.waUrl(window.WhatsApp.mensajeReserva(datos));
 
       // Sin fechas, el botón lleva al calendario en vez de abrir WhatsApp.
+      // Barra fija del celular: precio (o total) y fechas elegidas
+      const barraPrecio = document.querySelector('[data-b="precio"]');
+      const fFecha = (x) => new Intl.DateTimeFormat('es-CL', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(x + 'T00:00:00Z'));
+      const textoFechas = !llegada ? (dia ? 'Elige tu fecha' : 'Elige tus fechas') : dia ? fFecha(llegada) : salida ? `${fFecha(llegada)} – ${fFecha(salida)}` : `Desde ${fFecha(llegada)}`;
+      if (r.ok && conTarjeta) {
+        const tot = C.cotizacionTarjeta(cot, CFG.recargoTarjeta).total;
+        barraPrecio.innerHTML = porTarjeta
+          ? `<span><strong>${esc(fmt(tot))}</strong> <span class="muted">total</span></span><small>${esc(textoFechas)}</small>`
+          : `<span><s>${esc(fmt(tot))}</s> <strong>${esc(fmt(cot.total))}</strong> <span class="muted">total</span></span><small>${esc(textoFechas)}</small>`;
+      } else {
+        barraPrecio.innerHTML = `<span>${conTarjeta ? `<s>${esc(fmt(lista))}</s> ` : ''}<strong>${esc(fmt(base))}</strong> <span class="muted">${C.unidad(p)}</span></span><small>${esc(textoFechas)}</small>`;
+      }
+
       const faltanFechas = !llegada || (!dia && !salida);
       btn.classList.toggle('pendiente', faltanFechas);
       $('btn').textContent = faltanFechas ? (dia ? 'Elige la fecha de tu evento' : 'Elige tus fechas para reservar') : (r.ok ? 'Reservar por WhatsApp' : 'Consultar por WhatsApp');
       $('ayuda').textContent = faltanFechas
         ? (dia ? 'Toca el día en el calendario: te armamos el mensaje con la fecha y el precio.' : 'Toca la llegada y la salida en el calendario: te armamos el mensaje con las fechas y el precio.')
         : 'Se abre WhatsApp con tu reserva ya escrita: fechas, propiedad y precio. Solo tienes que enviarla.';
+    }
+
+    // Barra fija: "Reservar" lleva al cuadro de reserva; se oculta cuando el cuadro ya está en pantalla.
+    const barra = document.getElementById('barra-reserva');
+    barra.querySelector('[data-b="ir"]').addEventListener('click', () => {
+      const destino = form.llegada.value && (dia || form.salida.value) ? btn : document.getElementById('calendario');
+      destino.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([e]) => barra.classList.toggle('oculta', e.isIntersecting), { threshold: 0.15 })
+        .observe(document.querySelector('.reserva-box'));
     }
 
     btn.addEventListener('click', (e) => {

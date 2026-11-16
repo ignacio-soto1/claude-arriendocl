@@ -31,6 +31,12 @@
     tarjeta: svg('<rect x="2.5" y="5.5" width="19" height="13" rx="2.2"/><path d="M2.5 9.5h19M6 14.5h4M14.5 14.5h3"/>'),
     calendario: svg('<rect x="3.5" y="5" width="17" height="15.5" rx="2.2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><path d="m8.5 14.5 2.3 2.3 4.7-4.6"/>'),
     casaEvento: svg('<path d="M2.5 12 10 5.5l7.5 6.5M4.5 10.3V20h11v-9.7M8.3 20v-4.6h3.4V20"/><path d="M19.5 3v3M18 4.5h3M20.5 9.5v2M19.5 10.5h2"/>'),
+    tinaja: svg('<path d="M3 11.5h18v2.5a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6Z"/><path d="M8 8c-.8-1.2.8-2 0-3.5M12 8c-.8-1.2.8-2 0-3.5M16 8c-.8-1.2.8-2 0-3.5M7 20l-1 1.5M17 20l1 1.5"/>'),
+    lago: svg('<path d="M2.5 14 8 7l3.5 4.5L14 8.5l7.5 5.5"/><path d="M2.5 17.5c1.6 0 1.6-1 3.2-1s1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1M2.5 21c1.6 0 1.6-1 3.2-1s1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1"/>'),
+    playa: svg('<circle cx="17" cy="6.5" r="2.8"/><path d="M17 1.8v.9M21.7 6.5h-.9M20.3 3.2l-.6.6M13.7 3.2l.6.6"/><path d="M2.5 16c1.6 0 1.6-1 3.2-1s1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1M2.5 20c1.6 0 1.6-1 3.2-1s1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1M4 12.5c2-3.5 5-5 8.5-4.5"/>'),
+    eventos: svg('<path d="M8 4.5a4 4 0 0 1 8 0c0 3-4 6-4 6s-4-3-4-6Z"/><path d="M12 10.5c0 2-1.5 2.5-1.5 4.5s1.5 2.5 1.5 4.5M5 8l1.5 1M3.5 13h2M19 8l-1.5 1M20.5 13h-2"/>'),
+    mascotas: svg('<circle cx="6.5" cy="10" r="1.8"/><circle cx="10" cy="5.8" r="1.8"/><circle cx="14" cy="5.8" r="1.8"/><circle cx="17.5" cy="10" r="1.8"/><path d="M12 11.5c-2.6 0-5.5 3.6-5.5 6a2.5 2.5 0 0 0 3.2 2.4c.8-.2 1.5-.5 2.3-.5s1.5.3 2.3.5a2.5 2.5 0 0 0 3.2-2.4c0-2.4-2.9-6-5.5-6Z"/>'),
+    corazon: svg('<path d="M12 20.5s-8-4.8-8-10.6A4.4 4.4 0 0 1 12 7.4a4.4 4.4 0 0 1 8 2.5c0 5.8-8 10.6-8 10.6Z"/>'),
     compartir: svg('<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M5 12v7.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V12"/>'),
     personas: svg('<circle cx="12" cy="7" r="3"/><circle cx="5" cy="9.2" r="2.3"/><circle cx="19" cy="9.2" r="2.3"/><path d="M6.5 20.5v-2a5.5 5.5 0 0 1 11 0v2M1.5 19.5v-1A3.5 3.5 0 0 1 6 15M22.5 19.5v-1A3.5 3.5 0 0 0 18 15"/>'),
   };
@@ -109,6 +115,36 @@
     return `propiedad.html?${q}`;
   }
 
+  // Favoritos guardados en el navegador del visitante (no se comparten ni se envían a ningún lado).
+  const CLAVE_FAV = 'aecl-favoritos';
+  function favoritos() {
+    try { return JSON.parse(localStorage.getItem(CLAVE_FAV) || '[]'); } catch (_) { return []; }
+  }
+  function esFavorito(id) { return favoritos().includes(id); }
+  function alternarFavorito(id) {
+    const f = favoritos();
+    const i = f.indexOf(id);
+    if (i >= 0) f.splice(i, 1); else f.push(id);
+    try { localStorage.setItem(CLAVE_FAV, JSON.stringify(f)); } catch (_) { /* sin almacenamiento */ }
+    return i < 0;
+  }
+  function botonFavorito(id, clase = '') {
+    const on = esFavorito(id);
+    return `<button type="button" class="fav ${clase} ${on ? 'on' : ''}" data-fav="${esc(id)}" aria-pressed="${on}" aria-label="${on ? 'Quitar de guardados' : 'Guardar'}">${ICONOS_MARCA.corazon}</button>`;
+  }
+  // Un solo manejador para todos los corazones de la página.
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-fav]');
+    if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    const on = alternarFavorito(b.dataset.fav);
+    document.querySelectorAll(`[data-fav="${CSS.escape(b.dataset.fav)}"]`).forEach((x) => {
+      x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); x.setAttribute('aria-label', on ? 'Quitar de guardados' : 'Guardar');
+    });
+    contar(on ? 'guardar' : 'quitar-guardado', b.dataset.fav);
+    document.dispatchEvent(new CustomEvent('favoritos'));
+  }, true);
+
   // Precio con tarjeta (CONFIG.recargoTarjeta, redondeado a la luca). Sin recargo devuelve null.
   const conTarjeta = (n) => (Number(CFG.recargoTarjeta) > 0 ? window.Catalogo.totalTarjeta(n, CFG.recargoTarjeta) : null);
   // HTML de precio: el precio normal (tarjeta) tachado y el precio con descuento por transferencia destacado.
@@ -121,5 +157,5 @@
       + `<span class="descuento">Descuento pagando con transferencia</span></span>`;
   }
 
-  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar, precios, conTarjeta };
+  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar, precios, conTarjeta, favoritos, botonFavorito };
 })();
