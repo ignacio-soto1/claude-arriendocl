@@ -515,3 +515,4 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 @media (max-width: 520px) { .prueba-social a { font-size: .74rem; padding: 6px 12px; gap: 6px; } }
 .prueba-social a { white-space: nowrap; max-width: 100%; }
 @media (max-width: 380px) { .prueba-social a { font-size: .68rem; } }
+@media (max-width: 380px) { .prueba-social a { font-size: .64rem; padding: 6px 10px; } }
