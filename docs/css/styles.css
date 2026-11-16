@@ -512,3 +512,4 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 .prueba-social a:hover { background: rgb(0 0 0 / .5); }
 .prueba-social svg { width: 16px; height: 16px; }
 .top nav .icon-link { padding: 4px; }
+@media (max-width: 520px) { .prueba-social a { font-size: .74rem; padding: 6px 12px; gap: 6px; } }
