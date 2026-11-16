@@ -2,6 +2,9 @@
 window.CONFIG = {
   marca: 'Arriendo en CL',
   instagram: 'arriendoencl',
+  tiktok: 'arriendoencl',
+  // Seguidores en TikTok que se muestran en la portada (actualízalo de vez en cuando). Vacío para no mostrarlo.
+  seguidoresTiktok: '46 mil',
   // Celular que recibe las reservas, solo dígitos con 56 adelante (ej: '56912345678').
   // Si queda vacío, el botón abre WhatsApp para que el cliente elija a quién enviar el mensaje.
   whatsapp: '56988971675',

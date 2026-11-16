@@ -16,6 +16,7 @@
   }
 
   const WA_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.5 1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>';
+  const TT_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M16.6 2h-3.3v13.2a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9a6.3 6.3 0 1 0 5.3 6.2V8.6a7.9 7.9 0 0 0 4.4 1.4V6.7a4.6 4.6 0 0 1-4.4-4.7Z"/></svg>';
   const IG_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.2a3.2 3.2 0 1 1 0-6.4 3.2 3.2 0 0 1 0 6.4ZM17.3 5.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4ZM21.9 7.1c-.1-1.6-.4-3-1.6-4.2S17.7 1.3 16.1 1.2C14.4 1.1 9.6 1.1 7.9 1.2 6.3 1.3 4.9 1.6 3.7 2.8S2.1 5.5 2 7.1c-.1 1.7-.1 6.5 0 8.2.1 1.6.4 3 1.6 4.2s2.6 1.5 4.2 1.6c1.7.1 6.5.1 8.2 0 1.6-.1 3-.4 4.2-1.6s1.5-2.6 1.6-4.2c.1-1.7.1-6.5 0-8.2Zm-2.2 10a3.3 3.3 0 0 1-1.9 1.9c-1.3.5-4.4.4-5.8.4s-4.5.1-5.8-.4a3.3 3.3 0 0 1-1.9-1.9c-.5-1.3-.4-4.4-.4-5.8s-.1-4.5.4-5.8a3.3 3.3 0 0 1 1.9-1.9c1.3-.5 4.4-.4 5.8-.4s4.5-.1 5.8.4a3.3 3.3 0 0 1 1.9 1.9c.5 1.3.4 4.4.4 5.8s.1 4.5-.4 5.8Z"/></svg>';
 
   // Íconos de línea de la marca (mismo estilo que el logo de Instagram).
@@ -78,11 +79,13 @@
       <a class="logo-link" href="${CFG.unaPagina ? '#inicio' : './'}" aria-label="${esc(CFG.marca)}, inicio">${logo('chico')}</a>
       <nav>
         <a href="${publica}" class="btn sm publica">${ICONOS_MARCA.publicar}<span class="largo">Publica con nosotros</span><span class="corto">Publica</span></a>
-        <a href="${esc(ig)}" target="_blank" rel="noopener" class="icon-link">${IG_ICON}<span>@${esc(CFG.instagram)}</span></a>
+        <a href="${esc(ig)}" target="_blank" rel="noopener" class="icon-link" aria-label="Instagram @${esc(CFG.instagram)}">${IG_ICON}</a>
+        ${CFG.tiktok ? `<a href="https://www.tiktok.com/@${esc(CFG.tiktok)}" target="_blank" rel="noopener" class="icon-link" aria-label="TikTok @${esc(CFG.tiktok)}">${TT_ICON}</a>` : ''}
       </nav>`;
     document.querySelector('footer.bottom').innerHTML = `
       <p>${esc(CFG.marca)} · Alojamiento y parcelas para eventos de día, de Arica a Magallanes. Precios en pesos chilenos (CLP).</p>
       <p><a href="${esc(ig)}" target="_blank" rel="noopener">Instagram @${esc(CFG.instagram)}</a> ·
+         ${CFG.tiktok ? `<a href="https://www.tiktok.com/@${esc(CFG.tiktok)}" target="_blank" rel="noopener">TikTok @${esc(CFG.tiktok)}</a> ·` : ''}
          <a href="${esc(wa)}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a> ·
          <a href="${publica}">Publica tu propiedad con nosotros</a></p>`;
   }
@@ -157,5 +160,11 @@
       + `<span class="descuento">Descuento pagando con transferencia</span></span>`;
   }
 
-  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar, precios, conTarjeta, favoritos, botonFavorito };
+  // Prueba social en la portada: "Más de 46 mil personas nos siguen en TikTok"
+  function pruebaSocial(el) {
+    if (!el || !CFG.tiktok || !CFG.seguidoresTiktok) { if (el) el.hidden = true; return; }
+    el.innerHTML = `<a href="https://www.tiktok.com/@${esc(CFG.tiktok)}" target="_blank" rel="noopener">${TT_ICON}<span>Más de <strong>${esc(CFG.seguidoresTiktok)}</strong> personas nos siguen en TikTok</span></a>`;
+  }
+
+  window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar, precios, conTarjeta, favoritos, botonFavorito, pruebaSocial };
 })();

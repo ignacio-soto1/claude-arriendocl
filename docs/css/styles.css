@@ -504,3 +504,11 @@ input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 @media (prefers-reduced-motion: reduce) { .card-img img, .card-img .ph { transition: none; } }
 .card-precio .transf { display: block; margin-top: 1px; }
 .publica-antetitulo { margin: 4px 0 0; font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+
+/* Prueba social en el banner */
+.hero-foto .prueba-social { margin-top: 6px; }
+.prueba-social a { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; color: #fff; text-decoration: none;
+  background: rgb(0 0 0 / .35); border: 1px solid rgb(255 255 255 / .35); font-size: .85rem; backdrop-filter: blur(4px); }
+.prueba-social a:hover { background: rgb(0 0 0 / .5); }
+.prueba-social svg { width: 16px; height: 16px; }
+.top nav .icon-link { padding: 4px; }

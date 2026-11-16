@@ -6,6 +6,7 @@
   const TODAS = window.PROPIEDADES;
   UI.montarMarco();
   document.getElementById('hero-logo').innerHTML = UI.logo('grande');
+  UI.pruebaSocial(document.getElementById('prueba-social'));
   document.querySelectorAll('[data-icono]').forEach((el) => { el.innerHTML = UI.ICONOS_MARCA[el.dataset.icono]; });
 
   const form = document.getElementById('filtros');
