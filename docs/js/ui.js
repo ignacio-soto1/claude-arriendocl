@@ -160,10 +160,10 @@
       + `<span class="descuento">Descuento pagando con transferencia</span></span>`;
   }
 
-  // Prueba social en la portada: "Más de 46 mil personas nos siguen en TikTok"
+  // Prueba social en la portada: "Únete a nuestra comunidad de +46 mil en TikTok"
   function pruebaSocial(el) {
     if (!el || !CFG.tiktok || !CFG.seguidoresTiktok) { if (el) el.hidden = true; return; }
-    el.innerHTML = `<a href="https://www.tiktok.com/@${esc(CFG.tiktok)}" target="_blank" rel="noopener">${TT_ICON}<span>Más de <strong>${esc(CFG.seguidoresTiktok)}</strong> personas nos siguen en TikTok</span></a>`;
+    el.innerHTML = `<a href="https://www.tiktok.com/@${esc(CFG.tiktok)}" target="_blank" rel="noopener">${TT_ICON}<span>Únete a nuestra comunidad de <strong>+${esc(CFG.seguidoresTiktok)}</strong> en TikTok</span></a>`;
   }
 
   window.UI = { esc, foto, waUrl, WA_ICON, ICONOS_MARCA, logo, montarMarco, capaBase, enlaceFicha, contar, precios, conTarjeta, favoritos, botonFavorito, pruebaSocial };
