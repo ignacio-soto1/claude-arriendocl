@@ -1,7 +1,8 @@
 // 🏡 Propiedades del catálogo. Para agregar una, copia un bloque y cambia los datos.
 //
 // - id:        identificador único sin espacios (se usa en el enlace: propiedad.html?id=...)
-// - modalidad: 'noche' (alojamiento, por defecto) o 'dia' (eventos o día de piscina, se arrienda por día).
+// - modalidad: 'noche' (alojamiento, por defecto), 'dia' (eventos de día o día de piscina) o 'evento_noche'
+//              (eventos de noche). Los eventos se arriendan por una fecha con horario, con los mismos campos.
 //              Para 'dia' se usan: precio_dia, precio_dia_fin_semana (sábado y domingo, opcional),
 //              horario_dia: { desde: '10:00', hasta: '20:00' } y por_persona: { incluidas: 40, extra: 5000 } (opcional).
 //              En temporadas, usa precio_dia en vez de precio_noche. "ocupado" marca días: { desde: '2026-12-05', hasta: '2026-12-06' }.
@@ -99,6 +100,21 @@ window.PROPIEDADES = [
     descripcion: 'Media hectárea con piscina, quincho equipado y amplias áreas verdes con sombra. Perfecta para un día de piscina con la familia, cumpleaños o asados con amigos. Baños y estacionamiento para 15 autos.',
     fotos: [],
     ocupado: [{ desde: '2026-11-28', hasta: '2026-11-29' }],
+  },
+  {
+    id: 'parcela-calera-eventos-noche',
+    modalidad: 'evento_noche',
+    titulo: 'Parcela con quincho y luces para eventos de noche en Calera de Tango',
+    tipo: 'parcela', region: 'Metropolitana de Santiago', comuna: 'Calera de Tango', lat: -33.6290, lng: -70.7780,
+    superficie_m2: 6000,
+    precio_dia: 280000, precio_dia_fin_semana: 340000, tarifa_limpieza: 40000,
+    por_persona: { incluidas: 50, extra: 5000 },
+    horario_dia: { desde: '19:00', hasta: '03:00' },
+    capacidad: 100, dormitorios: 0, banos: 3, min_noches: 1,
+    amenities: ['estacionamiento', 'quincho', 'terraza', 'agua_potable'],
+    descripcion: 'Parcela pensada para celebraciones de noche: gran quincho techado, guirnaldas de luces, pista de baile y estacionamiento para 30 autos. Ideal para cumpleaños, fiestas de empresa y matrimonios.',
+    fotos: [],
+    ocupado: [{ desde: '2026-12-12', hasta: '2026-12-13' }],
   },
   {
     id: 'casa-la-serena-playa',

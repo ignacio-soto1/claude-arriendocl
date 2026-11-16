@@ -112,7 +112,7 @@
   function enlaceFicha(p, f = {}) {
     if (CFG.unaPagina) return `#p-${p.id}`;
     const q = new URLSearchParams({ id: p.id });
-    if (p.modalidad === 'dia' && f.llegada) q.set('fecha', f.llegada);
+    if ((p.modalidad === 'dia' || p.modalidad === 'evento_noche') && f.llegada) q.set('fecha', f.llegada);
     else if (f.llegada && f.salida) { q.set('llegada', f.llegada); q.set('salida', f.salida); }
     if (f.huespedes) q.set('huespedes', f.huespedes);
     return `propiedad.html?${q}`;

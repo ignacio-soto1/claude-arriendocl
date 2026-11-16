@@ -333,6 +333,15 @@ legend { font-weight: 700; padding: 0 6px; }
 .pill-dia { display: inline-block; background: var(--gold); color: #13293a; font-size: .72rem; font-weight: 700; letter-spacing: .05em;
   text-transform: uppercase; padding: 2px 8px; border-radius: 999px; vertical-align: 1px; }
 
+/* Etiquetas de modalidad: Alojamiento, Eventos de día, Eventos de noche */
+.card-img .tag-modo { top: 10px; left: 10px; right: auto; }
+.tag-modo, .pill-modo { font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.pill-modo { display: inline-block; padding: 2px 8px; border-radius: 999px; vertical-align: 1px; }
+.tag-modo.tag-noche, .pill-modo.tag-noche { background: #fff; color: #13293a; }
+.pill-modo.tag-noche { border: 1px solid var(--line); }
+.tag-modo.tag-dia, .pill-modo.tag-dia { background: var(--gold); color: #13293a; }
+.tag-modo.tag-evento_noche, .pill-modo.tag-evento_noche { background: #13293a; color: #f2cf6b; }
+
 /* Dos precios: transferencia y tarjeta */
 .precios { display: flex; flex-direction: column; gap: 1px; }
 .precios .medio { color: var(--muted); font-size: .8rem; }

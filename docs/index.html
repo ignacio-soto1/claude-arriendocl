@@ -16,7 +16,7 @@
   <meta property="og:description" content="Parcelas, departamentos y cabañas para arrendar en todo Chile. Reserva directo por WhatsApp.">
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="css/styles.css?v=202611160730">
+  <link rel="stylesheet" href="css/styles.css?v=202611161058">
 </head>
 <body class="inicio">
 <header class="top"></header>
@@ -54,6 +54,7 @@
       <label><input type="radio" name="modo" value="" checked><span>Todos</span></label>
       <label><input type="radio" name="modo" value="noche"><span>Alojamiento</span></label>
       <label><input type="radio" name="modo" value="dia"><span>Eventos de día</span></label>
+      <label><input type="radio" name="modo" value="evento_noche"><span>Eventos de noche</span></label>
     </fieldset>
     <label>Región <select name="region"><option value="">Todo Chile</option></select></label>
     <label>Comuna <select name="comuna"><option value="">Todas</option></select></label>
@@ -110,7 +111,7 @@
       </div>
       <label>¿Para qué la arriendas?
         <select name="uso" id="pub-uso">
-          <option>Alojamiento (por noche)</option><option>Eventos de día</option><option>Ambos</option>
+          <option>Alojamiento (por noche)</option><option>Eventos de día</option><option>Eventos de noche</option><option>Varios de estos</option>
         </select>
       </label>
       <label>Comuna o sector <input name="ubicacion" id="pub-ubicacion" placeholder="Ej: Peñaflor, Lago Rapel, Pucón"></label>
@@ -123,12 +124,12 @@
 </main>
 <footer class="bottom"></footer>
 
-<script src="config.js?v=202611160730"></script>
-<script src="data/propiedades.js?v=202611160730"></script>
+<script src="config.js?v=202611161058"></script>
+<script src="data/propiedades.js?v=202611161058"></script>
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="js/catalogo.js?v=202611160730"></script>
-<script src="js/whatsapp.js?v=202611160730"></script>
-<script src="js/ui.js?v=202611160730"></script>
-<script src="js/inicio.js?v=202611160730"></script>
+<script src="js/catalogo.js?v=202611161058"></script>
+<script src="js/whatsapp.js?v=202611161058"></script>
+<script src="js/ui.js?v=202611161058"></script>
+<script src="js/inicio.js?v=202611161058"></script>
 </body>
 </html>

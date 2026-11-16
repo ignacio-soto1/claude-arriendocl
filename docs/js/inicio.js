@@ -35,7 +35,7 @@
 
   // En "Eventos de día" se busca un solo día y por cantidad de personas.
   function ajustarModo() {
-    const dia = form.modo.value === 'dia';
+    const dia = C.esEventoModo(form.modo.value);
     form.querySelector('[data-etq="llegada"]').textContent = dia ? 'Fecha' : 'Llegada';
     form.querySelector('[data-etq="huespedes"]').textContent = dia ? 'Personas' : 'Huéspedes';
     form.querySelector('[data-campo="salida"]').hidden = dia;
@@ -99,7 +99,7 @@
     const q = dia ? (f.llegada ? C.cotizarDia(p, f.llegada, f.huespedes) : null)
       : (f.llegada && f.salida ? C.cotizar(p, f.llegada, f.salida) : null);
     return `<a class="card" href="${esc(enlace(p, f))}" data-id="${esc(p.id)}">
-      <div class="card-img">${foto(p)}${UI.botonFavorito(p.id)}${dia ? '<span class="tag tag-dia">Eventos de día</span>' : ''}</div>
+      <div class="card-img">${foto(p)}${UI.botonFavorito(p.id)}<span class="tag tag-modo tag-${esc(p.modalidad || 'noche')}">${esc(C.etiquetaModalidad(p))}</span></div>
       <div class="card-body">
         <div class="card-lugar">${esc(p.comuna)}, ${esc(p.region)}</div>
         <div class="muted">${esc(C.TIPOS[p.tipo])} · ${dia ? `hasta ${p.capacidad} personas` : `${p.capacidad} huéspedes`}</div>
@@ -128,11 +128,11 @@
     const lugar = f.comuna || f.region;
     const nombreCat = categoria === 'guardados' ? 'guardadas' : categoria ? `con ${C.CATEGORIAS[categoria].nombre.toLowerCase()}` : '';
     conteo.textContent = `${res.length} ${res.length === 1 ? 'propiedad' : 'propiedades'}${nombreCat ? ` ${nombreCat}` : ''}${lugar ? ` en ${lugar}` : ''}` +
-      (f.modo === 'dia' && f.llegada ? ` disponibles el ${C.formatFecha(f.llegada)}`
+      (C.esEventoModo(f.modo) && f.llegada ? ` disponibles el ${C.formatFecha(f.llegada)}`
         : f.llegada && f.salida ? ` disponibles del ${C.formatFecha(f.llegada)} al ${C.formatFecha(f.salida)}` : '');
     const ff = (x) => new Intl.DateTimeFormat('es-CL', { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(x + 'T00:00:00Z'));
     document.querySelector('[data-p="donde"]').textContent = f.comuna || f.region || 'Todo Chile';
-    document.querySelector('[data-p="cuando"]').textContent = f.modo === 'dia' && f.llegada ? ff(f.llegada)
+    document.querySelector('[data-p="cuando"]').textContent = C.esEventoModo(f.modo) && f.llegada ? ff(f.llegada)
       : f.llegada && f.salida ? `${ff(f.llegada)} – ${ff(f.salida)}` : 'Cualquier fecha';
     document.querySelector('[data-p="quien"]').textContent = f.huespedes ? `${f.huespedes} ${f.huespedes === 1 ? 'persona' : 'personas'}` : '¿Cuántos?';
     document.querySelector('[data-mostrar]').textContent = `Mostrar ${res.length} ${res.length === 1 ? 'propiedad' : 'propiedades'}`;
@@ -168,7 +168,7 @@
   form.llegada.addEventListener('change', () => {
     if (!form.llegada.value) return;
     form.salida.min = C.sumarDias(form.llegada.value, 1);
-    if (form.modo.value !== 'dia' && (!form.salida.value || form.salida.value <= form.llegada.value)) form.salida.value = C.sumarDias(form.llegada.value, 2);
+    if (!C.esEventoModo(form.modo.value) && (!form.salida.value || form.salida.value <= form.llegada.value)) form.salida.value = C.sumarDias(form.llegada.value, 2);
   });
   form.addEventListener('input', render);
   form.addEventListener('change', render);

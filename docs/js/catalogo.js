@@ -67,15 +67,18 @@
     quincho: { nombre: 'Quincho', prueba: tiene('quincho') },
     lago: { nombre: 'Lago o río', prueba: tiene('lago_rio') },
     playa: { nombre: 'Playa', prueba: tiene('vista_mar') },
-    eventos: { nombre: 'Eventos', prueba: (p) => p.modalidad === 'dia' },
+    eventos: { nombre: 'Eventos', prueba: (p) => esDia(p) },
     mascotas: { nombre: 'Mascotas', prueba: tiene('mascotas') },
   };
 
-  // ---- Arriendo por día (eventos) ----
-  const MODALIDADES = { noche: 'Alojamiento', dia: 'Eventos de día' };
-  const esDia = (p) => p.modalidad === 'dia';
+  // ---- Modalidades: alojamiento (por noche) y eventos (una fecha con horario, de día o de noche) ----
+  const MODALIDADES = { noche: 'Alojamiento', dia: 'Eventos de día', evento_noche: 'Eventos de noche' };
+  const esEventoModo = (m) => m === 'dia' || m === 'evento_noche';
+  // "esDia": se arrienda por una sola fecha con horario (eventos de día o de noche).
+  const esDia = (p) => esEventoModo(p.modalidad);
+  const etiquetaModalidad = (p) => MODALIDADES[p.modalidad] || MODALIDADES.noche;
   const precioBase = (p) => (esDia(p) ? p.precio_dia : p.precio_noche); // precio "desde" que se muestra
-  const unidad = (p) => (esDia(p) ? 'día' : 'noche');
+  const unidad = (p) => (p.modalidad === 'evento_noche' ? 'evento' : esDia(p) ? 'día' : 'noche');
 
   // Precio del arriendo de un día: temporada > fin de semana (sábado y domingo) > normal.
   function precioDia(p, fecha) {
@@ -237,7 +240,7 @@
   }
 
   return {
-    TIPOS, ICONOS, COMODIDADES, ORDENES, MODALIDADES, CATEGORIAS, esDia, precioBase, unidad, precioDia, cotizarDia, validarDia,
+    TIPOS, ICONOS, COMODIDADES, ORDENES, MODALIDADES, CATEGORIAS, esEventoModo, etiquetaModalidad, esDia, precioBase, unidad, precioDia, cotizarDia, validarDia,
     formatCLP, formatFecha, hoyChile, esFecha, noches, seSolapan, disponible, cotizar, validarReserva,
     filtrar, regiones, superficie, precioCorto, sumarDias, normalizar, totalTarjeta, cotizacionTarjeta, precioNoche, enTemporada, condiciones,
   };

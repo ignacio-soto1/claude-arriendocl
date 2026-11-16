@@ -16,8 +16,9 @@
   //      por_tarjeta? (desglose a precio normal y total con tarjeta), modalidad?: 'dia', fecha?, asistentes?, evento?, precio_dia?, etiqueta?, adicionales?, extra_persona? }
   function mensajeReserva(d) {
     // Sin emojis: el enlace de WhatsApp en iPhone los muestra como un signo de reemplazo.
-    const dia = d.modalidad === 'dia';
-    const l = [`Hola ${d.marca}, quiero reservar${dia ? ' para un evento de día' : ''}:`, '', `*${d.titulo}*`, `${d.tipo} en ${d.comuna}, ${d.region}`, ''];
+    const dia = d.modalidad === 'dia' || d.modalidad === 'evento_noche';
+    const tipoEvento = d.modalidad === 'evento_noche' ? ' para un evento de noche' : dia ? ' para un evento de día' : '';
+    const l = [`Hola ${d.marca}, quiero reservar${tipoEvento}:`, '', `*${d.titulo}*`, `${d.tipo} en ${d.comuna}, ${d.region}`, ''];
     if (dia) {
       l.push(d.fecha ? `*Fecha:* ${fmtFecha(d.fecha)}` : '*Fecha:* por definir');
       if (d.horario) l.push(`*Horario:* ${d.horario}`);
@@ -35,7 +36,7 @@
     if (d.total) {
       l.push('', '*Resumen del precio*');
       if (dia) {
-        l.push(`Arriendo del día${d.etiqueta && d.etiqueta !== 'Normal' ? ` (${d.etiqueta.toLowerCase()})` : ''}: ${clp.format(d.precio_dia)}`);
+        l.push(`${d.modalidad === 'evento_noche' ? 'Arriendo del evento' : 'Arriendo del día'}${d.etiqueta && d.etiqueta !== 'Normal' ? ` (${d.etiqueta.toLowerCase()})` : ''}: ${clp.format(d.precio_dia)}`);
         if (d.adicionales) l.push(`${plural(d.adicionales, 'persona adicional', 'personas adicionales')} × ${clp.format(d.extra_persona)} = ${clp.format(d.adicionales * d.extra_persona)}`);
       } else if (d.detalle && d.detalle.length) {
         // Desglose por tipo de noche (temporada, fin de semana, normal)

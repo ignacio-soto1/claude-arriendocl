@@ -31,9 +31,10 @@ function pagina(p, cfg) {
   const base = cfg.urlSitio;
   const imagen = base + (p.fotos && p.fotos[0] ? p.fotos[0] : 'img/hero-piscina.jpg');
   const titulo = `${p.titulo} · ${cfg.marca}`;
-  const dia = p.modalidad === 'dia';
+  const noche = p.modalidad === 'evento_noche';
+  const dia = p.modalidad === 'dia' || noche;
   const desc = dia
-    ? `${TIPOS[p.tipo]} para eventos en ${p.comuna}, ${p.region} · hasta ${p.capacidad} personas · desde ${precioTexto(p.precio_dia, 'el día', cfg)}. Reserva por WhatsApp.`
+    ? `${TIPOS[p.tipo]} para eventos${noche ? ' de noche' : ''} en ${p.comuna}, ${p.region} · hasta ${p.capacidad} personas · desde ${precioTexto(p.precio_dia, noche ? 'por evento' : 'el día', cfg)}. Reserva por WhatsApp.`
     : `${TIPOS[p.tipo]} en ${p.comuna}, ${p.region} · ${p.capacidad} huéspedes · desde ${precioTexto(p.precio_noche, 'la noche', cfg)}. Reserva por WhatsApp.`;
   const destino = `../propiedad.html?id=${encodeURIComponent(p.id)}`;
   return `<!doctype html>

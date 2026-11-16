@@ -21,7 +21,7 @@
   const encabezado = () => (UI.conTarjeta(1000) ? '<tr><th></th><th class="col-tarjeta">Precio</th><th class="col-desc">Con transferencia</th></tr>' : '');
 
   function seccionPreciosDia(p) {
-    const filas = [`<tr><td>Arriendo del día</td>${celdas(p.precio_dia)}</tr>`];
+    const filas = [`<tr><td>${p.modalidad === 'evento_noche' ? 'Arriendo del evento' : 'Arriendo del día'}</td>${celdas(p.precio_dia)}</tr>`];
     if (p.precio_dia_fin_semana) filas.push(`<tr><td>Sábado y domingo</td>${celdas(p.precio_dia_fin_semana)}</tr>`);
     for (const t of p.temporadas || []) {
       if (t.precio_dia) filas.push(`<tr><td>${esc(t.nombre)} <small>(${esc(diaMes(t.desde))} al ${esc(diaMes(t.hasta))})</small></td>${celdas(t.precio_dia)}</tr>`);
@@ -97,7 +97,7 @@
       <div class="titulo-fila">
         <div>
           <h1>${esc(p.titulo)}</h1>
-          <p class="muted">${dia ? '<span class="pill-dia">Eventos de día</span> ' : ''}${esc(C.TIPOS[p.tipo])} en ${esc(p.comuna)}, ${esc(p.region)}</p>
+          <p class="muted"><span class="pill-modo tag-${esc(p.modalidad || 'noche')}">${esc(C.etiquetaModalidad(p))}</span> ${esc(C.TIPOS[p.tipo])} en ${esc(p.comuna)}, ${esc(p.region)}</p>
         </div>
         <div class="compartir">
           ${UI.botonFavorito(p.id, 'en-ficha')}
@@ -134,7 +134,7 @@
 
         <aside class="reserva-box">
           <form id="form-reserva">
-            <p class="caja-titulo">${dia ? 'Elige el día de tu evento' : 'Elige tus fechas'}</p>
+            <p class="caja-titulo">${dia ? (p.modalidad === 'evento_noche' ? 'Elige la fecha de tu evento' : 'Elige el día de tu evento') : 'Elige tus fechas'}</p>
             <div class="calendario" id="calendario" aria-label="Calendario de disponibilidad"></div>
             <input type="hidden" name="llegada"><input type="hidden" name="salida">
             <div class="fechas-elegidas" data-q="fechas" hidden></div>
@@ -266,7 +266,7 @@
         if (dia) {
           const precioDia = porTarjeta ? ct.lineas[0].precio : cot.precio;
           const extraP = porTarjeta && cot.adicionales ? ct.lineas[1].precio : cot.extraPersona;
-          $('filas').innerHTML = `<div class="row between"><span>Arriendo del día${etq(cot.etiqueta)}</span><span>${esc(fmt(precioDia))}</span></div>`
+          $('filas').innerHTML = `<div class="row between"><span>${p.modalidad === 'evento_noche' ? 'Arriendo del evento' : 'Arriendo del día'}${etq(cot.etiqueta)}</span><span>${esc(fmt(precioDia))}</span></div>`
             + (cot.adicionales ? `<div class="row between"><span>${cot.adicionales} ${cot.adicionales === 1 ? 'persona adicional' : 'personas adicionales'} × ${esc(fmt(extraP))}</span><span>${esc(fmt(extraP * cot.adicionales))}</span></div>` : '');
         } else {
           const varios = cot.detalle.length > 1 || cot.detalle[0].etiqueta !== 'Normal';
@@ -292,7 +292,7 @@
       };
       // Incluye las fechas aunque no calcen (así pueden preguntar), y el total solo si es válido.
       if (dia) {
-        Object.assign(datos, { modalidad: 'dia', fecha: llegada, asistentes: huespedes, evento: (form.evento.value || '').trim(), horario: cond.horarioDia });
+        Object.assign(datos, { modalidad: p.modalidad, fecha: llegada, asistentes: huespedes, evento: (form.evento.value || '').trim(), horario: cond.horarioDia });
         if (r.ok) Object.assign(datos, { precio_dia: cot.precio, etiqueta: cot.etiqueta, adicionales: cot.adicionales, extra_persona: p.por_persona ? p.por_persona.extra : 0 });
       } else if (cot) Object.assign(datos, { llegada, salida, noches: cot.noches });
       if (!dia && cot && (cond.llegada || cond.salida)) {
